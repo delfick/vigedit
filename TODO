@@ -1,0 +1,19 @@
+ViGedit TODO
+============
+
+Requested bindings:
+-------------------
+
+- Chained commands, like
+	- dd for delete line
+	- yy for yank line.
+  This requires a command stack, and the ability to define legal cominations.
+
+- Copy n' paste
+
+
+Command input:
+--------------
+Command input box similiar to the vi ":"-command.
+- Save
+- Open

@@ -1,0 +1,101 @@
+VIGEDIT(1)
+==========
+Trond Danielsen <trond.danielsen@gmail.com>
+
+NAME
+----
+vigedit - Gedit plugins that enables Vi(m)-style key bindings for navigating documents.
+
+
+SYNOPSIS
+--------
+Place the ViGedit distribution files in ~/.gnome2/gedit/plugins.
+
+
+DESCRIPTION
+-----------
+Vi is a modal editor, where the insert mode is used to enter text, and the command mode is used to enter commands and move the cursor around the document. 
+
+When a document is loaded in Gedit, the default mode is insert. While in insert mode, Gedit behaves just like normal. To get to command mode, press Esc. In command mode the following keyboard shortcuts can be used.
+
+ViGedit supports the following key bindings:
+
+i:: 
+	Switch back to insert mode.
+v::
+	Switch to visual mode. Visual mode is used to select text.
+Esc::
+	Switch to command mode.
+
+    
+Basic movement:
+~~~~~~~~~~~~~~~
+j::
+    Down
+k::
+    Up
+h:: 
+    Left
+l:: 
+    Right
+w::
+    Move forward one word at the time.
+b::
+    Move backward, one word at the time.
+g::
+    Move to the beginning of the current document.
+G::
+    Move to the end of the current document.
+    
+Insert commands:
+~~~~~~~~~~~~~~~~
+A::
+	Insert at the end of the current line.
+I::
+	Insert at the beginning of the current line.
+O::
+	Open a new line above the current line.
+o::
+	Open a new line below the current line.
+
+Copy/Paste commands:
+~~~~~~~~~~~~~~~~~~~~
+y::
+	Copy (yank) selection clipboard.
+p::
+	Paste clipboard at cursor position.
+
+Various commands:
+~~~~~~~~~~~~~~~~~
+/::
+    Start interactive search (just like Ctrl-k).
+x::
+    Delete character after cursor.
+    
+    
+OPTIONS
+-------
+Your only option is to modify the source code.
+
+
+BUGS
+----
+See the ViGedit distribution BUGS file for known bugs. 
+
+WARNING: Undiscovered bugs might be present, which causes vigedit to wreak you car, eat all the food in your fridge or delete you Master thesis. You have been warned.
+
+
+AUTHOR
+------
+See the ViGedit distribution AUTHORS file.
+
+
+RESOURCES
+---------
+Get the latest version from http://www.open-gnss.org/~trondd/cgi-bin/hgweb.cgi[]
+
+
+COPYING
+-------
+Copyright (C) 2006 Trond Danielsen. Free use of this software is
+granted under the terms of the GNU General Public License (GPL).

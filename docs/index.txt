@@ -1,0 +1,8 @@
+ViGedit - Vi plugin for Gedit
+=============================
+Trond Danielsen <trond.danielsen@gmail.com>
+
+ViGedit is a vi plugin for gedit.
+
+ - You can read the man page here: http://www.open-gnss.org/~trondd/vigedit/vigedit.1.html[]
+ - or download the latest release of vigedit here: ftp://open-gnss.org/pub/vigedit[]
