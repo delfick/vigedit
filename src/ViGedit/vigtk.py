@@ -2,6 +2,7 @@
 
 #  vigtk.py - Vi Keybindings for gtk.TextView.
 #  
+#  Copyright (C) 2008 - Joseph Method
 #  Copyright (C) 2006 - Trond Danielsen
 #  
 #  This program is free software; you can redistribute it and/or modify
@@ -19,17 +20,42 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330,
 #  Boston, MA 02111-1307, USA.
 
+# Implemented:
+#   h, j, k, l              --directional
+#   v-stroke, v-stroke-d    --visual selection
+#   dd, d$, dw              --deletion
+#   :w, :wq, :q, q! :sav    --saving
+#   :e name, tabnew, 
+#   :tabnew name            --open document
+#   /                       --searching
+#   i, a, I, A, o, O        --insertion
+#
+# Todo:
+
+#
+#   :num, :vsplit, :sp
+#   t, r, caw, gq}, <
+#   -- (autoindent), (comment) 
+#   Vim-like last char behavior
+#   readline support in ex console
+#   help dialog button (embed in statusbar)
+#   contextual help (tells what you can do next)
+#   access to all menu shortcuts
+
 import gtk
+import gobject
 import gedit
 import re
+import os
 from gettext import gettext as _
 
 class BindingRegistry(object):
-    modes = { 0 : 'command', 1 : 'visual', 2: 'delete', 3 : 'insert', 4: 'ex', 5: 'yank' }
+    modes = { 0 : 'command', 1 : 'visual', 2: 'delete', 3 : 'insert', 4: 'ex', 5: 'yank', 6: 'gmode' }
 
-    visual_mode = {}
-    command_mode = {}
-    ex_mode = {}
+    def __init__(self):
+        self.command_mode = {}   
+        self.visual_mode = {}
+        self.ex_mode = {}
 
     def register_common(self, func, keycode, control=False, meta=False):
         self.register('visual', func, keycode, control, meta)
@@ -47,12 +73,17 @@ class BindingRegistry(object):
         return binding_map.get((keycode, control, meta), None)
 
 class ViGtk:
-    (COMMAND_MODE, VISUAL_MODE, DELETE_MODE, INSERT_MODE, EX_MODE, YANK_MODE) = range(6)
-
+    (COMMAND_MODE, VISUAL_MODE, DELETE_MODE, INSERT_MODE, EX_MODE, YANK_MODE, GMODE) = range(7)
     def __init__(self, statusbar, view, window):
         self.window = window
-        self.view = view # view is shared across documents!!!
+        self.view = view
         self.doc = view.get_buffer()
+        self.menubar = self.window.get_children()[0].get_children()[0]
+        self.save_menu = self.menubar.get_children()[0].get_submenu().get_children()[9]
+        self.save_as_menu = self.menubar.get_children()[0].get_submenu().get_children()[10]
+        self.search_next_menu = self.menubar.get_children()[3].get_submenu().get_children()[2]
+        self.quit_menu = self.menubar.get_children()[0].get_submenu().get_children()[-2]
+        self.file_close_menu = self.menubar.get_children()[0].get_submenu().get_children()[-3]
         print "__init__:     %s in %s" % (self, self.view)
         self.statusbar = statusbar
         self.last_search = None
@@ -77,7 +108,7 @@ class ViGtk:
         self.bindings = BindingRegistry()
 
         self.bindings.register_common(self.insert_mode, gtk.keysyms.i)
-        self.bindings.register_common(self.insert_after, gtk.keysyms.a)
+        self.bindings.register_common(self.append_after, gtk.keysyms.a)
         self.bindings.register_common(self.visual_mode, gtk.keysyms.v)
         self.bindings.register_common(self.move_forward, gtk.keysyms.l)
         self.bindings.register_common(self.move_backward, gtk.keysyms.h)
@@ -85,7 +116,7 @@ class ViGtk:
         self.bindings.register_common(self.move_up, gtk.keysyms.k)
         self.bindings.register_common(self.move_word_forward, gtk.keysyms.w)
         self.bindings.register_common(self.move_word_backward, gtk.keysyms.b)
-        self.bindings.register_common(self.move_buffer_top, gtk.keysyms.g)
+        self.bindings.register_common(self.g_mode, gtk.keysyms.g)
         self.bindings.register_common(self.move_buffer_end, gtk.keysyms.G)
         self.bindings.register_common(self.insert_end_line, gtk.keysyms.A)
         self.bindings.register_common(self.insert_begin_line, gtk.keysyms.I)
@@ -110,23 +141,8 @@ class ViGtk:
         self.bindings.register('visual', self.move_line_end, gtk.keysyms.dollar)
 
     def next_search_item(self):
-        # TODO This doesn't work at all. How to use search_forward???
         if self.doc.get_can_search_again():
-            start_iter, end_iter = self.doc.get_start_iter(), self.doc.get_end_iter()
-            if self.last_search != None:
-                start_selection, end_selection = self.last_search
-            else:
-                try:
-                    start_selection, end_selection = self.doc.get_selection_bounds()
-                    self.last_search = (start_selection, end_selection)
-                except:
-                    return
-            print "Performing %s" % self.doc.search_forward(self.doc.get_start_iter(), self.doc.get_end_iter(), start_selection, end_selection)
-            self.doc.emit("search-highlight-updated", start_selection, end_selection)
-            print "Going to next search item between (%s, %s) and (%s, %s) after (%s, %s) and (%s, %s)" % \
-                (start_iter.get_line(), start_iter.get_offset(), end_iter.get_line(), end_iter.get_offset(), start_selection.get_line(), start_selection.get_offset(), end_selection.get_line(),end_selection.get_offset())
-        else:
-            print "No more instances of search text."
+            self.search_next_menu.activate()
 
     def deactivate(self):
         self.view.disconnect(self.handler_ids[0])
@@ -183,6 +199,9 @@ class ViGtk:
         self.select = False
         self.mode = self.DELETE_MODE
 
+    def g_mode(self):
+        self.mode = self.GMODE
+
     def yank_mode(self):
         self.select = False
         self.mode = self.YANK_MODE
@@ -211,14 +230,29 @@ class ViGtk:
     def is_visual_mode(self):
         return self.mode is self.VISUAL_MODE
 
+    def get_cursor_iter(self):
+        return self.doc.get_iter_at_mark(self.doc.get_mark('insert'))    
+
+    def append_after(self):
+        iter = self.get_cursor_iter()
+        if iter.ends_line():
+            print "insert ' '"
+            self.doc.insert_at_cursor(" ")
+        else:
+            print "move forward cursor position" 
+            self.view.emit("move-cursor", gtk.MOVEMENT_VISUAL_POSITIONS, 1, self.select)
+            #iter.forward_cursor_position() 
+        self.insert_mode()
+        return True
+
+    def move_forward(self):
+        self.view.emit("move-cursor", gtk.MOVEMENT_VISUAL_POSITIONS, 1, self.select)
 
     def init_commands(self):
         self.move_up = \
                 lambda: self.view.emit("move-cursor", gtk.MOVEMENT_DISPLAY_LINES, -1, self.select)
         self.move_down = \
                 lambda: self.view.emit("move-cursor", gtk.MOVEMENT_DISPLAY_LINES, 1, self.select)
-        self.move_forward = \
-                lambda: self.view.emit("move-cursor", gtk.MOVEMENT_VISUAL_POSITIONS, 1, self.select)
         self.move_backward = \
                 lambda: self.view.emit("move-cursor", gtk.MOVEMENT_VISUAL_POSITIONS, -1, self.select)
         self.move_word_forward = \
@@ -235,12 +269,21 @@ class ViGtk:
                 lambda: self.view.emit("move-cursor", gtk.MOVEMENT_PARAGRAPH_ENDS, -1, self.select)
         self.search = \
                 lambda: self.view.emit("start_interactive_search")
-        self.delete_char = \
-                lambda: self.view.emit("delete-from-cursor", gtk.DELETE_CHARS, 1)
         self.do_undo = \
                 lambda: self.view.emit("undo")
         self.do_redo = \
                 lambda: self.view.emit("redo")
+
+    def delete_char(self):
+        #TODO This doesn't quite work right.
+        iter = self.get_cursor_iter() 
+        if iter.ends_line():
+            print "deleting last char"
+            self.doc.delete(iter, self.doc.get_iter_at_offset(iter.get_offset() + 1))
+        else:
+            print "regular delete char"
+            self.view.emit("delete-from-cursor", gtk.DELETE_CHARS, 1)
+        self.get_cursor_iter().backward_cursor_position()
 
     def paste_clipboard_above(self):
         self.view.paste_clipboard()
@@ -297,28 +340,69 @@ class ViGtk:
         self.select_line()
         self.cut_selection()
 
+    def save_file(self):
+        if self.doc.get_uri() != None:
+            self.save_menu.activate()
+        else:
+            self.save_as_menu.activate()
+    
+    def close_tab(self, save = True):
+        if save and self.window.get_active_document().get_modified():
+            self.file_close_menu.activate()
+        else:
+            self.window.close_tab(self.window.get_active_tab())
+        gobject.timeout_add(100, self.wait_until_save_dialog_done)
+
+    def wait_until_save_dialog_done(self):
+        if self.window.get_active_tab() and (self.window.get_active_tab().get_state() == gedit.TAB_STATE_SAVING):
+            print "Window still saving..."
+            return True
+        else:
+            print "Window done saving!"
+            if self.window.get_views() == []:
+                # This gives messy messages.
+                self.quit_menu.activate()
+                gtk.main_quit()
+            return False
+
+        
+    def close_quit(self):
+        tab = self.window.get_active_tab()
+        if tab.get_state() == gedit.TAB_STATE_SAVING:
+            return True
+        else:
+            self.close_tab()
+            return False
+
     def evaluate_ex(self, acc):
         command = "".join(acc)
+        print "ex command is %s" % command
         if command == "w":
-            if self.doc.get_uri() != None:
-                self.doc.save(gedit.DOCUMENT_SAVE_PRESERVE_BACKUP)
-            else:
-                # TODO how to do this?
-                # self.doc.emit("saving")
-                pass
+            self.save_file()
         elif command == "wq":
-            if self.doc.get_uri() != None:
-                self.doc.save(gedit.DOCUMENT_SAVE_PRESERVE_BACKUP)
-                self.window.close_tab(self.window.get_active_tab())
-            # TODO needs dialogs and stuff for the other case.
-            # TODO investigate warnings for this
+            # Need to wait for file to finish saving
+            self.save_file()
+            gobject.timeout_add(100, self.close_quit)
         elif re.compile("sav (.+)$").match(command):
             result = re.compile("sav (.+)$").match(command).group(1)
             self.doc.save_as(result, gedit.encoding_get_current(), gedit.DOCUMENT_SAVE_PRESERVE_BACKUP)
         elif command == "q":
+            self.close_tab()
+        elif command == "q!":
+            self.close_tab(False)
+        elif command == "tabnew":
+            self.window.create_tab(True)
+        elif re.compile("tabnew (.+)$").match(command):
+            file_name = "file://" + os.getcwd() + "/"+ re.compile("tabnew (.+)$").match(command).group(1)
+            print file_name
+            if not self.window.get_active_document().get_uri():
+                self.window.close_tab(self.window.get_active_tab())
+            self.window.create_tab_from_uri(file_name, gedit.encoding_get_utf8(), 1, True, True)
+        elif re.compile("e (.+)$").match(command):
+            file_name = "file://" + os.getcwd() + "/"+ re.compile("e (.+)$").match(command).group(1)
             self.window.close_tab(self.window.get_active_tab())
-        # elif command == "!q":
-        # TODO handle force quit case
+            self.window.create_tab_from_uri(file_name, gedit.encoding_get_utf8(), 1, True, True)
+
 
     def yank_line(self):
         self.select_line()
@@ -348,6 +432,8 @@ class ViGtk:
             elif (self.mode is self.INSERT_MODE) \
                 or (event.keyval in self.ignored_keys):
                     return False
+            elif (self.mode is self.GMODE):
+                return self.handle_g_mode(event)
             # Ex mode.
             elif (self.mode is self.EX_MODE):
                 return self.handle_ex_mode(event)
@@ -401,6 +487,26 @@ class ViGtk:
         self.command_mode()
         return True
 
+    def handle_g_mode(self, event):
+        if event.keyval == gtk.keysyms.g:
+            self.move_buffer_top()
+        # Wordy way to get_next_tab()
+        elif event.keyval == gtk.keysyms.t:
+            documents = self.window.get_documents()
+            this_document = self.window.get_active_document()
+            i = None
+            for iterator, document in enumerate(documents):
+                print this_document, document
+                if document == this_document:
+                    i = iterator + 1
+                elif iterator == i:
+                    print "active tab %s" % i
+                    self.window.set_active_tab(self.window.get_tab_from_uri(documents[i].get_uri()))
+                elif i == None:
+                    self.window.set_active_tab(self.window.get_tab_from_uri(documents[0].get_uri()))
+        self.command_mode()
+        return True
+        
     def keyval_is_number(self, event):
         try:
             int(chr(event.keyval))
@@ -434,7 +540,9 @@ class ViGtk:
             return True
         elif (self.mode is self.EX_MODE) and (event.keyval == gtk.keysyms.Return):
             self.evaluate_ex(self.acc)
-            self.command_mode()
+            print self.window.get_views()
+            if self.window.get_views != []:
+                self.command_mode()
             return True
 
     def process_keypress(self, event):
