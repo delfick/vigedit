@@ -17,5 +17,6 @@ def install_plugin(name):
     copy_tree('src/' + name, plugin_dir)
 
 install_plugin("ViGedit")
-install_plugin("classbrowser")
+# Considering integration with other plugins
+# install_plugin("classbrowser")
 
