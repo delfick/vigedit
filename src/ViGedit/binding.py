@@ -1,5 +1,8 @@
 class BindingRegistry(object):
-    modes = { 0 : 'command', 1 : 'visual', 2: 'delete', 3 : 'insert', 4: 'ex', 5: 'yank', 6: 'gmode', 7:'cmode' }
+    modes = { 0 : 'command', 1 : 'visual', 
+              2: 'delete',   3 : 'insert', 
+              4: 'ex', 5: 'yank', 6: 'gmode', 
+              7:'cmode', 8: 'rmode', 9: 'tmode' }
 
     def __init__(self):
         self.command_mode = {}   

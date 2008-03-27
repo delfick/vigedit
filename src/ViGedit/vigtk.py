@@ -23,28 +23,30 @@
 # Implemented:
 #   h, j, k, l              --directional
 #   v-stroke, v-stroke-d    --visual selection
-#   dd, d$, dw              --deletion
+#   dd, d$, dw,x            --deletion
 #   y, yy                   --copying
 #   :w, :wq, :q, q! :sav    --saving
-#   :e name, tabnew, 
+#   :e name, :tabnew, 
 #   :tabnew name            --open document
-#   /                       --searching
+#   /, t                    --searching
 #   i, a, I, A, o, O        --insertion
-#   caw                     --change
+#   caw, r                  --change
+#   gq}, <, >               --formatting
 #
 # Todo:
 #
-#   :num, :vsplit, :sp
-#   t, r, , gq}, <, w, yw
+#   :num, :!terminal, :vsplit, :sp
+#   vaw, daw
 #   -- (autoindent), (comment) 
 #   Vim-like last char behavior
 #   Ability to delete last line
 #   readline support in ex console
+#   history access in ex console
+#   extract evaluate_ex into ex_parser class
 #   help dialog button (embed in statusbar)
 #   contextual help (tells what you can do next)
 #   access to all menu shortcuts
-#   refactor into smaller files
-#   fix ctrl+r clash
+#   make paste replace highlighted text
 
 import gtk
 import gobject
@@ -56,7 +58,9 @@ from binding import *
 from actions import *
 
 class ViGtk(ActionsMixin):
-    (COMMAND_MODE, VISUAL_MODE, DELETE_MODE, INSERT_MODE, EX_MODE, YANK_MODE, GMODE, CMODE) = range(8)
+    (COMMAND_MODE, VISUAL_MODE, DELETE_MODE, 
+    INSERT_MODE, EX_MODE, YANK_MODE, GMODE, 
+    CMODE, RMODE, TMODE) = range(10)
     def __init__(self, statusbar, view, window):
         self.window = window
         self.view = view
@@ -102,11 +106,15 @@ class ViGtk(ActionsMixin):
         self.bindings.register_common(self.open_line_above, gtk.keysyms.O)
         self.bindings.register_common(self.undo, gtk.keysyms.u)
         self.bindings.register_common(self.search, gtk.keysyms.slash)
+        self.bindings.register_common(self.ex_mode, gtk.keysyms.colon)
+        self.bindings.register_common(self.indent_left, gtk.keysyms.less)
+        self.bindings.register_common(self.indent_right, gtk.keysyms.greater)
+        self.bindings.register_common(self.t_mode, gtk.keysyms.t)
 
-        self.bindings.register('command', self.ex_mode, gtk.keysyms.colon)
         self.bindings.register('command', self.c_mode, gtk.keysyms.c)
         self.bindings.register('command', self.delete_mode, gtk.keysyms.d)
-        self.bindings.register('command', self.redo_or_replace, gtk.keysyms.r)
+        self.bindings.register('command', self.do_redo, gtk.keysyms.r, True, False)
+        self.bindings.register('command', self.r_mode, gtk.keysyms.r)
         self.bindings.register('command', self.delete_char, gtk.keysyms.x)
         self.bindings.register('command', self.select_line, gtk.keysyms.V)
         self.bindings.register('command', self.cut_until_end_of_line, gtk.keysyms.D)
@@ -142,14 +150,6 @@ class ViGtk(ActionsMixin):
         """Does undo.""" 
         self.do_undo()
 
-    def redo_or_replace(self):
-        """Does undo.""" 
-        if isControlPressed(event):
-            self.do_redo()
-        else:
-            self.replace()
-        return True
-
     def insert_mode(self):
         """Switches to insert mode."""
         self.set_overwrite(False)
@@ -180,12 +180,22 @@ class ViGtk(ActionsMixin):
         self.mode = self.DELETE_MODE
 
     def g_mode(self):
+        self.acc = []
         self.mode = self.GMODE
 
     def c_mode(self):
         self.acc = []
         self.mode = self.CMODE
+    
+    def r_mode(self):
+        self.acc = []
+        self.mode = self.RMODE
 
+    def t_mode(self):
+        self.acc = []
+        self.old_mode = self.mode
+        self.mode = self.TMODE
+        
     def yank_mode(self):
         self.select = False
         self.mode = self.YANK_MODE
@@ -219,6 +229,10 @@ class ViGtk(ActionsMixin):
         elif re.compile("sav (.+)$").match(command):
             result = re.compile("sav (.+)$").match(command).group(1)
             self.doc.save_as(result, gedit.encoding_get_current(), gedit.DOCUMENT_SAVE_PRESERVE_BACKUP)
+        elif re.compile("(\d+).*").match(command):
+            result = re.compile("(\d+).*").match(command).group(1)
+            print "Go to line %s" % result
+            self.go_to_line(int(result))
         elif command == "q":
             self.close_tab()
         elif command == "q!":
@@ -240,6 +254,8 @@ class ViGtk(ActionsMixin):
         self.statusbar.update(":" + "".join(self.acc))
 
     def on_key_press_event(self, view, event):
+        if (len(self.acc) == 1) and (self.mode == self.RMODE): 
+            self.command_mode()
         if view.get_buffer() != self.doc: 
             return False
         elif view != self.view:
@@ -258,6 +274,10 @@ class ViGtk(ActionsMixin):
                 return self.handle_g_mode(event)
             elif (self.mode is self.CMODE):
                 return self.handle_c_mode(event)
+            elif (self.mode is self.RMODE):
+                return self.handle_r_mode(event)
+            elif (self.mode is self.TMODE):
+                return self.handle_t_mode(event)
             # Ex mode.
             elif (self.mode is self.EX_MODE):
                 return self.handle_ex_mode(event)
@@ -307,6 +327,7 @@ class ViGtk(ActionsMixin):
         return True
 
     def handle_g_mode(self, event):
+        print "handle_g_mode"
         if event.keyval == gtk.keysyms.g:
             self.move_buffer_top()
         # Wordy way to get_next_tab()
@@ -323,6 +344,15 @@ class ViGtk(ActionsMixin):
                     self.window.set_active_tab(self.window.get_tab_from_uri(documents[i].get_uri()))
                 elif i == None:
                     self.window.set_active_tab(self.window.get_tab_from_uri(documents[0].get_uri()))
+        elif event.keyval in (gtk.keysyms.Shift_L, gtk.keysyms.Shift_R):
+            return True
+        elif event.keyval == gtk.keysyms.q:
+            print "hit gq"
+            self.increment_accumulator(event)
+            return True
+        elif (event.keyval == gtk.keysyms.braceright) and (self.acc == ["q"]):
+            print "hit gq}"
+            self.split_lines()
         self.command_mode()
         return True
 
@@ -336,6 +366,31 @@ class ViGtk(ActionsMixin):
             self.cut_selection()
             self.insert_mode()
         return True
+
+    def handle_r_mode(self, event):
+        self.increment_accumulator(event)
+        print "handle_r_mode"
+        self.set_overwrite(True)
+        return False
+
+    def handle_t_mode(self, event):
+        cursor = self.get_cursor_iter()
+        while True:
+            cursor.forward_char()
+            print cursor.get_char(), gtk.gdk.keyval_name(event.keyval)
+            if cursor.get_char() == gtk.gdk.keyval_name(event.keyval):
+                break
+            if cursor.is_end():
+                break
+        if not cursor.is_end():
+            self.doc.place_cursor(cursor)
+        print self.acc
+        if self.old_mode == self.VISUAL_MODE:
+            self.visual_mode()
+        else:
+            self.command_mode()
+        return True
+        
 
     def handle_ex_mode(self, event):
         if (event.keyval != gtk.keysyms.Return) and (event.keyval != gtk.keysyms.BackSpace):

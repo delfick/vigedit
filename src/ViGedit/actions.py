@@ -21,6 +21,9 @@ class ActionsMixin(object):
         self.search_next_menu = self.menubar.get_children()[3].get_submenu().get_children()[2]
         self.quit_menu = self.menubar.get_children()[0].get_submenu().get_children()[-2]
         self.file_close_menu = self.menubar.get_children()[0].get_submenu().get_children()[-3]
+        self.indent_left_menu = self.menubar.get_children()[1].get_submenu().get_children()[-10]
+        self.indent_right_menu = self.menubar.get_children()[1].get_submenu().get_children()[-11]
+        self.split_lines_menu = self.menubar.get_children()[1].get_submenu().get_children()[-12]
 
     def set_overwrite(self, boolean):
         self.view.set_overwrite(boolean)
@@ -28,8 +31,61 @@ class ActionsMixin(object):
             print "Setting overwrite to %s, currently %s" % (boolean, self.view.get_overwrite())
             self.doc.emit("toggle-overwrite")
 
+    def go_to_line(self, line):
+        cursor = self.get_cursor_iter()
+        cursor.set_line(line - 1)
+        self.doc.place_cursor(cursor)
+        self.view.scroll_to_mark(self.doc.get_mark('insert'))
+    
+    def to_empty_line(self, forward = True):
+        cursor = self.get_cursor_iter()
+        while True:
+            if forward:
+                cursor.forward_line()
+            else:
+                cursor.backward_line()
+
+            print "=======forward(%s)====%s" % (forward, cursor.get_line() + 1)
+
+            while True:
+                print cursor.get_line_offset()
+                if cursor.starts_line():
+                    break
+                cursor.backward_char()
+
+            end_cursor = cursor.copy()
+            if not end_cursor.ends_line():
+                end_cursor.forward_to_line_end()
+            text = cursor.get_text(end_cursor)
+            print text.__repr__()
+            print "Is space: %s" % text.isspace()
+            print "========================="
+            if text.isspace() or (len(text) == 0):
+                print "text is space"
+                return cursor
+            elif cursor.is_start():
+                return cursor
+            elif end_cursor.is_end():
+                return end_cursor
+                
+    def split_lines(self):
+        begin = self.to_empty_line(False)
+        end = self.to_empty_line(True)
+        print begin, end
+        if (begin != None) and (end != None):
+            self.doc.select_range(begin, end)
+            print "activate split_lines_menu"
+            self.split_lines_menu.activate()
+        self.command_mode()
+        
     def get_cursor_iter(self):
         return self.doc.get_iter_at_mark(self.doc.get_mark('insert'))    
+
+    def indent_left(self):
+        self.indent_left_menu.activate()
+
+    def indent_right(self):
+        self.indent_right_menu.activate()
 
     def append_after(self):
         iter = self.get_cursor_iter()
@@ -107,7 +163,9 @@ class ActionsMixin(object):
         self.insert_mode()
 
     def insert_begin_line(self):
-        self.move_line_begin()
+        cursor = self.get_cursor_iter()
+        cursor.backward_sentence_start()
+        self.doc.place_cursor(cursor)
         self.insert_mode()
 
     def open_line_above(self):
@@ -195,10 +253,6 @@ class ActionsMixin(object):
             print "Keyval %s is not a number." % chr(event.keyval)
             return False
 
-    def replace(self):
-        self.delete_char()
-        self.insert_mode()
-            
     def cut_next_word(self):
         self.visual_mode()
         self.move_word_forward()
