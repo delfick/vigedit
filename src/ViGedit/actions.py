@@ -15,15 +15,18 @@ def isAltPressed(event):
 class ActionsMixin(object):
 
     def load_menu_items(self):
+        self.ui_manager = self.window.get_ui_manager()
+        print self.ui_manager.get_ui()
         self.menubar = self.window.get_children()[0].get_children()[0]
-        self.save_menu = self.menubar.get_children()[0].get_submenu().get_children()[9]
-        self.save_as_menu = self.menubar.get_children()[0].get_submenu().get_children()[10]
-        self.search_next_menu = self.menubar.get_children()[3].get_submenu().get_children()[2]
-        self.quit_menu = self.menubar.get_children()[0].get_submenu().get_children()[-2]
-        self.file_close_menu = self.menubar.get_children()[0].get_submenu().get_children()[-3]
-        self.indent_left_menu = self.menubar.get_children()[1].get_submenu().get_children()[-10]
-        self.indent_right_menu = self.menubar.get_children()[1].get_submenu().get_children()[-11]
-        self.split_lines_menu = self.menubar.get_children()[1].get_submenu().get_children()[-12]
+        self.save_menu = self.ui_manager.get_action("/MenuBar/FileMenu/FileSaveMenu")
+        self.save_as_menu = self.ui_manager.get_action("/MenuBar/FileMenu/FileSaveAsMenu")
+        self.search_next_menu = self.ui_manager.get_action("/MenuBar/SearchMenu/SearchFindNextMenu")
+        self.quit_menu = self.ui_manager.get_action("/MenuBar/FileMenu/FileQuitMenu")
+        self.file_close_menu = self.ui_manager.get_action("/MenuBar/FileMenu/FileCloseMenu")
+        self.indent_right_menu = self.ui_manager.get_action("/MenuBar/EditMenu/EditOps_5/Indent")
+        self.indent_left_menu = self.ui_manager.get_action("/MenuBar/EditMenu/EditOps_5/Unindent")
+        self.split_lines_menu = self.ui_manager.get_action("/MenuBar/EditMenu/EditOps_5/SplitLines")
+        self.join_lines_menu = self.ui_manager.get_action("/MenuBar/EditMenu/EditOps_5/JoinLines")
 
     def set_overwrite(self, boolean):
         self.view.set_overwrite(boolean)
@@ -69,6 +72,8 @@ class ActionsMixin(object):
                 return end_cursor
                 
     def split_lines(self):
+        if self.split_lines_menu == None:
+            return False
         begin = self.to_empty_line(False)
         end = self.to_empty_line(True)
         print begin, end
@@ -82,10 +87,12 @@ class ActionsMixin(object):
         return self.doc.get_iter_at_mark(self.doc.get_mark('insert'))    
 
     def indent_left(self):
-        self.indent_left_menu.activate()
+        if self.indent_left_menu:
+            self.indent_left_menu.activate()
 
     def indent_right(self):
-        self.indent_right_menu.activate()
+        if self.indent_right_menu:
+            self.indent_right_menu.activate()
 
     def append_after(self):
         iter = self.get_cursor_iter()

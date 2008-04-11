@@ -40,12 +40,12 @@
 #   -- (autoindent), (comment) 
 #   Vim-like last char behavior
 #   Ability to delete last line
+#   Ability to open up first line
 #   readline support in ex console
 #   history access in ex console
 #   extract evaluate_ex into ex_parser class
 #   help dialog button (embed in statusbar)
 #   contextual help (tells what you can do next)
-#   access to all menu shortcuts
 #   make paste replace highlighted text
 
 import gtk
