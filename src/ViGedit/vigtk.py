@@ -60,7 +60,7 @@ from actions import *
 class ViGtk(ActionsMixin):
     (COMMAND_MODE, VISUAL_MODE, DELETE_MODE, 
     INSERT_MODE, EX_MODE, YANK_MODE, GMODE, 
-    CMODE, RMODE, TMODE) = range(10)
+    CMODE, RMODE, TMODE, SELECTION_MODE) = range(11)
     def __init__(self, statusbar, view, window):
         self.window = window
         self.view = view
@@ -76,6 +76,7 @@ class ViGtk(ActionsMixin):
                 ["F%d" % n for n in range(1,13)] )
         self.handler_ids = [
                 self.view.connect("key-press-event", self.on_key_press_event),
+                self.view.connect("button-release-event", self.on_button_release_event),
                 self.doc.connect("saved", lambda document,view: self.update()),
                 self.doc.connect("loaded", lambda document, view: self.update()),
                 self.window.connect("active-tab-changed", self.on_active_tab_changed), 
@@ -85,10 +86,21 @@ class ViGtk(ActionsMixin):
     def on_active_tab_changed(self, window, tab):
         #self.deactivate()        
         pass
+    
+    def on_button_release_event(self, event, user_data):
+        if (self.mode is self.COMMAND_MODE) or (self.mode is self.SELECTION_MODE):
+            buffer = self.view.get_buffer()
+            if buffer.get_selection_bounds() != ():
+                self.selection_mode()
+                self.selection_start, self.selection_end = buffer.get_selection_bounds()
+            else:
+                self.command_mode()
         
     def init_bindings(self):
         self.bindings = BindingRegistry()
-
+        self.bindings.register_common(self.select_all, gtk.keysyms.a, True)
+        self.bindings.register_common(self.copy_via_menu, gtk.keysyms.c, True)
+        self.bindings.register_common(self.paste_via_menu, gtk.keysyms.v, True)
         self.bindings.register_common(self.insert_mode, gtk.keysyms.i)
         self.bindings.register_common(self.append_after, gtk.keysyms.a)
         self.bindings.register_common(self.visual_mode, gtk.keysyms.v)
@@ -110,6 +122,7 @@ class ViGtk(ActionsMixin):
         self.bindings.register_common(self.indent_left, gtk.keysyms.less)
         self.bindings.register_common(self.indent_right, gtk.keysyms.greater)
         self.bindings.register_common(self.t_mode, gtk.keysyms.t)
+        self.bindings.register_common(self.cut_via_menu, gtk.keysyms.x, True)
 
         self.bindings.register('command', self.c_mode, gtk.keysyms.c)
         self.bindings.register('command', self.delete_mode, gtk.keysyms.d)
@@ -126,6 +139,8 @@ class ViGtk(ActionsMixin):
         self.bindings.register('visual', self.cut_selection, gtk.keysyms.x)
         self.bindings.register('visual', self.yank_selection, gtk.keysyms.y)
         self.bindings.register('visual', self.move_line_end, gtk.keysyms.dollar)
+        
+        
 
     def next_search_item(self):
         if self.doc.get_can_search_again():
@@ -149,6 +164,18 @@ class ViGtk(ActionsMixin):
     def undo(self):
         """Does undo.""" 
         self.do_undo()
+    
+    def copy_via_menu(self):
+        if self.copy_menu:
+            self.copy_menu.activate()
+            
+    def paste_via_menu(self):
+        if self.paste_menu:
+            self.paste_menu.activate()
+
+    def cut_via_menu(self):
+        if self.cut_menu:
+            self.cut_menu.activate()
 
     def insert_mode(self):
         """Switches to insert mode."""
@@ -168,11 +195,17 @@ class ViGtk(ActionsMixin):
     def command_mode(self):
         """Switches to command mode."""
         self.acc = []
+        self.number = 0
         self.set_overwrite(True)
         self.view.emit("select-all", False)
         self.mode = self.COMMAND_MODE
         self.update()
         self.select = False
+
+    def selection_mode(self):
+        """Switches to selection mode."""
+        self.acc = []
+        self.mode = self.SELECTION_MODE
 
     def delete_mode(self):
         """Switches to 'delete' mode"""
@@ -239,6 +272,10 @@ class ViGtk(ActionsMixin):
             self.close_tab(False)
         elif command == "tabnew":
             self.window.create_tab(True)
+        elif command == "bn":
+            print "Select next tab"
+        elif command == "bp":
+            print "Select previous tab."
         elif re.compile("tabnew (.+)$").match(command):
             file_name = "file://" + os.getcwd() + "/"+ re.compile("tabnew (.+)$").match(command).group(1)
             print file_name
@@ -276,6 +313,8 @@ class ViGtk(ActionsMixin):
                 return self.handle_c_mode(event)
             elif (self.mode is self.RMODE):
                 return self.handle_r_mode(event)
+            elif (self.mode is self.SELECTION_MODE):
+                return self.handle_selection_mode(event)
             elif (self.mode is self.TMODE):
                 return self.handle_t_mode(event)
             # Ex mode.
@@ -373,6 +412,16 @@ class ViGtk(ActionsMixin):
         self.set_overwrite(True)
         return False
 
+    def handle_selection_mode(self, event):
+        if isControlPressed(event) == False:
+            start=self.selection_start
+            end = self.selection_end
+            self.increment_accumulator(event)
+            print "handle_selection_mode"
+            self.view.get_buffer().delete(start, end)
+            self.insert_mode()
+        return False
+
     def handle_t_mode(self, event):
         cursor = self.get_cursor_iter()
         while True:
@@ -413,6 +462,10 @@ class ViGtk(ActionsMixin):
         f = self.bindings.retrieve(self.mode, event.keyval, modifiers[0], modifiers[1])
         if callable(f) is True:
             [f() for ignore in range((int(''.join( ['0'] + self.acc)) or 1))]
+        if event.keyval > 47 and event.keyval < 58:
+           self.number = self.number * 10 + (event.keyval-48)
+        elif event.keyval > 65455 and event.keyval < 65466:
+            self.number = self.number * 10 + (event.keyval - 65456)
         self.acc = []
         return True
         

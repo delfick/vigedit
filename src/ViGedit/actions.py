@@ -27,6 +27,10 @@ class ActionsMixin(object):
         self.indent_left_menu = self.ui_manager.get_action("/MenuBar/EditMenu/EditOps_5/Unindent")
         self.split_lines_menu = self.ui_manager.get_action("/MenuBar/EditMenu/EditOps_5/SplitLines")
         self.join_lines_menu = self.ui_manager.get_action("/MenuBar/EditMenu/EditOps_5/JoinLines")
+        self.select_all_menu = self.ui_manager.get_action("/MenuBar/EditMenu/EditSelectAllMenu")
+        self.paste_menu = self.ui_manager.get_action("/MenuBar/EditMenu/EditPasteMenu")
+        self.cut_menu = self.ui_manager.get_action("/MenuBar/EditMenu/EditCutMenu")
+        self.copy_menu = self.ui_manager.get_action("/MenuBar/EditMenu/EditCopyMenu")
 
     def set_overwrite(self, boolean):
         self.view.set_overwrite(boolean)
@@ -39,6 +43,10 @@ class ActionsMixin(object):
         cursor.set_line(line - 1)
         self.doc.place_cursor(cursor)
         self.view.scroll_to_mark(self.doc.get_mark('insert'))
+
+    def select_all(self):
+        if self.select_all_menu:
+            self.select_all_menu.activate()
     
     def to_empty_line(self, forward = True):
         cursor = self.get_cursor_iter()
@@ -71,6 +79,25 @@ class ActionsMixin(object):
             elif end_cursor.is_end():
                 return end_cursor
                 
+    def select_lines(self):
+        self.move_line_begin()
+        self.visual_mode()
+        self.move_line_end()
+        self.move_forward()
+        self.number = self.number
+        #select the number of lines specified
+        while self.number > 0:
+            self.move_down()
+            self.number = self.number -1 
+    
+    def return_to_origin(self, number):
+        number = int(number) + 1
+        while number > 0:
+            self.move_up()
+            number = int(number) - 1
+        self.move_line_begin()
+        self.command_mode()
+                
     def split_lines(self):
         if self.split_lines_menu == None:
             return False
@@ -87,12 +114,18 @@ class ActionsMixin(object):
         return self.doc.get_iter_at_mark(self.doc.get_mark('insert'))    
 
     def indent_left(self):
+        number = self.number
+        self.select_lines()
         if self.indent_left_menu:
             self.indent_left_menu.activate()
+        self.return_to_origin(number)
 
     def indent_right(self):
+        number = self.number
+        self.select_lines()
         if self.indent_right_menu:
             self.indent_right_menu.activate()
+        self.return_to_origin(number)
 
     def append_after(self):
         iter = self.get_cursor_iter()
@@ -150,7 +183,7 @@ class ActionsMixin(object):
         self.view.paste_clipboard()
         self.command_mode()
 
-    def past_clipboard_below(self):
+    def paste_clipboard_below(self):
         pass
 
     def yank_selection(self):
@@ -177,10 +210,10 @@ class ActionsMixin(object):
 
     def open_line_above(self):
         print "Opening line above in %s" % self.view
-        self.move_up()
-        self.move_line_end()
+        self.move_line_begin()
         self.insert_mode()
         self.view.emit("insert-at-cursor", "\n")
+        self.move_up()
         
     def open_line_below(self):
         print "Opening line below in %s" % self.view
@@ -242,8 +275,10 @@ class ActionsMixin(object):
             return False
 
     def yank_line(self):
-        self.select_line()
+        number = self.number
+        self.select_lines()
         self.yank_selection()
+        self.return_to_origin(number)
 
     def increment_accumulator(self, event):
         self.acc += chr(event.keyval)
@@ -266,8 +301,6 @@ class ActionsMixin(object):
         self.cut_selection()
 
     def delete_whole_line(self):
-        self.move_line_begin()
-        self.visual_mode()
-        self.move_line_end()
-        self.move_forward()        
+        self.select_lines() 
         self.cut_selection()
+        

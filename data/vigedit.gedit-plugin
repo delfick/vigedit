@@ -5,6 +5,6 @@ IAge=2
 Name=vigedit
 Description=ViGedit (We Get It) makes it possible to use vi-style key bindings in Gedit.
 Icon=gedit-plugin
-Authors=Trond Danielsen <trond.danielsen@gmail.com>
+Authors=Trond Danielsen <trond.danielsen@gmail.com>, Stephen Moore <delfick755@gmail.com>
 Copyright=Copyright © 2006 Trond Danielsen
 Website=http://www.gedit.org
