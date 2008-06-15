@@ -20,454 +20,199 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330,
 #  Boston, MA 02111-1307, USA.
 
-# Implemented:
-#   h, j, k, l              --directional
-#   v-stroke, v-stroke-d    --visual selection
-#   dd, d$, dw,x            --deletion
-#   y, yy                   --copying
-#   :w, :wq, :q, q! :sav    --saving
-#   :e name, :tabnew, 
-#   :tabnew name            --open document
-#   /, t                    --searching
-#   i, a, I, A, o, O        --insertion
-#   caw, r                  --change
-#   gq}, <, >               --formatting
-#
-# Todo:
-#
-#   :num, :!terminal, :vsplit, :sp
-#   vaw, daw
-#   -- (autoindent), (comment) 
-#   Vim-like last char behavior
-#   Ability to delete last line
-#   Ability to open up first line
-#   readline support in ex console
-#   history access in ex console
-#   extract evaluate_ex into ex_parser class
-#   help dialog button (embed in statusbar)
-#   contextual help (tells what you can do next)
-#   make paste replace highlighted text
-
 import gtk
 import gobject
 import gedit
 import re
 import os
 from gettext import gettext as _
-from binding import *
-from actions import *
+from modes import BindingRegistry
+from actions.menus import menus
+from actions import keys
+from actions import actions_base as base
 
-class ViGtk(ActionsMixin):
+class ViGtk(object):
     (COMMAND_MODE, VISUAL_MODE, DELETE_MODE, 
     INSERT_MODE, EX_MODE, YANK_MODE, GMODE, 
     CMODE, RMODE, TMODE, SELECTION_MODE) = range(11)
+    
+   
+    
     def __init__(self, statusbar, view, window):
-        self.window = window
-        self.view = view
-        print "__init__:     %s in %s" % (self, self.view)
-        self.doc = view.get_buffer()
-        self.load_menu_items()
-        self.statusbar = statusbar
-        self.last_search = None
-        self.init_commands()
-        self.init_bindings()
-        self.ignored_keys = map( gtk.gdk.keyval_from_name, \
-                ['Up', 'Down', 'Left', 'Right', 'Page_Up', 'Page_Down', 'Home', 'End'] + \
-                ["F%d" % n for n in range(1,13)] )
-        self.handler_ids = [
-                self.view.connect("key-press-event", self.on_key_press_event),
-                self.view.connect("button-release-event", self.on_button_release_event),
-                self.doc.connect("saved", lambda document,view: self.update()),
-                self.doc.connect("loaded", lambda document, view: self.update()),
-                self.window.connect("active-tab-changed", self.on_active_tab_changed), 
+        self.vigtk = {}
+        self.vigtk["window"] = window
+        self.vigtk["view"] = view
+        self.vigtk["doc"] = view.get_buffer()
+        self.vigtk["statusbar"] = statusbar
+        self.vigtk["last_search"] = None
+        self.vigtk["ignored_keys"] = map( gtk.gdk.keyval_from_name, \
+                ['Up', 'Down', 'Left', 'Right', 'Page_Up', 'Page_Down', 'Home', 'End']) # + \
+#                ["F%d" % n for n in range(1,13)] )
+        self.vigtk["handler_ids"] = [
+                self.vigtk["view"].connect("key-press-event", self.on_key_press_event),
+                self.vigtk["view"].connect("button-release-event", self.on_button_release_event),
+                self.vigtk["doc"].connect("saved", lambda document,view: self.update()),
+                self.vigtk["doc"].connect("loaded", lambda document, view: self.update()),
+                self.vigtk["window"].connect("active-tab-changed", self.on_active_tab_changed), 
                 ]
-        self.command_mode()
-
+        self.vigtk["selection_start"] = None
+        self.vigtk["selection_end"] = None
+        self.vigtk["menus"] = menus(self.vigtk["window"])
+        self.vigtk["mode"] = self.COMMAND_MODE
+        self.vigtk["update"] = getattr(self, "update")
+        self.vigtk["select"] = True
+        self.vigtk["acc"] = []
+        self.vigtk["number"] = 1
+        self.vigtk["set_overwrite"] = self.set_overwrite  
+        self.vigtk["increment_accumulator"] = self.increment_accumulator
+        self.vigtk["old_mode"] = self.COMMAND_MODE
+           
+        base.vigtk = self
+        
+        self.bindings = BindingRegistry()
+        self.bindings.select_mode("command")
+        
+        base.bindings = self.bindings
+        
+        
+        print "__init__:     %s in %s" % (self, base.view())
+        
+    def get_element(self, key):
+        if self.vigtk[key] != None:
+            return self.vigtk[key]
+        return None
+        
+    def set_element(self, key, data):
+        self.vigtk[key] = data
+        
     def on_active_tab_changed(self, window, tab):
         #self.deactivate()        
         pass
     
     def on_button_release_event(self, event, user_data):
-        if (self.mode is self.COMMAND_MODE) or (self.mode is self.SELECTION_MODE):
-            buffer = self.view.get_buffer()
-            if buffer.get_selection_bounds() != ():
-                self.selection_mode()
-                self.selection_start, self.selection_end = buffer.get_selection_bounds()
+        if (base.mode() is self.COMMAND_MODE) or (base.mode() is self.SELECTION_MODE):
+            if base.doc().get_selection_bounds() != ():
+                self.bindings.select_mode("selection")
+                self.vigtk["selection_start"], self.vigtk["selection_end"] = base.doc().get_selection_bounds()
             else:
-                self.command_mode()
-        
-    def init_bindings(self):
-        self.bindings = BindingRegistry()
-        self.bindings.register_common(self.select_all, gtk.keysyms.a, True)
-        self.bindings.register_common(self.copy_via_menu, gtk.keysyms.c, True)
-        self.bindings.register_common(self.paste_via_menu, gtk.keysyms.v, True)
-        self.bindings.register_common(self.insert_mode, gtk.keysyms.i)
-        self.bindings.register_common(self.append_after, gtk.keysyms.a)
-        self.bindings.register_common(self.visual_mode, gtk.keysyms.v)
-        self.bindings.register_common(self.move_forward, gtk.keysyms.l)
-        self.bindings.register_common(self.move_backward, gtk.keysyms.h)
-        self.bindings.register_common(self.move_down, gtk.keysyms.j)
-        self.bindings.register_common(self.move_up, gtk.keysyms.k)
-        self.bindings.register_common(self.move_word_forward, gtk.keysyms.w)
-        self.bindings.register_common(self.move_word_backward, gtk.keysyms.b)
-        self.bindings.register_common(self.g_mode, gtk.keysyms.g)
-        self.bindings.register_common(self.move_buffer_end, gtk.keysyms.G)
-        self.bindings.register_common(self.insert_end_line, gtk.keysyms.A)
-        self.bindings.register_common(self.insert_begin_line, gtk.keysyms.I)
-        self.bindings.register_common(self.open_line_below, gtk.keysyms.o)
-        self.bindings.register_common(self.open_line_above, gtk.keysyms.O)
-        self.bindings.register_common(self.undo, gtk.keysyms.u)
-        self.bindings.register_common(self.search, gtk.keysyms.slash)
-        self.bindings.register_common(self.ex_mode, gtk.keysyms.colon)
-        self.bindings.register_common(self.indent_left, gtk.keysyms.less)
-        self.bindings.register_common(self.indent_right, gtk.keysyms.greater)
-        self.bindings.register_common(self.t_mode, gtk.keysyms.t)
-        self.bindings.register_common(self.cut_via_menu, gtk.keysyms.x, True)
-
-        self.bindings.register('command', self.c_mode, gtk.keysyms.c)
-        self.bindings.register('command', self.delete_mode, gtk.keysyms.d)
-        self.bindings.register('command', self.do_redo, gtk.keysyms.r, True, False)
-        self.bindings.register('command', self.r_mode, gtk.keysyms.r)
-        self.bindings.register('command', self.delete_char, gtk.keysyms.x)
-        self.bindings.register('command', self.select_line, gtk.keysyms.V)
-        self.bindings.register('command', self.cut_until_end_of_line, gtk.keysyms.D)
-        self.bindings.register('command', self.paste_clipboard_above, gtk.keysyms.P)
-        self.bindings.register('command', self.paste_clipboard_above, gtk.keysyms.p)
-        self.bindings.register('command', self.yank_mode, gtk.keysyms.y)
-        self.bindings.register('command', self.next_search_item, gtk.keysyms.n)
-
-        self.bindings.register('visual', self.cut_selection, gtk.keysyms.x)
-        self.bindings.register('visual', self.yank_selection, gtk.keysyms.y)
-        self.bindings.register('visual', self.move_line_end, gtk.keysyms.dollar)
-        
-        
-
-    def next_search_item(self):
-        if self.doc.get_can_search_again():
-            self.search_next_menu.activate()
+                self.bindings.select_mode("command")
 
     def deactivate(self):
-        self.view.disconnect(self.handler_ids[0])
-        doc = self.view.get_buffer()
-        doc.disconnect(self.handler_ids[1])
-        doc.disconnect(self.handler_ids[2])
-        self.window.disconnect(self.handler_ids[3])
-        self.insert_mode()
-        self.statusbar.update(None)
-        self.view = None
-        #self.statusbar = None
+        base.view().disconnect(base.handler_ids()[0])
+        base.view().disconnect(base.handler_ids()[1])
+        base.doc().disconnect(base.handler_ids()[2])
+        base.doc().disconnect(base.handler_ids()[3])
+        base.window().disconnect(base.handler_ids()[4])
+        self.bindings.select_mode("insert")
+        base.get_element("statusbar").update(None)
+        base.set_element("view", None)
+        base.set_element("statusbar", None)
 
     def update(self):
-        print "update:       %s in %s" % (self, self.view) 
-        self.statusbar.update(self.get_mode())
+     #   print "update:       %s in %s" % (self, base.view())
+        self.get_element("statusbar").update(self.get_mode())
 
-    def undo(self):
-        """Does undo.""" 
-        self.do_undo()
-    
-    def copy_via_menu(self):
-        if self.copy_menu:
-            self.copy_menu.activate()
-            
-    def paste_via_menu(self):
-        if self.paste_menu:
-            self.paste_menu.activate()
+    def on_key_press_event(self, view, event):
+        if (len(base.acc()) == 1) and (base.mode() == self.RMODE): 
+            self.bindings.select_mode("command")
+        if (base.mode() == self.SELECTION_MODE):
+            return self.bindings.handle_mode("selection", event)
+        if (base.mode() == self.EX_MODE):
+            return self.bindings.handle_mode("ex", event)
+        if (base.mode() == self.RMODE):
+            return self.bindings.handle_mode("rmode", event)
+        if (base.mode() == self.TMODE):
+            return self.bindings.handle_mode("tmode", event)
+        if view.get_buffer() != base.doc(): 
+            return False
+        elif view != base.view():
+            return False
+        else:
+            print "Key pressed was %s : %s" % (event.keyval, gtk.gdk.keyval_name(event.keyval))
+            # Always return to command mode when Escape is pressed.
+            if (event.keyval == gtk.keysyms.Escape):
+                self.bindings.select_mode("command")
+                return True
+            # Ignored keys.  
+            elif (base.mode() is self.INSERT_MODE) \
+                or (event.keyval in self.get_element("ignored_keys")):
+                    return False
+            # Process keypress
+            else:
+                return self.process_keypress(event)
 
-    def cut_via_menu(self):
-        if self.cut_menu:
-            self.cut_menu.activate()
 
-    def insert_mode(self):
-        """Switches to insert mode."""
-        self.set_overwrite(False)
-        self.view.emit("select-all", False)
-        self.mode = self.INSERT_MODE
-        self.update()
-        self.select = False
-
-    def ex_mode(self):
-        self.acc = []
-        self.view.emit("select-all", False)
-        self.mode = self.EX_MODE
-        self.update()
-        self.select = False
-
-    def command_mode(self):
-        """Switches to command mode."""
-        self.acc = []
-        self.number = 0
-        self.set_overwrite(True)
-        self.view.emit("select-all", False)
-        self.mode = self.COMMAND_MODE
-        self.update()
-        self.select = False
-
-    def selection_mode(self):
-        """Switches to selection mode."""
-        self.acc = []
-        self.mode = self.SELECTION_MODE
-
-    def delete_mode(self):
-        """Switches to 'delete' mode"""
-        self.select = False
-        self.mode = self.DELETE_MODE
-
-    def g_mode(self):
-        self.acc = []
-        self.mode = self.GMODE
-
-    def c_mode(self):
-        self.acc = []
-        self.mode = self.CMODE
-    
-    def r_mode(self):
-        self.acc = []
-        self.mode = self.RMODE
-
-    def t_mode(self):
-        self.acc = []
-        self.old_mode = self.mode
-        self.mode = self.TMODE
+    def process_keypress(self, event):
+        modifiers = keys.isControlPressed(event), keys.isAltPressed(event)
+        print "%s %s %s" % (base.mode(), event.keyval, modifiers)
+        should_print = base.mode() != self.INSERT_MODE
+        acc = base.acc()
+        number = base.number()
         
-    def yank_mode(self):
-        self.select = False
-        self.mode = self.YANK_MODE
-
-    def visual_mode(self):
-        self.mode = self.VISUAL_MODE
-        self.update()
-        self.select = True
-
+            
+        f = self.bindings.retrieve(base.mode(), event.keyval, modifiers[0], modifiers[1])
+        if f is None: 
+            print "\tBindings don't exist"
+        else:
+            function = f["function"]
+            isFinal = f["Final"]
+            isRepeatable = f["Repeatable"]
+            if callable(function) is True:
+                print "\tfunction is callable"
+                if isRepeatable:
+                    print "\tfunction is repeatable"
+                    [function() for ignore in range(number)]
+                    number = 0
+                    acc = []
+                else:
+                    function()
+                    if isFinal:
+                        print "\tfunction is final"
+                        number = 0
+                        acc = []
+            else:
+                print "\tfunction is not callable"
+                        
+        if event.keyval > 47 and event.keyval < 58:
+            number = number *10 + event.keyval-48
+            
+        if event.keyval > 65455 and event.keyval < 65465:
+            number = number * 10 + event.keyval-65456
+            
+        self.set_element("number", number)
+        self.set_element("acc", acc)
+        print
+        return should_print
+        
     def get_mode(self):
         """Get mode text"""
         return { 
                 self.INSERT_MODE:_("Insert Mode"),
                 self.COMMAND_MODE: _("Command Mode"),
                 self.VISUAL_MODE: _("Visual Mode"),
-                self.EX_MODE: _(": ")
-                }.get(self.mode)
-
+                self.EX_MODE: _(": "),
+                self.SELECTION_MODE: _("Selection Mode")
+                }.get(base.mode())
+                
+    def set_overwrite(self, boolean):
+        base.view().set_overwrite(boolean)    
+        if base.view().get_overwrite() != boolean:
+            print "Setting overwrite to %s, currently %s" % (boolean, base.view().get_overwrite())
+            base.doc().emit("toggle-overwrite")
+        
+        
     def is_visual_mode(self):
-        return self.mode is self.VISUAL_MODE
+        return base.mode() is self.VISUAL_MODE
+                
 
-    def evaluate_ex(self, acc):
-        command = "".join(acc)
-        print "ex command is %s" % command
-        if command == "w":
-            self.save_file()
-        elif command == "wq":
-            # Need to wait for file to finish saving
-            self.save_file()
-            gobject.timeout_add(100, self.close_quit)
-        elif re.compile("sav (.+)$").match(command):
-            result = re.compile("sav (.+)$").match(command).group(1)
-            self.doc.save_as(result, gedit.encoding_get_current(), gedit.DOCUMENT_SAVE_PRESERVE_BACKUP)
-        elif re.compile("(\d+).*").match(command):
-            result = re.compile("(\d+).*").match(command).group(1)
-            print "Go to line %s" % result
-            self.go_to_line(int(result))
-        elif command == "q":
-            self.close_tab()
-        elif command == "q!":
-            self.close_tab(False)
-        elif command == "tabnew":
-            self.window.create_tab(True)
-        elif command == "bn":
-            print "Select next tab"
-        elif command == "bp":
-            print "Select previous tab."
-        elif re.compile("tabnew (.+)$").match(command):
-            file_name = "file://" + os.getcwd() + "/"+ re.compile("tabnew (.+)$").match(command).group(1)
-            print file_name
-            if not self.window.get_active_document().get_uri():
-                self.window.close_tab(self.window.get_active_tab())
-            self.window.create_tab_from_uri(file_name, gedit.encoding_get_utf8(), 1, True, True)
-        elif re.compile("e (.+)$").match(command):
-            file_name = "file://" + os.getcwd() + "/"+ re.compile("e (.+)$").match(command).group(1)
-            self.window.close_tab(self.window.get_active_tab())
-            self.window.create_tab_from_uri(file_name, gedit.encoding_get_utf8(), 1, True, True)
-
-    def update_ex_bar(self):
-        self.statusbar.update(":" + "".join(self.acc))
-
-    def on_key_press_event(self, view, event):
-        if (len(self.acc) == 1) and (self.mode == self.RMODE): 
-            self.command_mode()
-        if view.get_buffer() != self.doc: 
-            return False
-        elif view != self.view:
-            return False
-        else:
-            print "Key pressed was %s : %s" % (event.keyval, gtk.gdk.keyval_name(event.keyval))
-            # Always return to command mode when Escape is pressed.
-            if (event.keyval == gtk.keysyms.Escape):
-                self.command_mode()
-                return True
-            # Ignored keys.  
-            elif (self.mode is self.INSERT_MODE) \
-                or (event.keyval in self.ignored_keys):
-                    return False
-            elif (self.mode is self.GMODE):
-                return self.handle_g_mode(event)
-            elif (self.mode is self.CMODE):
-                return self.handle_c_mode(event)
-            elif (self.mode is self.RMODE):
-                return self.handle_r_mode(event)
-            elif (self.mode is self.SELECTION_MODE):
-                return self.handle_selection_mode(event)
-            elif (self.mode is self.TMODE):
-                return self.handle_t_mode(event)
-            # Ex mode.
-            elif (self.mode is self.EX_MODE):
-                return self.handle_ex_mode(event)
-            # Delete mode.
-            elif (self.mode is self.DELETE_MODE):
-                return self.handle_delete_mode(event)
-            elif (self.mode is self.YANK_MODE):
-                return self.handle_yank_mode(event)
-            # Increment accumulator
-            elif self.keyval_in_directional_keys(event):
-                self.increment_accumulator(event)
-                return True
-            # Process keypress
-            else:
-                return self.process_keypress(event)
-
-    def handle_delete_mode(self, event):
-        if event.keyval == gtk.keysyms.d:
-            self.delete_whole_line()
-            self.command_mode()
-        elif event.keyval == gtk.keysyms.dollar:
-            self.visual_mode()
-            self.move_line_end()
-            self.cut_selection()
-            self.command_mode()
-        elif event.keyval == gtk.keysyms.w:
-            if self.acc == []:
-                print "Deleting first word. (%s)" % self.acc
-                self.cut_next_word()
-                self.command_mode()
-            else:
-                print "Delete %s words." % int("".join(self.acc))
-                for x in range(sum([int(x) for x in self.acc])):
-                    self.cut_next_word()
-                self.command_mode()    
-        elif self.keyval_is_number(event):
-            self.increment_accumulator(event)
-        self.command_mode()
-        return True
-
-    def handle_yank_mode(self, event):
-        if event.keyval == gtk.keysyms.y:
-            self.yank_line()
-            self.command_mode()
-            return True
-        self.command_mode()
-        return True
-
-    def handle_g_mode(self, event):
-        print "handle_g_mode"
-        if event.keyval == gtk.keysyms.g:
-            self.move_buffer_top()
-        # Wordy way to get_next_tab()
-        elif event.keyval == gtk.keysyms.t:
-            documents = self.window.get_documents()
-            this_document = self.window.get_active_document()
-            i = None
-            for iterator, document in enumerate(documents):
-                print this_document, document
-                if document == this_document:
-                    i = iterator + 1
-                elif iterator == i:
-                    print "active tab %s" % i
-                    self.window.set_active_tab(self.window.get_tab_from_uri(documents[i].get_uri()))
-                elif i == None:
-                    self.window.set_active_tab(self.window.get_tab_from_uri(documents[0].get_uri()))
-        elif event.keyval in (gtk.keysyms.Shift_L, gtk.keysyms.Shift_R):
-            return True
-        elif event.keyval == gtk.keysyms.q:
-            print "hit gq"
-            self.increment_accumulator(event)
-            return True
-        elif (event.keyval == gtk.keysyms.braceright) and (self.acc == ["q"]):
-            print "hit gq}"
-            self.split_lines()
-        self.command_mode()
-        return True
-
-    def handle_c_mode(self, event):
-        if event.keyval == gtk.keysyms.a:
-            self.acc.append('a')
-        elif (event.keyval == gtk.keysyms.w) and (self.acc == ['a']):
-            self.view.emit("move-cursor", gtk.MOVEMENT_WORDS, -1, self.select)
-            self.visual_mode()
-            self.view.emit("move-cursor", gtk.MOVEMENT_WORDS, 1, self.select)
-            self.cut_selection()
-            self.insert_mode()
-        return True
-
-    def handle_r_mode(self, event):
-        self.increment_accumulator(event)
-        print "handle_r_mode"
-        self.set_overwrite(True)
-        return False
-
-    def handle_selection_mode(self, event):
-        if isControlPressed(event) == False:
-            start=self.selection_start
-            end = self.selection_end
-            self.increment_accumulator(event)
-            print "handle_selection_mode"
-            self.view.get_buffer().delete(start, end)
-            self.insert_mode()
-        return False
-
-    def handle_t_mode(self, event):
-        cursor = self.get_cursor_iter()
-        while True:
-            cursor.forward_char()
-            print cursor.get_char(), gtk.gdk.keyval_name(event.keyval)
-            if cursor.get_char() == gtk.gdk.keyval_name(event.keyval):
-                break
-            if cursor.is_end():
-                break
-        if not cursor.is_end():
-            self.doc.place_cursor(cursor)
-        print self.acc
-        if self.old_mode == self.VISUAL_MODE:
-            self.visual_mode()
-        else:
-            self.command_mode()
-        return True
+    def increment_accumulator(self, event):
+        if event.keyval in range(256):
+            self.vigtk["acc"] +=chr(event.keyval)      
         
-
-    def handle_ex_mode(self, event):
-        if (event.keyval != gtk.keysyms.Return) and (event.keyval != gtk.keysyms.BackSpace):
-            self.increment_accumulator(event)
-            self.update_ex_bar()
-        elif event.keyval == gtk.keysyms.BackSpace:
-            if self.acc:
-                self.acc.pop()
-                self.update_ex_bar()
-        elif (self.mode is self.EX_MODE) and (event.keyval == gtk.keysyms.Return):
-            self.evaluate_ex(self.acc)
-            print self.window.get_views()
-            if self.window.get_views != []:
-                self.command_mode()
-        return True
-
-    def process_keypress(self, event):
-        modifiers = isControlPressed(event), isAltPressed(event)
-        print "%s %s %s" % (self.mode, event.keyval, modifiers)
-        f = self.bindings.retrieve(self.mode, event.keyval, modifiers[0], modifiers[1])
-        if callable(f) is True:
-            [f() for ignore in range((int(''.join( ['0'] + self.acc)) or 1))]
-        if event.keyval > 47 and event.keyval < 58:
-           self.number = self.number * 10 + (event.keyval-48)
-        elif event.keyval > 65455 and event.keyval < 65466:
-            self.number = self.number * 10 + (event.keyval - 65456)
-        self.acc = []
-        return True
         
-# vim: ai ts=4 sts=4 et sw=4
-
+        
+        
+        
+        
+        
+        

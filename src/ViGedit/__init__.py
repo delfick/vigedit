@@ -20,7 +20,7 @@
 #  Boston, MA 02111-1307, USA.
 
 import gedit
-import vigtk
+from vigtk import ViGtk
 
 
 class VigeditStatusbar:
@@ -54,7 +54,7 @@ class VigeditWindowHelper:
         self.attach_vigtk(tab.get_view(), window)
         
     def attach_vigtk(self, view, window):
-        vi_plugin = vigtk.ViGtk(self.statusbar, view, window)
+        vi_plugin = ViGtk(self.statusbar, view, window)
         print "attach_vigtk: %s in %s" % (vi_plugin, view)
         view.set_data(self.VIEW_DATA_KEY, vi_plugin)
         vi_plugin.update()      
@@ -77,7 +77,7 @@ class VigeditWindowHelper:
         if view:
             vi_plugin = view.get_data(self.VIEW_DATA_KEY)
             if vi_plugin:
-                print "update_ui:    %s in %s" % (vi_plugin, view)
+           #     print "update_ui:    %s in %s" % (vi_plugin, view)
                 vi_plugin.update()
         
 
