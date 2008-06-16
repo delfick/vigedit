@@ -33,10 +33,6 @@ class BindingRegistry(object):
         self.init_bindings()
 
     def init_bindings(self):
-        self.register_cvs(lambda : vibase.activate_menu("select_all"), gtk.keysyms.a, True, False, True)
-        self.register_cvs(lambda : vibase.activate_menu("copy"), gtk.keysyms.c, True, False, True)
-        self.register_cvs(lambda : vibase.activate_menu("paste"), gtk.keysyms.v, True, False, True)
-        self.register_cvs(lambda : vibase.activate_menu("cut"), gtk.keysyms.x, True, False, True)
         self.register_cv(lambda : self.set_mode("insert"), gtk.keysyms.i)
         self.register_cv(insert.append_after, gtk.keysyms.a)
         self.register_cv(lambda : self.set_mode("visual"), gtk.keysyms.v)

@@ -21,7 +21,10 @@ class command_Mode(binding_base):
         self.register(others.next_search_item, gtk.keysyms.n)
         
     def handle_mode(self, event):
-        return True
+        if vibase.isModifierPressed(event) == True:
+            return False
+        else:
+            return True
         
     def select_mode(self):
         """Switches to command mode."""

@@ -17,12 +17,25 @@ def isControlPressed(event):
             return True
         else:
             return False
-             
+            
 def isAltPressed(event):
-    if (event.keyval == 65513) or (event.keyval == 65514):
-        return True 
+    alt = event.state & gtk.gdk.MOD1_MASK
+    if alt:
+        return True
     else:
-        return False
+        if event.keyval == 65513:
+            return True
+        elif event.keyval == 65514:
+            return True
+        else: 
+            return False
+        
+def isModifierPressed(event):
+    if isControlPressed(event) == True:
+        return True
+    if isAltPressed(event) == True:
+        return True
+    return False
 
 def update():
     ViGtk.statusbar.update(get_mode())

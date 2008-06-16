@@ -14,7 +14,10 @@ class visual_Mode(binding_base):
         self.register(pos.move_line_end, gtk.keysyms.dollar)
       
     def handle_mode(self, event):
-        return True
+        if vibase.isModifierPressed(event) == True:
+            return False
+        else:
+            return True
         
     def select_mode(self):
         base.vigtk.mode = base.vigtk.VISUAL_MODE
