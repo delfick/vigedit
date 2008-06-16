@@ -1,11 +1,8 @@
-import gtk
 from binding_base import *
-from ..actions import text
-from ..actions import position as pos
 class delete_Mode(binding_base):
 
-    def __init__(self, bindings):
-        binding_base.__init__(self, bindings)
+    def __init__(self):
+        binding_base.__init__(self)
         
 
     def init_bindings(self):
@@ -14,30 +11,33 @@ class delete_Mode(binding_base):
         self.register(self.delete_words, gtk.keysyms.w)
         
     def handle_mode(self, event):
-        message = "this mode doesn't need to be handled"
+        return True
         
     def select_mode(self):
         """Switches to 'delete' mode"""
-        base.set_element("select", False)
-        base.set_element("mode", self.DELETE_MODE)
+        base.select = False
+        base.vigtk.mode = base.vigtk.DELETE_MODE
+        vibase.update()
+        return "hi"
 
     def delete_whole_line(self):
+        print "trying to delete the whole line"
         text.delete_whole_line()
-        self.bindings.select_mode("command")
+        vibase.set_mode("command")
         
     def delete_to_line_end(self):
-        self.bindings.select_mode("visual")
+        vibase.set_mode("visual")
         pos.move_line_end()
         text.cut_selection()
-        self.bindings.select_mode("command")
+        vibase.set_mode("command")
         
     def delete_words(self):
-        if base.acc() == []:
-            print "Deleting first word. (%s)" % base.acc()
+        if base.vigtk.acc == []:
+            print "Deleting first word. (%s)" % base.vigtk.acc
             text.cut_next_word()
-            self.bindings.select_mode("command")
+            vibase.set_mode("command")
         else:
-            print "Delete %s words." % int("".join(self.acc))
-            for x in range(sum([int(x) for x in base.acc()])):
+            print "Delete %s words." % int("".join(base.vigtk.acc()))
+            for x in range(sum([int(x) for x in base.vigtk.acc()])):
                 text.cut_next_word()
-            self.bindings.select_mode("command")
+            vibase.set_mode("command")

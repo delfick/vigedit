@@ -1,11 +1,8 @@
-import gtk
 from binding_base import *
-from ..actions import position as pos
-from ..actions import lines
 class gmode_Mode(binding_base):
 
-    def __init__(self, bindings):
-        binding_base.__init__(self, bindings)
+    def __init__(self):
+        binding_base.__init__(self)
         
 
     def init_bindings(self):
@@ -17,19 +14,20 @@ class gmode_Mode(binding_base):
         print "handle_g_mode"
         if event.keyval in (gtk.keysyms.Shift_L, gtk.keysyms.Shift_R):
             return True
-        elif (event.keyval == gtk.keysyms.braceright) and (self.acc == ["q"]):
+        elif (event.keyval == gtk.keysyms.braceright) and (base.vigtk.acc() == ["q"]):
             print "hit gq}"
             lines.split_lines()
-        self.bindings.select_mode("command")
+        vibase.set_mode("command")
         return True  
         
     def select_mode(self):
-        base.set_element("acc", [])
-        base.set_element("mode",self.GMODE)
+        base.vigtk.acc = []
+        base.vigtk.mode = v.GMODE
+        vibase.update()
         
     def next_tab(self):
-        documents = base.window().get_documents()
-        this_document = base.window().get_active_document()
+        documents = base.vigtk.window.get_documents()
+        this_document = base.vigtk.window.get_active_document()
         i = None
         for iterator, document in enumerate(documents):
             print this_document, document
@@ -37,9 +35,9 @@ class gmode_Mode(binding_base):
                 i = iterator + 1
             elif iterator == i:
                 print "active tab %s" % i
-                base.window().set_active_tab(base.window().get_tab_from_uri(documents[i].get_uri()))
+                base.vigtk.window.set_active_tab(base.vigtk.window.get_tab_from_uri(documents[i].get_uri()))
             elif i == None:
-                base.window().set_active_tab(base.window().get_tab_from_uri(documents[0].get_uri()))
+                base.vigtk.window.set_active_tab(base.vigtk.window.get_tab_from_uri(documents[0].get_uri()))
                 
     def append_q(self):
         self.increment_accumulator('q')

@@ -20,8 +20,8 @@
 #  Boston, MA 02111-1307, USA.
 
 import gedit
-from vigtk import ViGtk
-
+import vibase
+from modes import BindingRegistry
 
 class VigeditStatusbar:
     def __init__(self, window):
@@ -38,9 +38,12 @@ class VigeditStatusbar:
 class VigeditWindowHelper:
     VIEW_DATA_KEY = "VigeditPluginViewData"
 
-    def __init__(self, plugin, window):
+    def __init__(self, plugin, window, bindings):
         self.window = window
+        self.bindings = bindings
+        self.oldView = None
         self.statusbar = VigeditStatusbar(window)
+        print window.get_views()
         for view in window.get_views():
             self.attach_vigtk(view, window)
         self.window.connect("tab-added", self.on_tab_added)
@@ -54,10 +57,10 @@ class VigeditWindowHelper:
         self.attach_vigtk(tab.get_view(), window)
         
     def attach_vigtk(self, view, window):
-        vi_plugin = ViGtk(self.statusbar, view, window)
+        vi_plugin = vibase.ViBase(self.statusbar, view, window, self.bindings)
         print "attach_vigtk: %s in %s" % (vi_plugin, view)
         view.set_data(self.VIEW_DATA_KEY, vi_plugin)
-        vi_plugin.update()      
+        vi_plugin.update()
 
     def deactivate(self):
         for view in self.window.get_views():
@@ -86,9 +89,10 @@ class VigeditPlugin(gedit.Plugin):
     
     def __init__(self):
         gedit.Plugin.__init__(self)
+        self.bindings = BindingRegistry()
 
     def activate(self, window):
-        helper = VigeditWindowHelper(self, window)
+        helper = VigeditWindowHelper(self, window, self.bindings)
         window.set_data(self.WINDOW_DATA_KEY, helper)
     
     def deactivate(self, window):

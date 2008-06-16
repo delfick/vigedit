@@ -1,5 +1,4 @@
-import actions_base as base
-class menus(object):
+class Menus(object):
 
     def __init__(self, window):
         self.window = window    
@@ -24,16 +23,3 @@ class menus(object):
         the_menu = getattr(self, "%s_menu" % menuType, None)
         if the_menu is None: return
         return the_menu
-        
-def paste_menu():
-    return base.menus.get_menu("paste")
-    
-def copy_menu():
-    return base.menus.get_menu("copy")
-    
-def select_all_menu():
-    return base.menus.get_menu("select_all")
-    
-def cut_menu():
-    return base.menus.get_menu("cut")
-    

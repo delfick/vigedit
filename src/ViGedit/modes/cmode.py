@@ -1,10 +1,8 @@
-import gtk
 from binding_base import *
-from ..actions import text
 class cmode_Mode(binding_base):
 
-    def __init__(self, bindings):
-        binding_base.__init__(self, bindings)
+    def __init__(self):
+        binding_base.__init__(self)
         
 
     def init_bindings(self):
@@ -12,20 +10,20 @@ class cmode_Mode(binding_base):
         self.register(self.handle_w, gtk.keysyms.w, False, False)
         
     def handle_mode(self, event):
-        message = "nothing to see here"
+        return True
         
     def select_mode(self):
-        self.acc = []
-        self.mode = self.CMODE
-        
+        base.acc = []
+        base.set_mode("cmode")
+        vibase.update()
         
     def append_a(self):
         self.increment_accumulator('a')
         
     def handle_w(self):
         #what does this actually do?
-        self.get_element("view").emit("move-cursor", gtk.MOVEMENT_WORDS, -1, self.get_element("select"))
-        self.visual_mode()
-        self.get_element("view").emit("move-cursor", gtk.MOVEMENT_WORDS, 1, self.get_element("select"))
+        base.view.emit("move-cursor", gtk.MOVEMENT_WORDS, -1, base.select)
+        vibase.set_mode("visual")
+        base.view.emit("move-cursor", gtk.MOVEMENT_WORDS, 1, base.select)
         text.cut_selection()
-        self.select_mode("insert")
+        vibase.set_mode("insert")

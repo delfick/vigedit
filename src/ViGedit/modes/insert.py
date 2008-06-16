@@ -1,21 +1,21 @@
-import gtk
 from binding_base import *
 class insert_Mode(binding_base):
 
-    def __init__(self, bindings):
-        binding_base.__init__(self, bindings)
+    def __init__(self):
+        binding_base.__init__(self)
         
 
     def init_bindings(self):
-        message = "insert mode has no bindings yet"
+        pass
         
-    def handle_mode(self):
-        message = "insert mode doesn't need to be handled"
+    def handle_mode(self, event):
+        return False
 
     def select_mode(self):
         """Switches to insert mode."""
-        base.set_overwrite(False)
-        base.view().emit("select-all", False)
-        base.set_element("mode", self.INSERT_MODE)
-        base.update()
-        base.set_element("select", False)
+        vibase.set_overwrite(False)
+        base.vigtk.view.emit("select-all", False)
+        base.vigtk.mode = base.vigtk.INSERT_MODE
+        base.vigtk.select = False
+        vibase.update()
+        

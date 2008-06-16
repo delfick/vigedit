@@ -1,25 +1,23 @@
-import gtk
 from binding_base import *
-from ..actions import position as pos
-from ..actions import menus
 class visual_Mode(binding_base):
 
-    def __init__(self, bindings):
-        binding_base.__init__(self, bindings)
+    def __init__(self):
+        binding_base.__init__(self)
         
 
     def init_bindings(self):
         message = "not much here"
-        self.register(menus.cut_menu, gtk.keysyms.x)
-        self.register(menus.copy_menu, gtk.keysyms.y)
-        self.register(menus.paste_menu, gtk.keysyms.p)
-        self.register(menus.select_all_menu, gtk.keysyms.a)
+        self.register(lambda : vibase.get_menu("cut").activate, gtk.keysyms.x)
+        self.register(lambda : vibase.get_menu("copy").activate, gtk.keysyms.y)
+        self.register(lambda : vibase.get_menu("paste").activate, gtk.keysyms.p)
+        self.register(lambda : vibase.get_menu("select_all").activate, gtk.keysyms.a)
         self.register(pos.move_line_end, gtk.keysyms.dollar)
       
-    def handle_mode(self):
-        print "visual mode doesn't need to be handled"
+    def handle_mode(self, event):
+        return True
         
     def select_mode(self):
-        base.set_element("mode", self.VISUAL_MODE)
-        base.update()
-        base.set_element("select", True)
+        base.vigtk.mode = base.vigtk.VISUAL_MODE
+        base.vigtk.select = True
+        vibase.update()
+        

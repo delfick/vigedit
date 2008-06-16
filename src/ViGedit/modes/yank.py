@@ -1,23 +1,22 @@
-import gtk
 from binding_base import *
-from ..actions import lines
 class yank_Mode(binding_base):
 
-    def __init__(self, bindings):
-        binding_base.__init__(self, bindings)
+    def __init__(self):
+        binding_base.__init__(self)
         
 
     def init_bindings(self):
         self.register(self.yank_lines, gtk.keysyms.y)
         
     def handle_mode(self, event):
-        message = "this mode doesn't need to be handled"
+        return True
             
     def select_mode(self):
-        base.set_element("select", False)
-        base.set_element("mode", self.YANK_MODE)
+        base.vigtk.select = False
+        base.vigtk.mode = base.vigtk.YANK_MODE
+        vibase.update()
         
     def yank_lines(self):
         lines.yank_line()
-        self.bindings.select_mode("command")
+        vibase.set_mode("command")
         

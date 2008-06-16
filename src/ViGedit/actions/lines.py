@@ -1,11 +1,18 @@
-import position as pos
-import actions_base as base
-import menus
+import gtk
+import re
+import gedit
+import gobject
+import os
+from gettext import gettext as _
+
+from .. import vibase
+from ..vibase import ViBase as base
+import insert, others, text, position as pos, fileOperations as fileOps
 
 def select_lines(number):
     print "selecting %d lines" % (number+1)
     pos.move_line_begin()
-    base.select_mode("visual")
+    vibase.set_mode("visual")
     pos.move_line_end()
     pos.move_forward()
     #select the number of lines specified
@@ -16,40 +23,40 @@ def select_lines(number):
 def return_to_origin(number):
     number = int(number) + 1
     while number > 0:
-        self.move_up()
-        number = int(number) - 1
+        pos.move_up()
+        number = number - 1
     pos.move_line_begin()
-    self.command_mode()
+    vibase.set_mode("command")
 
     
 def select_line():
     pos.move_line_begin()
-    base.select_mode("visual")
+    vibase.set_mode("visual")
     pos.move_line_end()
     pos.move_forward() # Select \n too.
 
 def split_lines():
-    if menus.get_menu("split_lines") == None:
+    if vibase.get_menu("split_lines") == None:
         return False
     begin = pos.to_empty_line(False)
     end = pos.to_empty_line(True)
     print begin, end
     if (begin != None) and (end != None):
-        base.doc().select_range(begin, end)
+        base.vigtk.doc.select_range(begin, end)
         print "activate split_lines_menu"
-        menus.get_menu("split_lines").activate()
-    base.select_mode("command")
+        vibase.get_menu("split_lines").activate()
+    vibase.set_mode("command")
     
 def indent_left():
-    number = base.get_element("number")
+    number = base.vigtk.number
     select_lines(number)
-    if menus.get_menu("indent_left") is not None:
-        menus.get_menu("indent_left").activate()
+    if vibase.get_menu("indent_left") is not None:
+        vibase.get_menu("indent_left").activate()
     return_to_origin(number)
 
 def indent_right():
-    number = base.get_element("number")
+    number = base.vigtk.number
     select_lines(number)
-    if menus.get_menu("indent_right") is not None:
-        menus.get_menu("indent_right").activate()
+    if vibase.get_menu("indent_right") is not None:
+        vibase.get_menu("indent_right").activate()
     return_to_origin(number)
