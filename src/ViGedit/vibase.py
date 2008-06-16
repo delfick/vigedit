@@ -15,7 +15,7 @@ def isControlPressed(event):
             return True
         elif event.keyval == 65508:
             return True
-        else
+        else:
             return False
              
 def isAltPressed(event):
