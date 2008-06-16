@@ -37,6 +37,9 @@ def handle_mode(mode, event):
 def get_menu(menu):
     return ViBase.vigtk.menus.get_menu(menu)
     
+def activate_menu(menu):
+    return ViBase.vigtk.menus.activate_menu(menu)
+    
 def set_overwrite(boolean):
     ViBase.vigtk.set_overwrite(boolean)
     

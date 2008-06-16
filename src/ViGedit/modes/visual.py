@@ -7,10 +7,10 @@ class visual_Mode(binding_base):
 
     def init_bindings(self):
         message = "not much here"
-        self.register(lambda : vibase.get_menu("cut").activate, gtk.keysyms.x)
-        self.register(lambda : vibase.get_menu("copy").activate, gtk.keysyms.y)
-        self.register(lambda : vibase.get_menu("paste").activate, gtk.keysyms.p)
-        self.register(lambda : vibase.get_menu("select_all").activate, gtk.keysyms.a)
+        self.register(lambda : vibase.activate_menu("cut"), gtk.keysyms.x)
+        self.register(lambda : vibase.activate_menu("copy"), gtk.keysyms.y)
+        self.register(lambda : vibase.activate_menu("paste"), gtk.keysyms.p)
+        self.register(lambda : vibase.activate_menu("select_all"), gtk.keysyms.a)
         self.register(pos.move_line_end, gtk.keysyms.dollar)
       
     def handle_mode(self, event):

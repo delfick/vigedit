@@ -23,3 +23,10 @@ class Menus(object):
         the_menu = getattr(self, "%s_menu" % menuType, None)
         if the_menu is None: return
         return the_menu
+        
+    def activate_menu(self, menuType):
+        the_menu = getattr(self, "%s_menu" % menuType, None)
+        if the_menu is None: return
+        the_menu.activate()
+        
+    
