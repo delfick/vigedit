@@ -17,6 +17,6 @@ class yank_Mode(binding_base):
         vibase.update()
         
     def yank_lines(self):
-        lines.yank_line()
+        text.yank_line()
         vibase.set_mode("command")
         

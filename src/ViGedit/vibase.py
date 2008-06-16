@@ -11,8 +11,13 @@ def isControlPressed(event):
     if ctrl:
         return True 
     else:
-        return False
-
+        if event.keyval == 65507:
+            return True
+        elif event.keyval == 65508:
+            return True
+        else
+            return False
+             
 def isAltPressed(event):
     if (event.keyval == 65513) or (event.keyval == 65514):
         return True 
@@ -71,6 +76,18 @@ def deactivate(self):
     ViBase.vigtk.statusbar.update(None)
     ViBase.vigtk.view = None
     ViBase.vigtk.statusbar = None
+    
+    
+def info(object, spacing=10, collapse=1):
+    """Print methods and doc strings.
+    
+    Takes module, class, list, dictionary, or string."""
+    methodList = [method for method in dir(object) if callable(getattr(object, method))]
+    processFunc = collapse and (lambda s: " ".join(s.split())) or (lambda s: s)
+    print "\n".join(["%s %s" %
+                      (method.ljust(spacing),
+                       processFunc(str(getattr(object, method).__doc__)))
+                     for method in methodList])
 
 class ViBase:
     vigtk = None
