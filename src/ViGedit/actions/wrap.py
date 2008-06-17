@@ -9,16 +9,25 @@ from .. import vibase
 from ..vibase import ViBase as base
 import insert, lines, others, position, text, position as pos, fileOperations as fileOps
 
-def protect_mode(func):
+def preserve_mode(func):
     mode = base.vigtk.mode
     func()
     vibase.set_mode(mode)
     
     
 def preserve_position(func):
-    # ideally this would get horizontal position as well......
-    cursor = base.vigtk.doc.get_insert()
-    print dir(base.vigtk.doc)
+    origin = base.vigtk.doc.get_insert()
+    cursor = base.vigtk.doc.get_iter_at_mark(origin)
+    line = cursor.get_line()
+    lineOffset = cursor.get_line_offset()
+    
     func()
-    base.vigtk.doc.place_cursor(cursor)
-    base.vigttk.view.scroll_to_mark(cursor, 0.0)
+    
+    origin = base.vigtk.doc.get_insert()
+    cursor = base.vigtk.doc.get_iter_at_mark(origin)
+    cursor.set_line(line)
+    cursor.set_line_offset(lineOffset)    
+    origin = base.vigtk.doc.move_mark_by_name("insert", cursor)   
+   
+def preserve_position_and_mode(func):
+    preserve_mode(lambda : preserve_position(func))

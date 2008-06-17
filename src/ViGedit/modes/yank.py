@@ -6,7 +6,7 @@ class yank_Mode(binding_base):
         
 
     def init_bindings(self):
-        self.register(self.yank_lines, gtk.keysyms.y)
+        self.register(lambda : wrap.preserve_position(text.yank_line), gtk.keysyms.y, True, True, "command")
         
     def handle_mode(self, event):
         return True
@@ -15,8 +15,4 @@ class yank_Mode(binding_base):
         base.vigtk.select = False
         base.vigtk.mode = base.vigtk.YANK_MODE
         vibase.update()
-        
-    def yank_lines(self):
-        text.yank_line()
-        vibase.set_mode("command")
         

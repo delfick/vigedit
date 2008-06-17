@@ -35,16 +35,12 @@ def insert_begin_line():
 def open_line_above():
     print "Opening line above in %s" % base.vigtk.view
     pos.move_line_begin()
-    mode = base.vigtk.mode
     vibase.set_mode("insert")
     base.vigtk.view.emit("insert-at-cursor", "\n")
-    vibase.set_mode(mode)
     pos.move_up()
 
 def open_line_below():
     print "Opening line below in %s" % base.vigtk.view
     pos.move_line_end()
-    mode = base.vigtk.mode
     vibase.set_mode("insert")
     base.vigtk.view.emit("insert-at-cursor", "\n")
-    vibase.set_mode(mode)

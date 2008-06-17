@@ -87,7 +87,6 @@ def increment_accumulator(event):
         ViBase.vigtk.acc +=chr(event.keyval) 
         
         
-        
 def deactivate():
     ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[0])
     ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[1])

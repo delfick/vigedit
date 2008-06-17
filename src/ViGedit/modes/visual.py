@@ -31,8 +31,8 @@ class visual_Mode(binding_base):
 
         self.register(insert.insert_end_line, gtk.keysyms.A, True, False, "insert")
         self.register(insert.insert_begin_line, gtk.keysyms.I, True, False, "insert")
-        self.register(insert.open_line_below, gtk.keysyms.o, True, True)
-        self.register(insert.open_line_above, gtk.keysyms.O, True, True)
+        self.register(lambda : wrap.preserve_mode(insert.open_line_below), gtk.keysyms.o, True, True)
+        self.register(lambda : wrap.preserve_mode(insert.open_line_above), gtk.keysyms.O, True, True)
         self.register(insert.append_after, gtk.keysyms.a, True, False, "insert")
 
         self.register(others.undo, gtk.keysyms.u, True, True)

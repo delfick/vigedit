@@ -21,14 +21,14 @@ def delete_char():
     pos.get_cursor_iter().backward_cursor_position()
     
 def paste_clipboard_above():
-    insert.open_line_above()
+    pos.move_line_begin()
     base.vigtk.view.paste_clipboard()
-    delete_char()
+    base.vigtk.doc.insert_at_cursor("\n")
 
 def paste_clipboard_below():
-    insert.open_line_below()
+    pos.move_line_end()
+    base.vigtk.doc.insert_at_cursor("\n")
     base.vigtk.view.paste_clipboard()
-    delete_char()
     
 def yank_selection():
     base.vigtk.view.copy_clipboard()
@@ -46,9 +46,9 @@ def cut_line():
     cut_selection()
     
 def yank_line():
-    number = base.vigtk.number
+    number = base.vigtk.numLines
     lines.select_lines(number)
-    yank_selection()
+    base.vigtk.menus.activate_menu("copy")
     lines.return_to_origin(number+1)
 
 def cut_next_word():
@@ -63,7 +63,7 @@ def delete_whole_line():
 def delete_whole_lines():
     number = base.vigtk.numLines
     lines.select_lines(number)
-    cut_selection()
+    base.vigtk.menus.activate_menu("cut")
         
 def delete_to_line_end():
     lines.select_to_line_end()
