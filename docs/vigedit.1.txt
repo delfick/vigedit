@@ -1,6 +1,7 @@
 VIGEDIT(1)
 ==========
 Trond Danielsen <trond.danielsen@gmail.com>
+Stephen Moore <delfick755@gmail.com>
 
 NAME
 ----
@@ -14,64 +15,77 @@ Place the ViGedit distribution files in ~/.gnome2/gedit/plugins.
 
 DESCRIPTION
 -----------
-Vi is a modal editor, where the insert mode is used to enter text, and the command mode is used to enter commands and move the cursor around the document. 
+ViGedit gives the editor different modes, where each mode assign different actions to particular key combinations.
 
-When a document is loaded in Gedit, the default mode is insert. While in insert mode, Gedit behaves just like normal. To get to command mode, press Esc. In command mode the following keyboard shortcuts can be used.
+The three main modes are command, insert and visual mode. 
 
-ViGedit supports the following key bindings:
+Command mode can be reached at any point by pressing Escape, all other modes can be accessed via this mode.
+Insert mode makes the editor behave like an oridinary editor that doesn"t have modes.
+Visual mode makes it so when you move the iter (where text is to be inserted) via keyboard commands, then the text the iter is moved over will be selected.
 
-i:: 
-	Switch back to insert mode.
-v::
-	Switch to visual mode. Visual mode is used to select text.
+ViGedit supports the following key bindings for the following modes :
+
+Global to all modes:
+~~~~~~~~~~~~~~~~~~~~
+
 Esc::
 	Switch to command mode.
+	
+Command Mode:
+~~~~~~~~~~~~~
+Entered into by pressing Escape
 
-    
-Basic movement:
+Visual Mode:
+~~~~~~~~~~~~
+Entered into by pressing "v" in command mode
+
+Insert Mode:
+~~~~~~~~~~~~
+Entered into by pressing "i" in command mode
+
+Selection Mode:
 ~~~~~~~~~~~~~~~
-j::
-    Down
-k::
-    Up
-h:: 
-    Left
-l:: 
-    Right
-w::
-    Move forward one word at the time.
-b::
-    Move backward, one word at the time.
-g::
-    Move to the beginning of the current document.
-G::
-    Move to the end of the current document.
-    
-Insert commands:
-~~~~~~~~~~~~~~~~
-A::
-	Insert at the end of the current line.
-I::
-	Insert at the beginning of the current line.
-O::
-	Open a new line above the current line.
-o::
-	Open a new line below the current line.
+Entered into by selecting some text whilst in command mode
+Once entered into, deselecting the text without modifying said text will return the user to command mode
 
-Copy/Paste commands:
-~~~~~~~~~~~~~~~~~~~~
-y::
-	Copy (yank) selection clipboard.
-p::
-	Paste clipboard at cursor position.
+Pressing a modifier (control, alt, shift) will not edit the text
+Global shortcuts defined in gedit will still work in this mode
 
-Various commands:
-~~~~~~~~~~~~~~~~~
-/::
-    Start interactive search (just like Ctrl-k).
-x::
-    Delete character after cursor.
-    
+Pressing any character key whilst in this mode will delete the selection of text, insert the character you just pressed and set the mode to insert mode.
+
+Pressing Delete or backspace whilst in selection mode will delete only the selected text.
+
+Delete Mode:
+~~~~~~~~~~~~
+Entered into by pressing "d" in command mode
+
+Indent Mode:
+~~~~~~~~~~~~
+Entered into by pressing ">" or "<" in command mode
+
+Ex Mode:
+~~~~~~~~
+Entered into by pressing ":" in command mode
+
+Yank Mode:
+~~~~~~~~~~
+Entered into by pressing "y" in command mode
+
+C Mode:
+~~~~~~~
+Entered into by pressing "c" in command mode
+
+G Mode:
+~~~~~~~
+Entered into by pressing "g" in command mode
+
+R Mode:
+~~~~~~~
+Entered into by pressing "r" in command mode
+
+T Mode:
+~~~~~~~
+Entered into by pressing "t" in command mode
     
 OPTIONS
 -------
@@ -92,10 +106,11 @@ See the ViGedit distribution AUTHORS file.
 
 RESOURCES
 ---------
-Get the latest version from http://www.open-gnss.org/~trondd/cgi-bin/hgweb.cgi[]
+Get the latest version from https://launchpad.net/vigedit[]
 
 
 COPYING
 -------
-Copyright (C) 2006 Trond Danielsen. Free use of this software is
-granted under the terms of the GNU General Public License (GPL).
+Copyright (C) 2006 Trond Danielsen,
+Copyright (C) 2008 Stephen Moore. 
+Free use of this software is granted under the terms of the GNU General Public License (GPL).

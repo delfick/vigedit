@@ -1,109 +1,97 @@
-.\" ** You probably do not want to edit this file directly **
-.\" It was generated using the DocBook XSL Stylesheets (version 1.69.1).
-.\" Instead of manually editing it, you probably should edit the DocBook XML
-.\" source for it and then use the DocBook XSL Stylesheets to regenerate it.
-.TH "VIGEDIT" "1" "01/23/2007" "" ""
+.\"     Title: vigedit
+.\"    Author: 
+.\" Generator: DocBook XSL Stylesheets v1.73.2 <http://docbook.sf.net/>
+.\"      Date: 06/18/2008
+.\"    Manual: 
+.\"    Source: 
+.\"
+.TH "VIGEDIT" "1" "06/18/2008" "" ""
 .\" disable hyphenation
 .nh
 .\" disable justification (adjust text to left margin only)
 .ad l
 .SH "NAME"
-vigedit \- Gedit plugins that enables Vi(m)\-style key bindings for navigating documents.
+vigedit - Gedit plugins that enables Vi(m)-style key bindings for navigating documents.
 .SH "SYNOPSIS"
-Place the ViGedit distribution files in ~/.gnome2/gedit/plugins.
+Place the ViGedit distribution files in ~/\.gnome2/gedit/plugins\.
 .sp
 .SH "DESCRIPTION"
-Vi is a modal editor, where the insert mode is used to enter text, and the command mode is used to enter commands and move the cursor around the document.
+ViGedit gives the editor different modes, where each mode assign different actions to particular key combinations\.
 .sp
-When a document is loaded in Gedit, the default mode is insert. While in insert mode, Gedit behaves just like normal. To get to command mode, press Esc. In command mode the following keyboard shortcuts can be used.
+The three main modes are command, insert and visual mode\.
 .sp
-ViGedit supports the following key bindings:
+Command mode can be reached at any point by pressing Escape, all other modes can be accessed via this mode\. Insert mode makes the editor behave like an oridinary editor that doesn"t have modes\. Visual mode makes it so when you move the iter (where text is to be inserted) via keyboard commands, then the text the iter is moved over will be selected\.
 .sp
-.TP
-i
-Switch back to insert mode.
-.TP
-v
-Switch to visual mode. Visual mode is used to select text.
-.TP
+ViGedit supports the following key bindings for the following modes :
+.sp
+.SS "Global to all modes:"
+.PP
 Esc
-Switch to command mode.
-.SS "Basic movement:"
-.TP
-j
-Down
-.TP
-k
-Up
-.TP
-h
-Left
-.TP
-l
-Right
-.TP
-w
-Move forward one word at the time.
-.TP
-b
-Move backward, one word at the time.
-.TP
-g
-Move to the beginning of the current document.
-.TP
-G
-Move to the end of the current document.
-.SS "Insert commands:"
-.TP
-A
-Insert at the end of the current line.
-.TP
-I
-Insert at the beginning of the current line.
-.TP
-O
-Open a new line above the current line.
-.TP
-o
-Open a new line below the current line.
-.SS "Copy/Paste commands:"
-.TP
-y
-Copy (yank) selection clipboard.
-.TP
-p
-Paste clipboard at cursor position.
-.SS "Various commands:"
-.TP
-/
-Start interactive search (just like Ctrl\-k).
-.TP
-x
-Delete character after cursor.
+.RS 4
+Switch to command mode\.
+.RE
+.SS "Command Mode:"
+Entered into by pressing Escape
+.sp
+.SS "Visual Mode:"
+Entered into by pressing "v" in command mode
+.sp
+.SS "Insert Mode:"
+Entered into by pressing "i" in command mode
+.sp
+.SS "Selection Mode:"
+Entered into by selecting some text whilst in command mode Once entered into, deselecting the text without modifying said text will return the user to command mode
+.sp
+Pressing a modifier (control, alt, shift) will not edit the text Global shortcuts defined in gedit will still work in this mode
+.sp
+Pressing any character key whilst in this mode will delete the selection of text, insert the character you just pressed and set the mode to insert mode\.
+.sp
+Pressing Delete or backspace whilst in selection mode will delete only the selected text\.
+.sp
+.SS "Delete Mode:"
+Entered into by pressing "d" in command mode
+.sp
+.SS "Indent Mode:"
+Entered into by pressing ">" or "<" in command mode
+.sp
+.SS "Ex Mode:"
+Entered into by pressing ":" in command mode
+.sp
+.SS "Yank Mode:"
+Entered into by pressing "y" in command mode
+.sp
+.SS "C Mode:"
+Entered into by pressing "c" in command mode
+.sp
+.SS "G Mode:"
+Entered into by pressing "g" in command mode
+.sp
+.SS "R Mode:"
+Entered into by pressing "r" in command mode
+.sp
+.SS "T Mode:"
+Entered into by pressing "t" in command mode
+.sp
 .SH "OPTIONS"
-Your only option is to modify the source code.
+Your only option is to modify the source code\.
 .sp
 .SH "BUGS"
-See the ViGedit distribution BUGS file for known bugs.
+See the ViGedit distribution BUGS file for known bugs\.
 .sp
 .sp
 .it 1 an-trap
 .nr an-no-space-flag 1
 .nr an-break-flag 1
 .br
-\fBWarning\fR
-Undiscovered bugs might be present, which causes vigedit to wreak you car, eat all the food in your fridge or delete you Master thesis. You have been warned.
+Warning
+Undiscovered bugs might be present, which causes vigedit to wreak you car, eat all the food in your fridge or delete you Master thesis\. You have been warned\.
 .sp
 .SH "AUTHOR"
-See the ViGedit distribution AUTHORS file.
+See the ViGedit distribution AUTHORS file\.
 .sp
 .SH "RESOURCES"
-Get the latest version from [1]\&\fIhttp://www.open\-gnss.org/~trondd/cgi\-bin/hgweb.cgi\fR
+Get the latest version from https://launchpad\.net/vigedit
 .sp
 .SH "COPYING"
-Copyright \(co 2006 Trond Danielsen. Free use of this software is granted under the terms of the GNU General Public License (GPL).
+Copyright \(co 2006 Trond Danielsen, Copyright \(co 2008 Stephen Moore\. Free use of this software is granted under the terms of the GNU General Public License (GPL)\.
 .sp
-.SH "REFERENCES"
-.TP 3
-1.\ http://www.open\-gnss.org/~trondd/cgi\-bin/hgweb.cgi
-\%http://www.open\-gnss.org/~trondd/cgi\-bin/hgweb.cgi

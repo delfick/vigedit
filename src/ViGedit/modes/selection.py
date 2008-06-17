@@ -9,7 +9,6 @@ class selection_Mode(binding_base):
         pass
         
     def handle_mode(self, event):
-        print "handle_selection_mode"
         if vibase.isModifierPressed(event) == False:
             start = base.vigtk.selection_start
             end = base.vigtk.selection_end
