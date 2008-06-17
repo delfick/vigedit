@@ -126,7 +126,6 @@ class ViBase:
             ViGtk.doc.connect("saved", lambda document,view: self.update()),
             ViGtk.doc.connect("loaded", lambda document, view: self.update())
             ]
-        set_mode("command")
         
     def update_vigtk(self, statusbar, view, window):
         ViBase.vigtk.update_vigtk(view, window, ViBase.bindings, statusbar)

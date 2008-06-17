@@ -45,8 +45,8 @@ class VigeditWindowHelper:
         self.statusbar = VigeditStatusbar(window)
         for view in window.get_views():
             self.attach_vigtk(view, window)
-        self.window.connect("tab-added", self.on_tab_added)
-        self.window.connect("active-tab-changed", self.on_active_tab_changed)
+        self.id_1 = self.window.connect("tab-added", self.on_tab_added)
+        self.id_2 = self.window.connect("active-tab-changed", self.on_active_tab_changed)
 
     def on_active_tab_changed(self, window, tab):
         print "active-tab-changed" # : %s with %s" % (tab, tab.get_view())
@@ -62,6 +62,7 @@ class VigeditWindowHelper:
         view = self.window.get_active_view()
         vi_plugin = view.get_data(self.VIEW_DATA_KEY)
         if view is not vi_plugin.vigtk.view:
+            print "different window has focus"
             vi_plugin.update_vigtk(VigeditStatusbar(self.window), view, self.window)
         
     def attach_vigtk(self, view, window):
@@ -75,8 +76,10 @@ class VigeditWindowHelper:
         for view in self.window.get_views():
             vi_plugin = view.get_data(self.VIEW_DATA_KEY)
             vi_plugin.deactivate()
+            view.disconnect_by_func(self.on_button_press_event)
             view.set_data(self.VIEW_DATA_KEY, None)
-        self.window.disconnect_by_func(self.on_tab_added)
+        self.window.disconnect(self.id_1)
+        self.window.disconnect(self.id_2)
         self.window = None
 
     def update_ui(self):
