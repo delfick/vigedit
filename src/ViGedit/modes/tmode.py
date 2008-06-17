@@ -19,7 +19,7 @@ class tmode_Mode(binding_base):
                 break
         if not cursor.is_end():
             base.vigtk.doc.place_cursor(cursor)
-        print base.vigtk.acc()
+        print base.vigtk.acc
         if base.vigtk.old_mode == base.vigtk.VISUAL_MODE:
             vibase.set_mode("visual")
         else:

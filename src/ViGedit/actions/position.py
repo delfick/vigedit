@@ -7,16 +7,16 @@ from gettext import gettext as _
 
 from .. import vibase
 from ..vibase import ViBase as base
-import insert, lines, others, text, fileOperations as fileOps
+import insert, lines, others, text, wrap, fileOperations as fileOps
 
 def get_cursor_iter():
     return base.vigtk.doc.get_iter_at_mark(base.vigtk.doc.get_mark('insert'))   
     
 def go_to_line(line):
-    cursor = get_cursor_iter(doc)
+    cursor = get_cursor_iter()
     cursor.set_line(line - 1)
     base.vigtk.doc.place_cursor(cursor)
-    base.vigtk.view.scroll_to_mark(base.vigtk.doc.get_mark('insert'))
+    base.vigtk.view.scroll_to_mark(base.vigtk.doc.get_mark('insert'), 0.0)
     
 def to_empty_line(forward = True):
     cursor = get_cursor_iter()

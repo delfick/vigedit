@@ -16,7 +16,13 @@ class selection_Mode(binding_base):
             print "handle_selection_mode"
             base.vigtk.doc.delete(start, end)
             vibase.set_mode("insert")
-            return False
+            print event.keyval == 65505
+            print event.keyval == 65506
+            print ((event.keyval == 65505) or (event.keyval == 65506))
+            if (event.keyval == gtk.keysyms.BackSpace) or (event.keyval == gtk.keysyms.Delete):
+                return True
+            else:
+                return False
         else:
             return False
         

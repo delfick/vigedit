@@ -7,7 +7,7 @@ from gettext import gettext as _
 
 from .. import vibase
 from ..vibase import ViBase as base
-import insert, lines, others, position as pos, fileOperations as fileOps
+import insert, lines, others, wrap, position as pos, fileOperations as fileOps
 
 def delete_char():
     # TODO This doesn't quite work right.
@@ -21,23 +21,20 @@ def delete_char():
     pos.get_cursor_iter().backward_cursor_position()
     
 def paste_clipboard_above():
+    insert.open_line_above()
     base.vigtk.view.paste_clipboard()
-    vibase.set_mode("command")
+    delete_char()
 
 def paste_clipboard_below():
     insert.open_line_below()
     base.vigtk.view.paste_clipboard()
     delete_char()
-    pos.move_up()
-    vibase.set_mode("command")
     
 def yank_selection():
     base.vigtk.view.copy_clipboard()
-    vibase.set_mode("command")
     
 def cut_selection():
     base.vigtk.view.cut_clipboard()
-    vibase.set_mode("command")    
     
 def cut_until_end_of_line():
     vibase.set_mode("visual")
@@ -52,7 +49,7 @@ def yank_line():
     number = base.vigtk.number
     lines.select_lines(number)
     yank_selection()
-    lines.return_to_origin(number)
+    lines.return_to_origin(number+1)
 
 def cut_next_word():
     vibase.set_mode("visual")
@@ -60,5 +57,15 @@ def cut_next_word():
     cut_selection()
 
 def delete_whole_line():
-    lines.select_line() 
+    lines.select_line()
     cut_selection()
+    
+def delete_whole_lines():
+    number = base.vigtk.numLines
+    lines.select_lines(number)
+    cut_selection()
+        
+def delete_to_line_end():
+    lines.select_to_line_end()
+    cut_selection()
+

@@ -6,15 +6,15 @@ class gmode_Mode(binding_base):
         
 
     def init_bindings(self):
-        self.register(pos.move_buffer_top, gtk.keysyms.g)
-        self.register(self.next_tab, gtk.keysyms.t)
-        self.register(self.append_q, gtk.keysyms.q)
+        self.register(pos.move_buffer_top, gtk.keysyms.g, True, False, "command")
+        self.register(self.next_tab, gtk.keysyms.t, True, True, "command")
+        self.register(None, gtk.keysyms.q, True)
         
     def handle_mode(self, event):
         print "handle_g_mode"
         if event.keyval in (gtk.keysyms.Shift_L, gtk.keysyms.Shift_R):
             return True
-        elif (event.keyval == gtk.keysyms.braceright) and (base.vigtk.acc() == ["q"]):
+        elif (event.keyval == gtk.keysyms.braceright) and (base.vigtk.acc == ["q"]):
             print "hit gq}"
             lines.split_lines()
         vibase.set_mode("command")
@@ -22,7 +22,7 @@ class gmode_Mode(binding_base):
         
     def select_mode(self):
         base.vigtk.acc = []
-        base.vigtk.mode = v.GMODE
+        base.vigtk.mode = base.vigtk.GMODE
         vibase.update()
         
     def next_tab(self):
@@ -38,8 +38,4 @@ class gmode_Mode(binding_base):
                 base.vigtk.window.set_active_tab(base.vigtk.window.get_tab_from_uri(documents[i].get_uri()))
             elif i == None:
                 base.vigtk.window.set_active_tab(base.vigtk.window.get_tab_from_uri(documents[0].get_uri()))
-                
-    def append_q(self):
-        self.increment_accumulator('q')
-    
       

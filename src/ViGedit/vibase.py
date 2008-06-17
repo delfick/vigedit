@@ -29,11 +29,20 @@ def isAltPressed(event):
             return True
         else: 
             return False
+            
+            
+def isShiftPressed(event):
+    if (event.keyval == 65505) or (event.keyval == 65506):
+        return True
+    else:
+        return False
         
 def isModifierPressed(event):
     if isControlPressed(event) == True:
         return True
     if isAltPressed(event) == True:
+        return True
+    if isShiftPressed(event) == True:
         return True
     return False
 
@@ -79,12 +88,13 @@ def increment_accumulator(event):
         
         
         
-def deactivate(self):
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids()[0])
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids()[1])
-    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids()[2])
-    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids()[3])
-    ViBase.vigtk.window.disconnect(ViBase.vigtk.handler_ids()[4])
+def deactivate():
+    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[0])
+    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[1])
+    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[2])
+    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[3])
+    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[4])
+    ViBase.vigtk.window.disconnect(ViBase.vigtk.handler_ids[5])
     ViBase.vigtk.bindings.set_mode("insert")
     ViBase.vigtk.statusbar.update(None)
     ViBase.vigtk.view = None
@@ -114,6 +124,7 @@ class ViBase:
         ViBase.vigtk.handler_ids = [
             ViGtk.view.connect("key-press-event", self.on_key_press_event),
             ViGtk.view.connect("button-release-event", self.on_button_release_event),
+            ViGtk.view.connect("button-press-event", self.on_button_press_event),
             ViGtk.doc.connect("saved", lambda document,view: self.update()),
             ViGtk.doc.connect("loaded", lambda document, view: self.update()),
             ViGtk.window.connect("active-tab-changed", self.on_active_tab_changed), 
@@ -122,6 +133,9 @@ class ViBase:
         
     def update(self):
         update()
+        
+    def deactivate(self):
+        deactivate()
 
 
     def on_key_press_event(self, view, event):
@@ -154,38 +168,49 @@ class ViBase:
         modifiers = isControlPressed(event), isAltPressed(event)
         print "%s %s %s" % (ViBase.vigtk.mode, event.keyval, modifiers)
         should_print = ViBase.vigtk.mode != ViBase.vigtk.INSERT_MODE
-            
         f = ViBase.vigtk.bindings.retrieve(ViBase.vigtk.mode, event.keyval, modifiers[0], modifiers[1])
         if f is None: 
             print "\tBindings don't exist"
             if event.keyval > 47 and event.keyval < 58:
                 ViBase.vigtk.number = ViBase.vigtk.number *10 + event.keyval-48
             
-            elif event.keyval > 65455 and event.keyval < 65465:
+            if event.keyval > 65455 and event.keyval < 65465:
                 ViBase.vigtk.number = ViBase.vigtk.number * 10 + event.keyval-65456
                 
-            else : 
-                should_print = handle_mode(get_mode_name(), event)
+            
+            should_print = handle_mode(get_mode_name(), event)
         else:
             function = f["function"]
             isFinal = f["Final"]
             isRepeatable = f["Repeatable"]
+            returnToMode = f["ReturnToMode"]
             if callable(function) is True:
                 print "\tfunction is callable"
                 if isRepeatable:
                     print "\tfunction is repeatable"
                     [function() for ignore in range(ViBase.vigtk.number or 1)]
+                    print "resetting numbers"
                     ViBase.vigtk.number = 0
+                    ViBase.vigtk.numLines = 0
                     ViBase.vigtk.acc = []
                 else:
                     function()
+                    ViBase.vigtk.numLines = ViBase.vigtk.number
+                    ViBase.vigtk.number = 0
                     if isFinal:
                         print "\tfunction is final"
                         ViBase.vigtk.number = 0
+                        ViBase.vigtk.numLines = 0
                         ViBase.vigtk.acc = []
+                        
+                set_mode(returnToMode)
             else:
                 print "\tfunction is not callable"
-            
+                if function is None: increment_accumulator(event)
+                    
+        if ViBase.vigtk.returnToMode is not None:
+            set_mode(ViBase.vigtk.returnToMode)
+            ViBase.vigtk.returnToMode = None
         return should_print
         
     def on_active_tab_changed(self, window, tab):
@@ -196,7 +221,16 @@ class ViBase:
     def on_button_release_event(self, event, user_data):
         if (ViBase.vigtk.mode is ViBase.vigtk.COMMAND_MODE) or (ViBase.vigtk.mode is ViBase.vigtk.SELECTION_MODE):
             if ViBase.vigtk.doc.get_selection_bounds() != ():
-                set_mode("selection")
-                ViBase.vigtk.selection_start, ViBase.vigtk.selection_end = ViBase.vigtk.doc.get_selection_bounds()
+                if ViBase.vigtk.already_selected:
+                    set_mode("command")
+                else:
+                    ViBase.vigtk.selection_start, ViBase.vigtk.selection_end = ViBase.vigtk.doc.get_selection_bounds()
+                    set_mode("selection")
             else:
                 set_mode("command")
+                
+    def on_button_press_event(self, event, user_data):
+        if ViBase.vigtk.doc.get_selection_bounds() != ():
+            ViBase.vigtk.already_selected = True
+        else:
+            ViBase.vigtk.already_selected = False

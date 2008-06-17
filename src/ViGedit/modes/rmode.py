@@ -11,6 +11,7 @@ class rmode_Mode(binding_base):
     def handle_mode(self, event):
         vibase.increment_accumulator(event)
         vibase.set_overwrite(True)
+        base.vigtk.returnToMode = "command"
         return False
         
     def select_mode(self):

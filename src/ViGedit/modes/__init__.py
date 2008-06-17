@@ -9,6 +9,8 @@ from cmode import cmode_Mode
 from rmode import rmode_Mode
 from tmode import tmode_Mode
 from selection import selection_Mode
+from indent import indent_Mode
+
 import gtk
 from ..actions import insert, lines, menus, others, text
 from ..actions import fileOperations as fileOps
@@ -30,30 +32,7 @@ class BindingRegistry(object):
         self.rmodeMode = rmode_Mode()
         self.tmodeMode = tmode_Mode()
         self.selectionMode = selection_Mode()
-        self.init_bindings()
-
-    def init_bindings(self):
-        self.register_cv(lambda : self.set_mode("insert"), gtk.keysyms.i)
-        self.register_cv(insert.append_after, gtk.keysyms.a)
-        self.register_cv(lambda : self.set_mode("visual"), gtk.keysyms.v)
-        self.register_cv(pos.move_forward, gtk.keysyms.l)
-        self.register_cv(pos.move_backward, gtk.keysyms.h)
-        self.register_cv(pos.move_down, gtk.keysyms.j)
-        self.register_cv(pos.move_up, gtk.keysyms.k)
-        self.register_cv(pos.move_word_forward, gtk.keysyms.w)
-        self.register_cv(pos.move_word_backward, gtk.keysyms.b)
-        self.register_cv(lambda : self.set_mode("gmode"), gtk.keysyms.g)
-        self.register_cv(pos.move_buffer_end, gtk.keysyms.G)
-        self.register_cv(insert.insert_end_line, gtk.keysyms.A)
-        self.register_cv(insert.insert_begin_line, gtk.keysyms.I)
-        self.register_cv(insert.open_line_below, gtk.keysyms.o)
-        self.register_cv(insert.open_line_above, gtk.keysyms.O)
-        self.register_cv(others.undo, gtk.keysyms.u)
-        self.register_cv(others.search, gtk.keysyms.slash)
-        self.register_cv(lambda : self.set_mode("exmode"), gtk.keysyms.colon)
-        self.register_cv(lines.indent_left, gtk.keysyms.less)
-        self.register_cv(lines.indent_right, gtk.keysyms.greater)
-        self.register_cv(lambda : self.set_mode("tmode"), gtk.keysyms.t)
+        self.indentMode = indent_Mode()
 
     def set_mode(self, mode):
         the_mode = getattr(self, "%sMode" % mode, None)
@@ -65,19 +44,10 @@ class BindingRegistry(object):
         if the_mode is None:return
         return the_mode.handle_mode(event)
 
-    def register_cv(self, func, keycode, isFinal=False, isRepeatable=False, control=False, meta=False):
-        self.register('visual', func, keycode, isFinal, isRepeatable, control, meta)
-        self.register('command', func, keycode, isFinal, isRepeatable, control, meta)
-
-    def register_cvs(self, func, keycode, isFinal=False, isRepeatable=False, control=False, meta=False):
-        self.register('visual', func, keycode, isFinal, isRepeatable, control, meta)
-        self.register('command', func, keycode, isFinal, isRepeatable, control, meta)
-        self.register('selection', func, keycode, isFinal, isRepeatable, control, meta)
-
-    def register(self, mode, func, keycode, isFinal=False, isRepeatable=False, control=False, meta=False):
+    def register(self, mode, func, keycode, isFinal=False, isRepeatable=False, control=False, returnToMode=None, meta=False):
         binding_map = getattr(self, "%sMode" % mode, None)
         if binding_map is None: return
-        binding_map.register(func, keycode, isFinal, isRepeatable, control, meta)
+        binding_map.register(func, keycode, isFinal, returnToMode, isRepeatable, control, meta)
 
     def retrieve(self, mode, keycode, control=False, meta=False):
         the_mode = getattr(self, "%sMode" % vibase.get_mode_name(), None)

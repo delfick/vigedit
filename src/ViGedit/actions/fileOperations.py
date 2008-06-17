@@ -7,10 +7,10 @@ from gettext import gettext as _
 
 from .. import vibase
 from ..vibase import ViBase as base
-import insert, lines, others, text, position as pos
+import insert, lines, others, text, wrap, position as pos
 
 def save_file():
-    if base.doc.get_uri() != None:
+    if base.vigtk.doc.get_uri() != None:
         vibase.get_menu("save").activate()
     else:
         vibase.get_menu("save_as").activate()

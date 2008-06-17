@@ -7,26 +7,24 @@ from gettext import gettext as _
 
 from .. import vibase
 from ..vibase import ViBase as base
-import insert, others, text, position as pos, fileOperations as fileOps
+import insert, others, text, wrap, position as pos, fileOperations as fileOps
 
 def select_lines(number):
-    print "selecting %d lines" % (number+1)
     pos.move_line_begin()
     vibase.set_mode("visual")
     pos.move_line_end()
     pos.move_forward()
     #select the number of lines specified
-    while number > 0:
+    while number > 1:
         pos.move_down()
         number = number-1 
 
 def return_to_origin(number):
-    number = int(number) + 1
+    print "moving up %d lines" % number
     while number > 0:
         pos.move_up()
-        number = number - 1
+        number = number -1
     pos.move_line_begin()
-    vibase.set_mode("command")
 
     
 def select_line():
@@ -34,6 +32,10 @@ def select_line():
     vibase.set_mode("visual")
     pos.move_line_end()
     pos.move_forward() # Select \n too.
+    
+def select_to_line_end():
+    vibase.set_mode("visual")
+    pos.move_line_end()
 
 def split_lines():
     if vibase.get_menu("split_lines") == None:
@@ -48,14 +50,14 @@ def split_lines():
     vibase.set_mode("command")
     
 def indent_left():
-    number = base.vigtk.number
+    number = base.vigtk.numLines
     select_lines(number)
     if vibase.get_menu("indent_left") is not None:
         vibase.get_menu("indent_left").activate()
     return_to_origin(number)
 
 def indent_right():
-    number = base.vigtk.number
+    number = base.vigtk.numLines
     select_lines(number)
     if vibase.get_menu("indent_right") is not None:
         vibase.get_menu("indent_right").activate()

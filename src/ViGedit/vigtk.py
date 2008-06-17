@@ -28,13 +28,13 @@ class ViGtk:
 
     (COMMAND_MODE, VISUAL_MODE, DELETE_MODE, 
     INSERT_MODE, EX_MODE, YANK_MODE, GMODE, 
-    CMODE, RMODE, TMODE, SELECTION_MODE) = range(11)
+    CMODE, RMODE, TMODE, SELECTION_MODE, INDENT_MODE) = range(12)
 
     modes = { 0 : 'command', 1 : 'visual', 
               2: 'delete',   3 : 'insert', 
               4: 'ex', 5: 'yank', 6: 'gmode', 
               7:'cmode', 8: 'rmode', 9: 'tmode',
-              10:'selection' }    
+              10:'selection', 11:'indent'}    
               
     def get_mode(self, mode):
         """ Get mode text """
@@ -49,7 +49,8 @@ class ViGtk:
                 ViGtk.CMODE: _("C Mode"),
                 ViGtk.RMODE: _("R Mode"),
                 ViGtk.TMODE: _("T Mode"),
-                ViGtk.SELECTION_MODE: _("Selection Mode")
+                ViGtk.SELECTION_MODE: _("Selection Mode"),
+                ViGtk.INDENT_MODE: _("Indent Mode")
                 }.get(mode)
               
     initial = True
@@ -80,7 +81,10 @@ class ViGtk:
         ViGtk.selection_end = None
         ViGtk.select = True
         ViGtk.acc = []
-        ViGtk.number = 1
+        ViGtk.number = 0
+        ViGtk.numLines = 0
         ViGtk.old_mode = ViGtk.COMMAND_MODE
+        ViGtk.already_selected = False
+        ViGtk.returnToMode = None
         
 
