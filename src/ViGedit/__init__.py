@@ -43,22 +43,31 @@ class VigeditWindowHelper:
         self.bindings = bindings
         self.oldView = None
         self.statusbar = VigeditStatusbar(window)
-        print window.get_views()
         for view in window.get_views():
             self.attach_vigtk(view, window)
         self.window.connect("tab-added", self.on_tab_added)
         self.window.connect("active-tab-changed", self.on_active_tab_changed)
 
     def on_active_tab_changed(self, window, tab):
-        print "active-tab-changed: %s with %s" % (tab, tab.get_view())
+        print "active-tab-changed" # : %s with %s" % (tab, tab.get_view())
+        vibase = tab.get_view().get_data(self.VIEW_DATA_KEY)
+        if vibase is not None:
+            tab.get_view().get_data(self.VIEW_DATA_KEY).update_vigtk(VigeditStatusbar(window), tab.get_view(), window)
 
     def on_tab_added(self, window, tab):
-        print "on_tab_added: attach to %s on %s" % (tab.get_view(), tab)
+        print "on_tab_added" #: attach to %s on %s" % (tab.get_view(), tab)
         self.attach_vigtk(tab.get_view(), window)
+        
+    def on_button_press_event(self, event, user_data):
+        view = self.window.get_active_view()
+        vi_plugin = view.get_data(self.VIEW_DATA_KEY)
+        if view is not vi_plugin.vigtk.view:
+            vi_plugin.update_vigtk(VigeditStatusbar(self.window), view, self.window)
         
     def attach_vigtk(self, view, window):
         vi_plugin = vibase.ViBase(self.statusbar, view, window, self.bindings)
-        print "attach_vigtk: %s in %s" % (vi_plugin, view)
+        view.connect("button-press-event", self.on_button_press_event)
+        print "attach_vigtk" #: %s in %s" % (vi_plugin, view)
         view.set_data(self.VIEW_DATA_KEY, vi_plugin)
         vi_plugin.update()
 
@@ -88,7 +97,6 @@ class VigeditPlugin(gedit.Plugin):
     WINDOW_DATA_KEY = "VigeditPluginWindowData"
     
     def __init__(self):
-        gedit.Plugin.__init__(self)
         self.bindings = BindingRegistry()
 
     def activate(self, window):

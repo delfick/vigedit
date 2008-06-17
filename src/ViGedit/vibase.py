@@ -93,7 +93,6 @@ def deactivate():
     ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[2])
     ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[3])
     ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[4])
-    ViBase.vigtk.window.disconnect(ViBase.vigtk.handler_ids[5])
     ViBase.vigtk.bindings.set_mode("insert")
     ViBase.vigtk.statusbar.update(None)
     ViBase.vigtk.view = None
@@ -125,9 +124,12 @@ class ViBase:
             ViGtk.view.connect("button-release-event", self.on_button_release_event),
             ViGtk.view.connect("button-press-event", self.on_button_press_event),
             ViGtk.doc.connect("saved", lambda document,view: self.update()),
-            ViGtk.doc.connect("loaded", lambda document, view: self.update()),
-            ViGtk.window.connect("active-tab-changed", self.on_active_tab_changed), 
+            ViGtk.doc.connect("loaded", lambda document, view: self.update())
             ]
+        set_mode("command")
+        
+    def update_vigtk(self, statusbar, view, window):
+        ViBase.vigtk.update_vigtk(view, window, ViBase.bindings, statusbar)
         set_mode("command")
         
     def update(self):
@@ -211,11 +213,6 @@ class ViBase:
             set_mode(ViBase.vigtk.returnToMode)
             ViBase.vigtk.returnToMode = None
         return should_print
-        
-    def on_active_tab_changed(self, window, tab):
-        set_mode("command")
-        ViBase.vigtk = ViGtk(ViBase.statusbar, tab.get_view(), window, ViBase.bindings)
-
     
     def on_button_release_event(self, event, user_data):
         if (ViBase.vigtk.mode is ViBase.vigtk.COMMAND_MODE) or (ViBase.vigtk.mode is ViBase.vigtk.SELECTION_MODE):

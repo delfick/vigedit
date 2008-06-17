@@ -3,7 +3,6 @@ class cmode_Mode(binding_base):
 
     def __init__(self):
         binding_base.__init__(self)
-        
 
     def init_bindings(self):
         self.register(None, gtk.keysyms.a, False, False)

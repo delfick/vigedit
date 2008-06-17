@@ -23,7 +23,6 @@
 import gtk
 from actions.menus import Menus
         
-        
 class ViGtk:
 
     (COMMAND_MODE, VISUAL_MODE, DELETE_MODE, 
@@ -56,24 +55,22 @@ class ViGtk:
     initial = True
     
     def __init__(self, statusbar, view, window, bindings):
-        ViGtk.statusbar = statusbar
-        self.update_vigtk(view, window, bindings)
+        self.update_vigtk(view, window, bindings, statusbar)
         
         if ViGtk.initial:
             ViGtk.initial = False
             ViGtk.last_search = None
             ViGtk.menus = Menus(ViGtk.window)
-            ViGtk.mode = ViGtk.COMMAND_MODE
             ViGtk.ignored_keys = map( gtk.gdk.keyval_from_name, \
                     ['Up', 'Down', 'Left', 'Right', 'Page_Up', 'Page_Down', 'Home', 'End'] + \
                     ["F%d" % n for n in range(1,13)] )
             ViGtk.bindings = bindings
             ViGtk.bindings.init_modes()
         
-       # print "__init__:     %s in %s" % (self, ViGtk.view)
+        print "__init__:" #     %s in %s" % (self, ViGtk.view)
         
         
-    def update_vigtk(self, view, window, bindings):
+    def update_vigtk(self, view, window, bindings, statusbar):
         ViGtk.window = window
         ViGtk.view = view
         ViGtk.doc = view.get_buffer()
@@ -86,5 +83,6 @@ class ViGtk:
         ViGtk.old_mode = ViGtk.COMMAND_MODE
         ViGtk.already_selected = False
         ViGtk.returnToMode = None
-        
+        ViGtk.statusbar = statusbar
+        ViGtk.mode = ViGtk.COMMAND_MODE
 
