@@ -1,3 +1,4 @@
+""" random functions """
 import gtk
 import re
 import gedit

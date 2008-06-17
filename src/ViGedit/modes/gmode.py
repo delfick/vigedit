@@ -11,8 +11,8 @@ class gmode_Mode(binding_base):
         self.register(None, gtk.keysyms.q, True)
         
     def handle_mode(self, event):
-        print "handle_g_mode"
         if event.keyval in (gtk.keysyms.Shift_L, gtk.keysyms.Shift_R):
+            """ only shift was pressed, so let it pass """
             return True
         elif (event.keyval == gtk.keysyms.braceright) and (base.vigtk.acc == ["q"]):
             print "hit gq}"

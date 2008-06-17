@@ -1,3 +1,4 @@
+""" functions to insert text """
 import gtk
 import re
 import gedit
@@ -33,14 +34,14 @@ def insert_begin_line():
     
     
 def open_line_above():
-    print "Opening line above in %s" % base.vigtk.view
+    print "Opening line above" # in %s" % base.vigtk.view
     pos.move_line_begin()
     vibase.set_mode("insert")
     base.vigtk.view.emit("insert-at-cursor", "\n")
     pos.move_up()
 
 def open_line_below():
-    print "Opening line below in %s" % base.vigtk.view
+    print "Opening line below" # in %s" % base.vigtk.view
     pos.move_line_end()
     vibase.set_mode("insert")
     base.vigtk.view.emit("insert-at-cursor", "\n")

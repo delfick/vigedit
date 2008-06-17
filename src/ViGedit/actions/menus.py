@@ -1,3 +1,7 @@
+""" object holding reference to particular menu items
+there is only ever one instance of this 
+that instance can be referenced through vibase.get_menu or vibase.activate_menu"""
+
 class Menus(object):
 
     def __init__(self, window):
@@ -20,11 +24,13 @@ class Menus(object):
         self.copy_menu = self.ui_manager.get_action("/MenuBar/EditMenu/EditCopyMenu")
         
     def get_menu(self, menuType):
+        """ returns a reference to the specified menu """
         the_menu = getattr(self, "%s_menu" % menuType, None)
         if the_menu is None: return
         return the_menu
         
     def activate_menu(self, menuType):
+        """ activates the specified menu """
         the_menu = getattr(self, "%s_menu" % menuType, None)
         if the_menu is None: return
         the_menu.activate()

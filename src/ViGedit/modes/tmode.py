@@ -9,6 +9,7 @@ class tmode_Mode(binding_base):
         pass
         
     def handle_mode(self, event):
+        """ moves cursor to next occurance of the next key to be pressed """
         cursor = pos.get_cursor_iter()
         while True:
             cursor.forward_char()

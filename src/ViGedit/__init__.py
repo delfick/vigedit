@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-#  vigedit.py - Vi Keybindings for gedit.
+#  __init__.py - initialise the plugin
 #  
 #  Copyright (C) 2006 - Trond Danielsen
+#  Copyright (C) 2008 - Stephen Moore
 #  
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -59,6 +60,7 @@ class VigeditWindowHelper:
         self.attach_vigtk(tab.get_view(), window)
         
     def on_button_press_event(self, event, user_data):
+        """ make sure vigtk knows which window you're using """
         view = self.window.get_active_view()
         vi_plugin = view.get_data(self.VIEW_DATA_KEY)
         if view is not vi_plugin.vigtk.view:

@@ -1,3 +1,4 @@
+""" functions to change the position of the iter """
 import gtk
 import re
 import gedit
@@ -11,6 +12,13 @@ import insert, lines, others, text, wrap, fileOperations as fileOps
 
 def get_cursor_iter():
     return base.vigtk.doc.get_iter_at_mark(base.vigtk.doc.get_mark('insert'))   
+    
+def return_to_origin(number):
+    print "moving up %d lines" % number
+    while number > 0:
+        pos.move_up()
+        number = number -1
+    pos.move_line_begin()
     
 def go_to_line(line):
     cursor = get_cursor_iter()

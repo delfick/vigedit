@@ -1,3 +1,4 @@
+""" file related operations (save, close, etc) """
 import gtk
 import re
 import gedit

@@ -39,6 +39,8 @@ class visual_Mode(binding_base):
         self.register(others.search, gtk.keysyms.slash, True)
       
     def handle_mode(self, event):
+        """ if a modifier is pressed, let it pass through so it can be registered by gedit 
+        (so you can still use ordinary shortcuts in visual mode if they haven't been overwritten in init_bindings) """
         if vibase.isModifierPressed(event) == True:
             return False
         else:

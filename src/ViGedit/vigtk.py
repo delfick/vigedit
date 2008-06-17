@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-#  vigtk.py - Vi Keybindings for gtk.TextView.
+#  vigtk.py - container class. Values in here should be edited through vibase
 #  
 #  Copyright (C) 2008 - Joseph Method
+#  Copyright (C) 2008 - Stephen Moore
 #  Copyright (C) 2006 - Trond Danielsen
 #  
 #  This program is free software; you can redistribute it and/or modify
@@ -24,7 +25,6 @@ import gtk
 from actions.menus import Menus
         
 class ViGtk:
-
     (COMMAND_MODE, VISUAL_MODE, DELETE_MODE, 
     INSERT_MODE, EX_MODE, YANK_MODE, GMODE, 
     CMODE, RMODE, TMODE, SELECTION_MODE, INDENT_MODE) = range(12)
@@ -35,7 +35,7 @@ class ViGtk:
               7:'cmode', 8: 'rmode', 9: 'tmode',
               10:'selection', 11:'indent'}    
               
-    def get_mode(self, mode):
+    def get_mode_desc(self, mode):
         """ Get mode text """
         return { 
                 ViGtk.COMMAND_MODE: _("Command Mode"),
@@ -58,6 +58,7 @@ class ViGtk:
         self.update_vigtk(view, window, bindings, statusbar)
         
         if ViGtk.initial:
+            """ these things only need to be set once """
             ViGtk.initial = False
             ViGtk.last_search = None
             ViGtk.menus = Menus(ViGtk.window)
@@ -71,6 +72,7 @@ class ViGtk:
         
         
     def update_vigtk(self, view, window, bindings, statusbar):
+        """ update information held by the class """
         ViGtk.window = window
         ViGtk.view = view
         ViGtk.doc = view.get_buffer()

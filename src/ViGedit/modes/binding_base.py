@@ -1,3 +1,4 @@
+""" base for the different modes """
 import gtk
 import re
 import gedit
@@ -13,10 +14,12 @@ from ..actions import insert, lines, others, text, wrap
 class binding_base:
 
     def __init__(self):
+        """ create an object to hold the bindings and initialise the bindings """
         self.bindingsObject = {}
         self.init_bindings()
  
     def register(self, func, keycode, isFinal=False, isRepeatable=False, returnToMode=None, control=False, meta=False):
+        """ create a key in the bindingsObject equal to the keycombo with the relevant information in it """
         keycombo = keycode, control, meta
         self.bindingsObject[keycombo] = {}
         self.bindingsObject[keycombo]["function"] = func
@@ -26,7 +29,3 @@ class binding_base:
     
     def retrieve(self, keycode, control=False, meta=False):
         return self.bindingsObject.get((keycode, control, meta), None)
-        
-    def increment_accumulator(self, key):
-        acc = base.acc
-        base.acc = acc.append(key)

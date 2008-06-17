@@ -21,6 +21,9 @@ from .. import vibase
 class BindingRegistry(object):
 
     def init_modes(self):
+        """ initialise the different modes 
+        This calls their init_bindings method, which registers the different bindings for each mode """
+        
         self.deleteMode = delete_Mode()
         self.commandMode = command_Mode()
         self.visualMode = visual_Mode()
@@ -44,12 +47,8 @@ class BindingRegistry(object):
         if the_mode is None:return
         return the_mode.handle_mode(event)
 
-    def register(self, mode, func, keycode, isFinal=False, isRepeatable=False, control=False, returnToMode=None, meta=False):
-        binding_map = getattr(self, "%sMode" % mode, None)
-        if binding_map is None: return
-        binding_map.register(func, keycode, isFinal, returnToMode, isRepeatable, control, meta)
-
     def retrieve(self, mode, keycode, control=False, meta=False):
+        """ retrieve a binding from the current mode if it exists """
         the_mode = getattr(self, "%sMode" % vibase.get_mode_name(), None)
         if the_mode is None: return
         return the_mode.retrieve(keycode, control, meta)
