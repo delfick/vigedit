@@ -32,6 +32,7 @@ def delete_whole_lines():
     number = base.vigtk.numLines
     lines.select_lines(number)
     base.vigtk.menus.activate_menu("cut")
+    delete_char()
         
 def delete_to_line_end():
     lines.select_to_line_end()
@@ -43,7 +44,7 @@ def yank_line():
     number = base.vigtk.numLines
     lines.select_lines(number)
     base.vigtk.menus.activate_menu("copy")
-    lines.return_to_origin(number+1)
+    pos.return_to_origin(number+1)
     
 def yank_selection():
     base.vigtk.view.copy_clipboard()

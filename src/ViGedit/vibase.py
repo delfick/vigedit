@@ -28,6 +28,7 @@ import gobject
 import os
 from gettext import gettext as _
 from vigtk import ViGtk
+from gobject import GObject
 
 """ functions to determine if certain modifiers have been pressed """
 
@@ -148,17 +149,19 @@ def info(object, spacing=10, collapse=1):
                        processFunc(str(getattr(object, method).__doc__)))
                      for method in methodList])
 
-class ViBase:
+class ViBase(GObject):
     """ class that holds an instance of vitgk and processes certain events (see handler_ids below) """
     vigtk = None
-    statusbar = None
-    bindings = None
     
-    def __init__(self, statusbar, view, window, bindings):
+    __gsignals__ = { 
+           'update_vigtk' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, 
+                            (gobject.TYPE_OBJECT, gobject.TYPE_OBJECT, gobject.TYPE_PYOBJECT, gobject.TYPE_INT))
+                   }
+    
+    def __init__(self, view):
+        gobject.GObject.__init__(self)
         """ iniitalise vigtk """
-        ViBase.statusbar = statusbar
-        ViBase.bindings = bindings
-        ViBase.vigtk = ViGtk(statusbar, view, window, bindings)
+        ViBase.vigtk = ViGtk(view)
         ViBase.vigtk.handler_ids = [
             ViGtk.view.connect("key-press-event", self.on_key_press_event),
             ViGtk.view.connect("button-release-event", self.on_button_release_event),
@@ -166,11 +169,20 @@ class ViBase:
             ViGtk.doc.connect("saved", lambda document,view: self.update()),
             ViGtk.doc.connect("loaded", lambda document, view: self.update())
             ]
+        self.connect_after("update_vigtk", self.retry_event)
+            
+    def do_update_vigtk(self, view, old_view, event, mode):
+        print "updating vigtk"
         
-    def update_vigtk(self, statusbar, view, window):
+    def retry_event(self, obj, view, old_view, event, mode):
+        self.on_key_press_event(view, event)
+        
+    def set_mode(self, mode):
+        set_mode(mode)
+        
+    def update_vigtk(self, view, mode):
         """ update vigtk when the tab or window changes """
-        ViBase.vigtk.update_vigtk(view, window, ViBase.bindings, statusbar)
-        set_mode("command")
+        ViBase.vigtk.update_vigtk(view, mode)
         
     def update(self):
         update()
@@ -185,9 +197,14 @@ class ViBase:
             set_mode("command")
             
         if view.get_buffer() != ViGtk.doc: 
+            
+            print "doc doesn't equal"
+            self.emit("update_vigtk", view, ViGtk.view, event, ViGtk.mode)
             return False
             
         elif view != ViGtk.view:
+            print "view doesn't equal"
+            self.emit("update_vigtk", view, ViGtk.view, event, ViGtk.mode)
             return False
             
         else:
@@ -278,12 +295,13 @@ class ViBase:
                 if ViBase.vigtk.already_selected:
                     set_mode("command")
                 else:
-                    ViBase.vigtk.selection_start, ViBase.vigtk.selection_end = ViBase.vigtk.doc.get_selection_bounds()
                     set_mode("selection")
             else:
                 set_mode("command")
                 
-    def on_button_press_event(self, event, user_data):
+    def on_button_press_event(self, view, event):
+        if view != ViGtk.view:
+            self.emit("update_vigtk", view, ViGtk.view, event, ViGtk.mode)
         """ check if the user deselects text by clicking on already selected text, so it can be used by on_button_release_event
         to determine wether to change back to command mode or not if there is no selection """
         if ViBase.vigtk.doc.get_selection_bounds() != ():

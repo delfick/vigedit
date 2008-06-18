@@ -22,6 +22,7 @@
 
 import gedit
 import vibase
+from actions.menus import Menus
 from modes import BindingRegistry
 
 class VigeditStatusbar:
@@ -43,9 +44,14 @@ class VigeditWindowHelper:
         self.window = window
         self.bindings = bindings
         self.oldView = None
+        self.menus = Menus(window)
         self.statusbar = VigeditStatusbar(window)
         for view in window.get_views():
-            self.attach_vigtk(view, window)
+            view.set_data("statusbar", self.statusbar)
+            view.set_data("menus", self.menus)
+            view.set_data("window", self.window)
+            view.set_data("bindings", self.bindings)
+            self.attach_vigtk(view, window, menus)
         self.id_1 = self.window.connect("tab-added", self.on_tab_added)
         self.id_2 = self.window.connect("active-tab-changed", self.on_active_tab_changed)
 
@@ -53,23 +59,23 @@ class VigeditWindowHelper:
         print "active-tab-changed" # : %s with %s" % (tab, tab.get_view())
         vibase = tab.get_view().get_data(self.VIEW_DATA_KEY)
         if vibase is not None:
-            tab.get_view().get_data(self.VIEW_DATA_KEY).update_vigtk(VigeditStatusbar(window), tab.get_view(), window)
+            tab.get_view().get_data(self.VIEW_DATA_KEY).update_vigtk(tab.get_view(), 0)
+            
+    def update_vigtk(self, obj, view, old_view, event, mode):
+        view.get_data(self.VIEW_DATA_KEY).update_vigtk(view, mode)
 
     def on_tab_added(self, window, tab):
         print "on_tab_added" #: attach to %s on %s" % (tab.get_view(), tab)
         self.attach_vigtk(tab.get_view(), window)
         
-    def on_button_press_event(self, event, user_data):
-        """ make sure vigtk knows which window you're using """
-        view = self.window.get_active_view()
-        vi_plugin = view.get_data(self.VIEW_DATA_KEY)
-        if view is not vi_plugin.vigtk.view:
-            print "different window has focus"
-            vi_plugin.update_vigtk(VigeditStatusbar(self.window), view, self.window)
-        
     def attach_vigtk(self, view, window):
-        vi_plugin = vibase.ViBase(self.statusbar, view, window, self.bindings)
-        view.connect("button-press-event", self.on_button_press_event)
+        view.set_data("statusbar", self.statusbar)
+        view.set_data("menus", self.menus)
+        view.set_data("window", window)
+        view.set_data("bindings", self.bindings)
+        
+        vi_plugin = vibase.ViBase(view)
+        vi_plugin.connect("update_vigtk", self.update_vigtk)
         print "attach_vigtk" #: %s in %s" % (vi_plugin, view)
         view.set_data(self.VIEW_DATA_KEY, vi_plugin)
         vi_plugin.update()
@@ -78,7 +84,6 @@ class VigeditWindowHelper:
         for view in self.window.get_views():
             vi_plugin = view.get_data(self.VIEW_DATA_KEY)
             vi_plugin.deactivate()
-            view.disconnect_by_func(self.on_button_press_event)
             view.set_data(self.VIEW_DATA_KEY, None)
         self.window.disconnect(self.id_1)
         self.window.disconnect(self.id_2)

@@ -54,37 +54,34 @@ class ViGtk:
               
     initial = True
     
-    def __init__(self, statusbar, view, window, bindings):
-        self.update_vigtk(view, window, bindings, statusbar)
-        
+    def __init__(self, view):
+        self.update_vigtk(view, 0)
         if ViGtk.initial:
             """ these things only need to be set once """
             ViGtk.initial = False
             ViGtk.last_search = None
-            ViGtk.menus = Menus(ViGtk.window)
             ViGtk.ignored_keys = map( gtk.gdk.keyval_from_name, \
                     ['Up', 'Down', 'Left', 'Right', 'Page_Up', 'Page_Down', 'Home', 'End'] + \
                     ["F%d" % n for n in range(1,13)] )
-            ViGtk.bindings = bindings
+            ViGtk.bindings = view.get_data("bindings")
             ViGtk.bindings.init_modes()
         
         print "__init__:" #     %s in %s" % (self, ViGtk.view)
         
         
-    def update_vigtk(self, view, window, bindings, statusbar):
+    def update_vigtk(self, view, mode):
         """ update information held by the class """
-        ViGtk.window = window
+        ViGtk.window = view.get_data("window")
         ViGtk.view = view
         ViGtk.doc = view.get_buffer()
-        ViGtk.selection_start = None
-        ViGtk.selection_end = None
         ViGtk.select = True
         ViGtk.acc = []
         ViGtk.number = 0
         ViGtk.numLines = 0
-        ViGtk.old_mode = ViGtk.COMMAND_MODE
+        ViGtk.old_mode = mode
         ViGtk.already_selected = False
         ViGtk.returnToMode = None
-        ViGtk.statusbar = statusbar
+        ViGtk.statusbar = view.get_data("statusbar")
         ViGtk.mode = ViGtk.COMMAND_MODE
+        ViGtk.menus = view.get_data("menus")
 

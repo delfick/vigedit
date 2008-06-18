@@ -22,21 +22,8 @@ The three main modes are command, insert and visual mode\.
 .sp
 Command mode can be reached at any point by pressing Escape, all other modes can be accessed via this mode\. Insert mode makes the editor behave like an oridinary editor that doesn"t have modes\. Visual mode makes it so when you move the iter (where text is to be inserted) via keyboard commands, then the text the iter is moved over will be selected\.
 .sp
-ViGedit supports the following key bindings for the following modes :
-.sp
-.SS "Global to all modes:"
-.PP
-Esc
-.RS 4
-Switch to command mode\.
-.RE
-.SS "Command Mode:"
-.sp
-.RS 4
-.nf
-Entered into by pressing Escape
-.fi
-.RE
+.SS "Using the Commands:"
+All actions are activated by a chain of key combinations with the following format:
 .PP
 \fB<x> <keycombo> <y> <keycombo>\fR
 .sp
@@ -53,124 +40,158 @@ Entered into by pressing Escape
 .RE
 .sp
 .RS 4
-\h'-04'\(bu\h'+03'In the following descriptions of all the modes, if an actions supports the use of <x>, it will state selects lines and if it supports the use of <y> it will state repeatable
+\h'-04'\(bu\h'+03'The only exception to the above rule is that no action in command mode will select lines, and if they are repeatable, then they will use <x> as the number of times to repeat
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+Understanding the following explanations
+The following contains the keys that have actions binded to them for each mode\. Note that every binding have 2 flags associated with them, isFinal, isRepeatable\. If isRepeatable is set then that means the action will be repeated, and the accumulator and two number flags will be reset after the action has been repeated the specified number of times if IsFinal is set, then the accumulator and the two flags will be reset after that action has been executed\.
+.sp
+The following listing of the currently implemented bindings will have a [sfrp] before the binding\. Where each letter represents a different characteristic of the binding, if a letter is red, then that means that characteristic is true\. s means that action selects lines of text f represents the isFinal flag r represents the isRepeatable flag p means the action will preserve the position of the iter when it\'s executed\.
+.sp
+.SS "Global to all modes:"
+.PP
+Esc
+.RS 4
+Switch to command mode\.
+.RE
+.SS "Command Mode:"
+.sp
+.RS 4
+.nf
+Entered into by pressing Escape
+.fi
+.RE
+.PP
+\fBhello\fR. Activate
+C mode
+the section called \(lqC Mode:\(rq
+.PP
+\fBExample\ 1.\ A NOTE block\fR
+Qui in magna commodo, est labitur dolorum an\. Est ne magna primis adolescens\.
+.sp
+.sp
+.RS 4
+\h'-04' 1.\h'+02'Fusce euismod commodo velit\.
 .RE
 .sp
 .RS 4
-\h'-04'\(bu\h'+03'The only exception to the above rule is that no action in command mode will select lines, and if they are repeatable, then they will use <x> as the number of times to repeat
-.RE
-_
-.PP
-c
+\h'-04' 2.\h'+02'Vivamus fringilla mi eu lacus\.
+.sp
 .RS 4
-Activate
-C mode
-the section called \(lqC Mode:\(rq
+\h'-04' 1.\h'+02'Fusce euismod commodo velit\.
 .RE
-.PP
-d
+.sp
 .RS 4
-Activate
-delete mode
-???
+\h'-04' 2.\h'+02'Vivamus fringilla mi eu lacus\.
 .RE
+.RE
+.sp
+.RS 4
+\h'-04' 3.\h'+02'Donec eget arcu bibendum nunc consequat lobortis\.
+.RE
+
+[sfrp] d Activate delete mode ???
 .PP
-r
+[sfrp] r
 .RS 4
 Activate
 R mode
 the section called \(lqR Mode:\(rq
 .RE
 .PP
-y
+[sfrp] y
 .RS 4
 Activate
 Yank mode
 the section called \(lqYank Mode:\(rq
 .RE
 .PP
-i
+[sfrp] i
 .RS 4
 Activate
 Insert mode
 the section called \(lqInsert Mode:\(rq
 .RE
 .PP
-v
+[sfrp] v
 .RS 4
 Activate
 Visual mode
 the section called \(lqVisual Mode:\(rq
 .RE
 .PP
-g
+[sfrp] g
 .RS 4
 Activate
 G mode
 the section called \(lqG Mode:\(rq
 .RE
 .PP
-:
+[sfrp] :
 .RS 4
 Activate
 Ex mode
 ???
 .RE
 .PP
-t
+[sfrp] t
 .RS 4
 Activate
 T mode
 the section called \(lqT Mode:\(rq
 .RE
 .PP
->
+[sfrp] >
 .RS 4
 Activate
 Indent mode
 the section called \(lqIndent Mode:\(rq
 .RE
 .PP
-<
+[sfrp] <
 .RS 4
 Activate
 Indent mode
 the section called \(lqIndent Mode:\(rq
 .RE
 .PP
-ctrl r
+[sfrp] ctrl r
 .RS 4
 redo (repeatable)
 .RE
 .PP
-Delete
+[sfrp] Delete
 .RS 4
 Delete character the iter is currently over (repeatable)
 .RE
 .PP
-V
+[sfrp] V
 .RS 4
 select the line the iter is currently over and enter into
 Selection mode
 ???
 .RE
 .PP
-D
+[sfrp] D
 .RS 4
 Cut the text from the iter to the end of the line\.
 .RE
 .PP
-P
+[sfrp] P
 .RS 4
 Paste the clipboard above the line the iter is currently over (repeatable)
 .RE
 .PP
-p
+[sfrp] p
 .RS 4
 Paste the clipboard below the line the iter is currently over (repeatable)
 .RE
 .PP
-n
+[sfrp] n
 .RS 4
 Go the next item in search results (if a search has been conducted (repeatable)
 .RE
@@ -182,29 +203,29 @@ Entered into by pressing "v" in command mode
 .fi
 .RE
 .PP
-i
+[sfrp] i
 .RS 4
 Activate
 Insert mode
 the section called \(lqInsert Mode:\(rq
 .RE
 .PP
-x
+[sfrp] x
 .RS 4
 Cut the current selection
 .RE
 .PP
-y
+[sfrp] y
 .RS 4
 Copy the current selection
 .RE
 .PP
-p
+[sfrp] p
 .RS 4
 Paste the current selection (repeatable)
 .RE
 .PP
-a
+[sfrp] a
 .RS 4
 Select all
 .RE
@@ -217,71 +238,71 @@ The only difference is any command that moves the iter, will select the text the
 .fi
 .RE
 .PP
-l
+[sfrp] l
 .RS 4
 Move forward one character (repeatable)
 .RE
 .PP
-h
+[sfrp] h
 .RS 4
 Move backward one character (repeatable)
 .RE
 .PP
-j
+[sfrp] j
 .RS 4
 Move down one line (repeatable)
 .RE
 .PP
-k
+[sfrp] k
 .RS 4
 Move up one line (repeatable)
 .RE
 .PP
-w
+[sfrp] w
 .RS 4
 Move forward one word (repeatable)
 .RE
 .PP
-b
+[sfrp] b
 .RS 4
 Move backward one word (repeatable)
 .RE
 .PP
-G
+[sfrp] G
 .RS 4
 Move the end of the document
 .RE
 .PP
-$
+[sfrp] $
 .RS 4
 Move the end of the line (repeatable)
 .RE
 .PP
-%
+[sfrp] %
 .RS 4
 Move to the beginning of the line
 .RE
 .PP
-u
+[sfrp] u
 .RS 4
 Undo last command (repeatable)
 .RE
 .PP
-A
+[sfrp] A
 .RS 4
 Move to the end of the line and enter
 Insert mode
 the section called \(lqInsert Mode:\(rq
 .RE
 .PP
-I
+[sfrp] I
 .RS 4
 Move the beginning of the line and enter
 Insert mode
 the section called \(lqInsert Mode:\(rq
 .RE
 .PP
-o
+[sfrp] o
 .RS 4
 Insert a line below the line the iter is currently over and enter
 Insert mode
@@ -289,7 +310,7 @@ the section called \(lqInsert Mode:\(rq
 (repeatable)
 .RE
 .PP
-O
+[sfrp] O
 .RS 4
 Insert a line above the line the iter is currently over and enter
 Insert mode
@@ -297,14 +318,14 @@ the section called \(lqInsert Mode:\(rq
 (repeatable)
 .RE
 .PP
-a
+[sfrp] a
 .RS 4
 Move the iter forward one character and enter
 Insert mode
 the section called \(lqInsert Mode:\(rq
 .RE
 .PP
-/
+[sfrp] /
 .RS 4
 Start a search
 .RE

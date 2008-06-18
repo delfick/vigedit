@@ -319,23 +319,8 @@ div#toc a:visited { color: blue; }
 <p>Command mode can be reached at any point by pressing Escape, all other modes can be accessed via this mode.
 Insert mode makes the editor behave like an oridinary editor that doesn"t have modes.
 Visual mode makes it so when you move the iter (where text is to be inserted) via keyboard commands, then the text the iter is moved over will be selected.</p>
-<p>ViGedit supports the following key bindings for the following modes :</p>
-<h3>Global to all modes:</h3>
-<dl>
-<dt>
-Esc
-</dt>
-<dd>
-<p>
-        Switch to command mode.
-</p>
-</dd>
-</dl>
-<h3><a id="command"></a>Command Mode:</h3>
-<div class="literalblock">
-<div class="content">
-<pre><tt>Entered into by pressing Escape</tt></pre>
-</div></div>
+<h3>Using the Commands:</h3>
+<p>All actions are activated by a chain of key combinations with the following format:</p>
 <div class="title">&lt;x&gt; &lt;keycombo&gt; &lt;y&gt; &lt;keycombo&gt;</div><ul>
 <li>
 <p>
@@ -354,35 +339,87 @@ If the action is repeatable, &lt;y&gt; will be the number of times the action is
 </li>
 <li>
 <p>
-In the following descriptions of all the modes, if an actions supports the use of &lt;x&gt;, it will state <span style="color: red;">selects lines</span> and if it supports the use of &lt;y&gt; it will state <span style="color: red;">repeatable</span>
-</p>
-</li>
-<li>
-<p>
 The only exception to the above rule is that no action in command mode will select lines, and if they are repeatable, then they will use &lt;x&gt; as the number of times to repeat
 </p>
 </li>
 </ul>
-<p><span style="color: white;">_</span></p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="title">Understanding the following explanations</div>
+<p>The following contains the keys that have actions binded to them for each mode. Note that every binding have 2 flags associated with them, isFinal, isRepeatable.
+If isRepeatable is set then that means the action will be repeated, and the accumulator and two number flags will be reset after the action has been repeated the specified number of times
+if IsFinal is set, then the accumulator and the two flags will be reset after that action has been executed.</p>
+<p>The following listing of the currently implemented bindings will have a [sfrp] before the binding. Where each letter represents a different characteristic of the binding, if a letter is red, then that means that characteristic is true.
+s means that action selects lines of text
+f represents the isFinal flag
+r represents the isRepeatable flag
+p means the action will preserve the position of the iter when it's executed.</p>
+</td>
+</tr></table>
+</div>
+<h3>Global to all modes:</h3>
 <dl>
 <dt>
-c
+Esc
 </dt>
 <dd>
 <p>
-    Activate <a href="#cmode">C mode</a>
+        Switch to command mode.
 </p>
 </dd>
-<dt>
-d
-</dt>
-<dd>
+</dl>
+<h3><a id="command"></a>Command Mode:</h3>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Entered into by pressing Escape</tt></pre>
+</div></div>
+<div class="title">hello</div>
+<p>Activate <a href="#cmode">C mode</a></p>
+<div class="exampleblock">
+<div class="title">My Special NoteA NOTE block</div>
+<div class="exampleblock-content">
+<p>Qui in magna commodo, est labitur dolorum an. Est ne magna primis
+adolescens.</p>
+<ol>
+<li>
 <p>
-    Activate <a href="#deleteMode">delete mode</a>
+Fusce euismod commodo velit.
 </p>
-</dd>
+</li>
+<li>
+<p>
+Vivamus fringilla mi eu lacus.
+</p>
+<ol class="olist2">
+<li>
+<p>
+Fusce euismod commodo velit.
+</p>
+</li>
+<li>
+<p>
+Vivamus fringilla mi eu lacus.
+</p>
+</li>
+</ol>
+</li>
+<li>
+<p>
+Donec eget arcu bibendum
+  nunc consequat lobortis.
+</p>
+</li>
+</ol>
+</div></div>
+<p>[sfrp]  d
+    Activate <a href="#deleteMode">delete mode</a></p>
+<dl>
 <dt>
-r
+[sfrp]  r
 </dt>
 <dd>
 <p>
@@ -390,7 +427,7 @@ r
 </p>
 </dd>
 <dt>
-y
+[sfrp]  y
 </dt>
 <dd>
 <p>
@@ -398,7 +435,7 @@ y
 </p>
 </dd>
 <dt>
-i
+[sfrp]  i
 </dt>
 <dd>
 <p>
@@ -406,7 +443,7 @@ i
 </p>
 </dd>
 <dt>
-v
+[sfrp]  v
 </dt>
 <dd>
 <p>
@@ -414,7 +451,7 @@ v
 </p>
 </dd>
 <dt>
-g
+[sfrp]  g
 </dt>
 <dd>
 <p>
@@ -422,7 +459,7 @@ g
 </p>
 </dd>
 <dt>
-:
+[sfrp]  :
 </dt>
 <dd>
 <p>
@@ -430,7 +467,7 @@ g
 </p>
 </dd>
 <dt>
-t
+[sfrp]  t
 </dt>
 <dd>
 <p>
@@ -438,7 +475,7 @@ t
 </p>
 </dd>
 <dt>
-&gt;
+[sfrp]  &gt;
 </dt>
 <dd>
 <p>
@@ -446,7 +483,7 @@ t
 </p>
 </dd>
 <dt>
-&lt;
+[sfrp]  &lt;
 </dt>
 <dd>
 <p>
@@ -454,7 +491,7 @@ t
 </p>
 </dd>
 <dt>
-ctrl r
+[sfrp]  ctrl r
 </dt>
 <dd>
 <p>
@@ -462,7 +499,7 @@ ctrl r
 </p>
 </dd>
 <dt>
-Delete
+[sfrp]  Delete
 </dt>
 <dd>
 <p>
@@ -470,7 +507,7 @@ Delete
 </p>
 </dd>
 <dt>
-V
+[sfrp]  V
 </dt>
 <dd>
 <p>
@@ -478,7 +515,7 @@ V
 </p>
 </dd>
 <dt>
-D
+[sfrp]  D
 </dt>
 <dd>
 <p>
@@ -486,7 +523,7 @@ D
 </p>
 </dd>
 <dt>
-P
+[sfrp]  P
 </dt>
 <dd>
 <p>
@@ -494,7 +531,7 @@ P
 </p>
 </dd>
 <dt>
-p
+[sfrp]  p
 </dt>
 <dd>
 <p>
@@ -502,7 +539,7 @@ p
 </p>
 </dd>
 <dt>
-n
+[sfrp]  n
 </dt>
 <dd>
 <p>
@@ -517,7 +554,7 @@ n
 </div></div>
 <dl>
 <dt>
-i
+[sfrp]  i
 </dt>
 <dd>
 <p>
@@ -525,7 +562,7 @@ i
 </p>
 </dd>
 <dt>
-x
+[sfrp]  x
 </dt>
 <dd>
 <p>
@@ -533,7 +570,7 @@ x
 </p>
 </dd>
 <dt>
-y
+[sfrp]  y
 </dt>
 <dd>
 <p>
@@ -541,7 +578,7 @@ y
 </p>
 </dd>
 <dt>
-p
+[sfrp]  p
 </dt>
 <dd>
 <p>
@@ -549,7 +586,7 @@ p
 </p>
 </dd>
 <dt>
-a
+[sfrp]  a
 </dt>
 <dd>
 <p>
@@ -565,7 +602,7 @@ The only difference is any command that moves the iter, will select the text the
 </div></div>
 <dl>
 <dt>
-l
+[sfrp]  l
 </dt>
 <dd>
 <p>
@@ -573,7 +610,7 @@ l
 </p>
 </dd>
 <dt>
-h
+[sfrp]  h
 </dt>
 <dd>
 <p>
@@ -581,7 +618,7 @@ h
 </p>
 </dd>
 <dt>
-j
+[sfrp]  j
 </dt>
 <dd>
 <p>
@@ -589,7 +626,7 @@ j
 </p>
 </dd>
 <dt>
-k
+[sfrp]  k
 </dt>
 <dd>
 <p>
@@ -597,7 +634,7 @@ k
 </p>
 </dd>
 <dt>
-w
+[sfrp]  w
 </dt>
 <dd>
 <p>
@@ -605,7 +642,7 @@ w
 </p>
 </dd>
 <dt>
-b
+[sfrp]  b
 </dt>
 <dd>
 <p>
@@ -613,7 +650,7 @@ b
 </p>
 </dd>
 <dt>
-G
+[sfrp]  G
 </dt>
 <dd>
 <p>
@@ -621,7 +658,7 @@ G
 </p>
 </dd>
 <dt>
-$
+[sfrp]  $
 </dt>
 <dd>
 <p>
@@ -629,7 +666,7 @@ $
 </p>
 </dd>
 <dt>
-%
+[sfrp]  %
 </dt>
 <dd>
 <p>
@@ -637,7 +674,7 @@ $
 </p>
 </dd>
 <dt>
-u
+[sfrp]  u
 </dt>
 <dd>
 <p>
@@ -645,7 +682,7 @@ u
 </p>
 </dd>
 <dt>
-A
+[sfrp]  A
 </dt>
 <dd>
 <p>
@@ -653,7 +690,7 @@ A
 </p>
 </dd>
 <dt>
-I
+[sfrp]  I
 </dt>
 <dd>
 <p>
@@ -661,7 +698,7 @@ I
 </p>
 </dd>
 <dt>
-o
+[sfrp]  o
 </dt>
 <dd>
 <p>
@@ -669,7 +706,7 @@ o
 </p>
 </dd>
 <dt>
-O
+[sfrp]  O
 </dt>
 <dd>
 <p>
@@ -677,7 +714,7 @@ O
 </p>
 </dd>
 <dt>
-a
+[sfrp]  a
 </dt>
 <dd>
 <p>
@@ -685,7 +722,7 @@ a
 </p>
 </dd>
 <dt>
-/
+[sfrp]  /
 </dt>
 <dd>
 <p>
@@ -790,7 +827,7 @@ Free use of this software is granted under the terms of the GNU General Public L
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 18-Jun-2008 12:48:47 WST
+Last updated 18-Jun-2008 21:13:05 WST
 </div>
 </div>
 </body>

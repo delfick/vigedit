@@ -10,8 +10,7 @@ class selection_Mode(binding_base):
         
     def handle_mode(self, event):
         if vibase.isModifierPressed(event) == False:
-            start = base.vigtk.selection_start
-            end = base.vigtk.selection_end
+            start, end = base.vigtk.doc.get_selection_bounds()
             vibase.increment_accumulator(event)
             base.vigtk.doc.delete(start, end)
             vibase.set_mode("insert")

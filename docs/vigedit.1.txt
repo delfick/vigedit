@@ -21,7 +21,31 @@ Command mode can be reached at any point by pressing Escape, all other modes can
 Insert mode makes the editor behave like an oridinary editor that doesn"t have modes.
 Visual mode makes it so when you move the iter (where text is to be inserted) via keyboard commands, then the text the iter is moved over will be selected.
 
-ViGedit supports the following key bindings for the following modes :
+Using the Commands:
+~~~~~~~~~~~~~~~~~~~
+
+All actions are activated by a chain of key combinations with the following format:
+
+.<x> <keycombo> <y> <keycombo>
+* Where <x> and <y> are numbers, and a <keycombo> some keys that are pressed (usually a single letter, though can be a single letter with some modifer being pressed (like control) 
+* If the action supports it, <x> will be the number of lines the action will apply to
+* If the action is repeatable, <y> will be the number of times the action is repeated on the number of lines specified by <x> 
+* The only exception to the above rule is that no action in command mode will select lines, and if they are repeatable, then they will use <x> as the number of times to repeat 
+
+.Understanding the following explanations
+[NOTE]
+===============================
+The following contains the keys that have actions binded to them for each mode. Note that every binding have 2 flags associated with them, isFinal, isRepeatable.
+If isRepeatable is set then that means the action will be repeated, and the accumulator and two number flags will be reset after the action has been repeated the specified number of times
+if IsFinal is set, then the accumulator and the two flags will be reset after that action has been executed.
+
+The following listing of the currently implemented bindings will have a [sfrp] before the binding. Where each letter represents a different characteristic of the binding, if a letter is red, then that means that characteristic is true.
+s means that action selects lines of text
+f represents the isFinal flag
+r represents the isRepeatable flag
+p means the action will preserve the position of the iter when it's executed.
+===============================
+
 
 Global to all modes:
 ~~~~~~~~~~~~~~~~~~~~
@@ -34,67 +58,74 @@ Command Mode:
 ~~~~~~~~~~~~~
     Entered into by pressing Escape
 
-.<x> <keycombo> <y> <keycombo>
-* Where <x> and <y> are numbers, and a <keycombo> some keys that are pressed (usually a single letter, though can be a single letter with some modifer being pressed (like control) 
-* If the action supports it, <x> will be the number of lines the action will apply to
-* If the action is repeatable, <y> will be the number of times the action is repeated on the number of lines specified by <x>  
-* In the following descriptions of all the modes, if an actions supports the use of <x>, it will state [red]#selects lines# and if it supports the use of <y> it will state [red]#repeatable#
-* The only exception to the above rule is that no action in command mode will select lines, and if they are repeatable, then they will use <x> as the number of times to repeat 
+.hello
+[icons=None, caption="hello"] //[s[red]##f##rp]  c"]
+Activate xref:cmode[C mode]
 
-[white]#_#   
+[icons=None, caption="My Special Note"]
+.A NOTE block
+=====================================================================
+Qui in magna commodo, est labitur dolorum an. Est ne magna primis
+adolescens.
 
-c::
-    Activate xref:cmode[C mode]
+. Fusce euismod commodo velit.
+. Vivamus fringilla mi eu lacus.
+  .. Fusce euismod commodo velit.
+  .. Vivamus fringilla mi eu lacus.
+. Donec eget arcu bibendum
+  nunc consequat lobortis.
+=====================================================================
     
-d::
+    
+[sfrp]  d
     Activate xref:deleteMode[delete mode]
     
-r::
+[sfrp]  r::
     Activate xref:rmode[R mode]
 
-y::
+[sfrp]  y::
     Activate xref:yank[Yank mode]
     
-i::
+[sfrp]  i::
     Activate xref:insert[Insert mode]
     
-v::
+[sfrp]  v::
     Activate xref:visual[Visual mode]
     
-g::
+[sfrp]  g::
     Activate xref:gmode[G mode]
     
-:::
+[sfrp]  :::
     Activate xref:exmode[Ex mode]
     
-t::
+[sfrp]  t::
     Activate xref:tmode[T mode]
     
->::
+[sfrp]  >::
     Activate xref:indent[Indent mode]
     
-<::
+[sfrp]  <::
     Activate xref:indent[Indent mode] 
     
-ctrl r::
+[sfrp]  ctrl r::
     redo ([red]#repeatable#)
     
-Delete::
+[sfrp]  Delete::
     Delete character the iter is currently over ([red]#repeatable#)
     
-V:: 
+[sfrp]  V:: 
     select the line the iter is currently over and enter into xref:selection[Selection mode]
     
-D::
+[sfrp]  D::
     Cut the text from the iter to the end of the line.
     
-P::
+[sfrp]  P::
     Paste the clipboard above the line the iter is currently over ([red]#repeatable#)
     
-p:: 
+[sfrp]  p:: 
     Paste the clipboard below the line the iter is currently over ([red]#repeatable#)
     
-n::
+[sfrp]  n::
     Go the next item in search results (if a search has been conducted ([red]#repeatable#)
     
 [[visual]]
@@ -102,19 +133,19 @@ Visual Mode:
 ~~~~~~~~~~~~
     Entered into by pressing "v" in command mode
     
-i::
+[sfrp]  i::
     Activate xref:insert[Insert mode]
     
-x::
+[sfrp]  x::
     Cut the current selection
     
-y::
+[sfrp]  y::
     Copy the current selection
     
-p::    
+[sfrp]  p::    
     Paste the current selection ([red]#repeatable#)
     
-a::
+[sfrp]  a::
     Select all        
         
 Common to Visual and Command Modes:
@@ -122,52 +153,52 @@ Common to Visual and Command Modes:
     These commands are common to visual and command modes. 
     The only difference is any command that moves the iter, will select the text the iter moves over when in visual mode, and doesn't select text when in command mode.
     
-l::
+[sfrp]  l::
     Move forward one character ([red]#repeatable#)
     
-h::
+[sfrp]  h::
     Move backward one character ([red]#repeatable#)
     
-j::
+[sfrp]  j::
     Move down one line ([red]#repeatable#)
     
-k::
+[sfrp]  k::
     Move up one line ([red]#repeatable#)
     
-w::
+[sfrp]  w::
     Move forward one word ([red]#repeatable#)
     
-b::
+[sfrp]  b::
     Move backward one word ([red]#repeatable#)
     
-G::
+[sfrp]  G::
     Move the end of the document
     
-$::
+[sfrp]  $::
     Move the end of the line ([red]#repeatable#)
     
-%::
+[sfrp]  %::
     Move to the beginning of the line
     
-u::
+[sfrp]  u::
     Undo last command ([red]#repeatable#)
     
-A::
+[sfrp]  A::
     Move to the end of the line and enter xref:insert[Insert mode] 
     
-I::
+[sfrp]  I::
     Move the beginning of the line and enter xref:insert[Insert mode]
     
-o::
+[sfrp]  o::
     Insert a line below the line the iter is currently over and enter xref:insert[Insert mode] ([red]#repeatable#)
     
-O::
+[sfrp]  O::
     Insert a line above the line the iter is currently over and enter xref:insert[Insert mode] ([red]#repeatable#)
     
-a::
+[sfrp]  a::
     Move the iter forward one character and enter xref:insert[Insert mode]
     
-/::
+[sfrp]  /::
     Start a search  
     
 [[insert]]

@@ -16,9 +16,9 @@ def get_cursor_iter():
 def return_to_origin(number):
     print "moving up %d lines" % number
     while number > 0:
-        pos.move_up()
+        move_up()
         number = number -1
-    pos.move_line_begin()
+    move_line_begin()
     
 def go_to_line(line):
     cursor = get_cursor_iter()

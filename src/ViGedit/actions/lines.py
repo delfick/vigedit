@@ -23,6 +23,7 @@ def get_lines_till_end():
     cursor = pos.get_cursor_iter()
     line = cursor.get_line()
     total = base.vigtk.doc.get_line_count()
+    print total-line
     return total-line
         
 def select_many_lines(number):
@@ -45,7 +46,6 @@ def select_one_line():
     pos.move_line_begin()
     vibase.set_mode("visual")
     pos.move_line_end()
-    pos.move_forward() # Select \n too.
     
 """ select part of a line """
 
