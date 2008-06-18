@@ -7,18 +7,12 @@ class visual_Mode(binding_base):
 
     def init_bindings(self):
         self.register(lambda : vibase.set_mode("insert"), gtk.keysyms.i)
-        self.register(lambda : vibase.set_mode("visual"), gtk.keysyms.v)
-        self.register(lambda : vibase.set_mode("gmode"), gtk.keysyms.g)
-        self.register(lambda : vibase.set_mode("exmode"), gtk.keysyms.colon)
-        self.register(lambda : vibase.set_mode("tmode"), gtk.keysyms.t)
-        self.register(lambda : vibase.set_mode("indent"), gtk.keysyms.less)
-        self.register(lambda : vibase.set_mode("indent"), gtk.keysyms.greater)
         
         self.register(lambda : vibase.activate_menu("cut"), gtk.keysyms.x, True)
         self.register(lambda : vibase.activate_menu("copy"), gtk.keysyms.y, True)
         self.register(lambda : vibase.activate_menu("paste"), gtk.keysyms.p, True, True)
         self.register(lambda : vibase.activate_menu("select_all"), gtk.keysyms.a, True)
-        self.register(pos.move_line_end, gtk.keysyms.dollar, True)
+        
         
         
         self.register(pos.move_forward, gtk.keysyms.l, True, True)
@@ -27,7 +21,9 @@ class visual_Mode(binding_base):
         self.register(pos.move_up, gtk.keysyms.k, True, True)
         self.register(pos.move_word_forward, gtk.keysyms.w, True, True)
         self.register(pos.move_word_backward, gtk.keysyms.b, True, True)
-        self.register(pos.move_buffer_end, gtk.keysyms.G, True)        
+        self.register(pos.move_buffer_end, gtk.keysyms.G, True)
+        self.register(pos.move_line_end, gtk.keysyms.dollar, True)
+        self.register(pos.move_line_begin, gtk.keysyms.percent, True)        
 
         self.register(insert.insert_end_line, gtk.keysyms.A, True, False, "insert")
         self.register(insert.insert_begin_line, gtk.keysyms.I, True, False, "insert")

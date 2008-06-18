@@ -1,7 +1,5 @@
 VIGEDIT(1)
 ==========
-Trond Danielsen <trond.danielsen@gmail.com>
-Stephen Moore <delfick755@gmail.com>
 
 NAME
 ----
@@ -30,62 +28,204 @@ Global to all modes:
 
 Esc::
 	Switch to command mode.
-	
+
+[[command]]
 Command Mode:
 ~~~~~~~~~~~~~
-Entered into by pressing Escape
+    Entered into by pressing Escape
 
+.<x> <keycombo> <y> <keycombo>
+* Where <x> and <y> are numbers, and a <keycombo> some keys that are pressed (usually a single letter, though can be a single letter with some modifer being pressed (like control) 
+* If the action supports it, <x> will be the number of lines the action will apply to
+* If the action is repeatable, <y> will be the number of times the action is repeated on the number of lines specified by <x>  
+* In the following descriptions of all the modes, if an actions supports the use of <x>, it will state [red]#selects lines# and if it supports the use of <y> it will state [red]#repeatable#
+* The only exception to the above rule is that no action in command mode will select lines, and if they are repeatable, then they will use <x> as the number of times to repeat 
+
+[white]#_#   
+
+c::
+    Activate xref:cmode[C mode]
+    
+d::
+    Activate xref:deleteMode[delete mode]
+    
+r::
+    Activate xref:rmode[R mode]
+
+y::
+    Activate xref:yank[Yank mode]
+    
+i::
+    Activate xref:insert[Insert mode]
+    
+v::
+    Activate xref:visual[Visual mode]
+    
+g::
+    Activate xref:gmode[G mode]
+    
+:::
+    Activate xref:exmode[Ex mode]
+    
+t::
+    Activate xref:tmode[T mode]
+    
+>::
+    Activate xref:indent[Indent mode]
+    
+<::
+    Activate xref:indent[Indent mode] 
+    
+ctrl r::
+    redo ([red]#repeatable#)
+    
+Delete::
+    Delete character the iter is currently over ([red]#repeatable#)
+    
+V:: 
+    select the line the iter is currently over and enter into xref:selection[Selection mode]
+    
+D::
+    Cut the text from the iter to the end of the line.
+    
+P::
+    Paste the clipboard above the line the iter is currently over ([red]#repeatable#)
+    
+p:: 
+    Paste the clipboard below the line the iter is currently over ([red]#repeatable#)
+    
+n::
+    Go the next item in search results (if a search has been conducted ([red]#repeatable#)
+    
+[[visual]]
 Visual Mode:
 ~~~~~~~~~~~~
-Entered into by pressing "v" in command mode
-
+    Entered into by pressing "v" in command mode
+    
+i::
+    Activate xref:insert[Insert mode]
+    
+x::
+    Cut the current selection
+    
+y::
+    Copy the current selection
+    
+p::    
+    Paste the current selection ([red]#repeatable#)
+    
+a::
+    Select all        
+        
+Common to Visual and Command Modes:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    These commands are common to visual and command modes. 
+    The only difference is any command that moves the iter, will select the text the iter moves over when in visual mode, and doesn't select text when in command mode.
+    
+l::
+    Move forward one character ([red]#repeatable#)
+    
+h::
+    Move backward one character ([red]#repeatable#)
+    
+j::
+    Move down one line ([red]#repeatable#)
+    
+k::
+    Move up one line ([red]#repeatable#)
+    
+w::
+    Move forward one word ([red]#repeatable#)
+    
+b::
+    Move backward one word ([red]#repeatable#)
+    
+G::
+    Move the end of the document
+    
+$::
+    Move the end of the line ([red]#repeatable#)
+    
+%::
+    Move to the beginning of the line
+    
+u::
+    Undo last command ([red]#repeatable#)
+    
+A::
+    Move to the end of the line and enter xref:insert[Insert mode] 
+    
+I::
+    Move the beginning of the line and enter xref:insert[Insert mode]
+    
+o::
+    Insert a line below the line the iter is currently over and enter xref:insert[Insert mode] ([red]#repeatable#)
+    
+O::
+    Insert a line above the line the iter is currently over and enter xref:insert[Insert mode] ([red]#repeatable#)
+    
+a::
+    Move the iter forward one character and enter xref:insert[Insert mode]
+    
+/::
+    Start a search  
+    
+[[insert]]
 Insert Mode:
 ~~~~~~~~~~~~
-Entered into by pressing "i" in command mode
+    Entered into by pressing "i" in command mode 
 
 Selection Mode:
 ~~~~~~~~~~~~~~~
-Entered into by selecting some text whilst in command mode
-Once entered into, deselecting the text without modifying said text will return the user to command mode
+    Entered into by selecting some text whilst in command mode
+    Once entered into, deselecting the text without modifying said text will return the user to command mode
 
-Pressing a modifier (control, alt, shift) will not edit the text
-Global shortcuts defined in gedit will still work in this mode
+    Pressing a modifier (control, alt, shift) will not edit the text
+    Global shortcuts defined in gedit will still work in this mode
 
-Pressing any character key whilst in this mode will delete the selection of text, insert the character you just pressed and set the mode to insert mode.
+    Pressing any character key whilst in this mode will delete the selection of text, insert the character you just pressed and set the mode to insert mode.
 
-Pressing Delete or backspace whilst in selection mode will delete only the selected text.
+    Pressing Delete or backspace whilst in selection mode will delete only the selected text.
 
+[[delete]]
 Delete Mode:
 ~~~~~~~~~~~~
-Entered into by pressing "d" in command mode
+    Entered into by pressing "d" in command mode
 
+[[indent]]
 Indent Mode:
 ~~~~~~~~~~~~
-Entered into by pressing ">" or "<" in command mode
+    Entered into by pressing ">" or "<" in command mode
 
+[[ex]]
 Ex Mode:
 ~~~~~~~~
-Entered into by pressing ":" in command mode
+    Entered into by pressing ":" in command mode
 
+[[yank]]
 Yank Mode:
 ~~~~~~~~~~
-Entered into by pressing "y" in command mode
+    Entered into by pressing "y" in command mode
 
+[[cmode]]
 C Mode:
 ~~~~~~~
-Entered into by pressing "c" in command mode
+    Entered into by pressing "c" in command mode
 
+[[gmode]]
 G Mode:
 ~~~~~~~
-Entered into by pressing "g" in command mode
+    Entered into by pressing "g" in command mode
 
+[[rmode]]
 R Mode:
 ~~~~~~~
-Entered into by pressing "r" in command mode
+    Entered into by pressing "r" in command mode
 
+[[tmode]]
 T Mode:
 ~~~~~~~
-Entered into by pressing "t" in command mode
+    Entered into by pressing "t" in command mode
     
 OPTIONS
 -------

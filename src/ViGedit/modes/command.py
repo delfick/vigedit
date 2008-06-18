@@ -34,6 +34,8 @@ class command_Mode(binding_base):
         self.register(pos.move_word_forward, gtk.keysyms.w, True, True)
         self.register(pos.move_word_backward, gtk.keysyms.b, True, True)
         self.register(pos.move_buffer_end, gtk.keysyms.G, True)        
+        self.register(pos.move_line_end, gtk.keysyms.dollar, True)
+        self.register(pos.move_line_begin, gtk.keysyms.percent, True) 
 
         self.register(insert.insert_end_line, gtk.keysyms.A, True, False, "insert")
         self.register(insert.insert_begin_line, gtk.keysyms.I, True, False, "insert")

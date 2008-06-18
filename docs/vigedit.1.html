@@ -303,9 +303,6 @@ div#toc a:visited { color: blue; }
 <body>
 <div id="header">
 <h1>VIGEDIT(1)</h1>
-<span id="author">Trond Danielsen</span><br />
-<span id="email"><tt>&lt;<a href="mailto:trond.danielsen@gmail.com">trond.danielsen@gmail.com</a>&gt;</tt></span><br />
-Stephen Moore &lt;delfick755@gmail.com&gt;
 </div>
 <h2>NAME</h2>
 <div class="sectionbody">
@@ -334,35 +331,432 @@ Esc
 </p>
 </dd>
 </dl>
-<h3>Command Mode:</h3>
-<p>Entered into by pressing Escape</p>
-<h3>Visual Mode:</h3>
-<p>Entered into by pressing "v" in command mode</p>
-<h3>Insert Mode:</h3>
-<p>Entered into by pressing "i" in command mode</p>
+<h3><a id="command"></a>Command Mode:</h3>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Entered into by pressing Escape</tt></pre>
+</div></div>
+<div class="title">&lt;x&gt; &lt;keycombo&gt; &lt;y&gt; &lt;keycombo&gt;</div><ul>
+<li>
+<p>
+Where &lt;x&gt; and &lt;y&gt; are numbers, and a &lt;keycombo&gt; some keys that are pressed (usually a single letter, though can be a single letter with some modifer being pressed (like control)
+</p>
+</li>
+<li>
+<p>
+If the action supports it, &lt;x&gt; will be the number of lines the action will apply to
+</p>
+</li>
+<li>
+<p>
+If the action is repeatable, &lt;y&gt; will be the number of times the action is repeated on the number of lines specified by &lt;x&gt;
+</p>
+</li>
+<li>
+<p>
+In the following descriptions of all the modes, if an actions supports the use of &lt;x&gt;, it will state <span style="color: red;">selects lines</span> and if it supports the use of &lt;y&gt; it will state <span style="color: red;">repeatable</span>
+</p>
+</li>
+<li>
+<p>
+The only exception to the above rule is that no action in command mode will select lines, and if they are repeatable, then they will use &lt;x&gt; as the number of times to repeat
+</p>
+</li>
+</ul>
+<p><span style="color: white;">_</span></p>
+<dl>
+<dt>
+c
+</dt>
+<dd>
+<p>
+    Activate <a href="#cmode">C mode</a>
+</p>
+</dd>
+<dt>
+d
+</dt>
+<dd>
+<p>
+    Activate <a href="#deleteMode">delete mode</a>
+</p>
+</dd>
+<dt>
+r
+</dt>
+<dd>
+<p>
+    Activate <a href="#rmode">R mode</a>
+</p>
+</dd>
+<dt>
+y
+</dt>
+<dd>
+<p>
+    Activate <a href="#yank">Yank mode</a>
+</p>
+</dd>
+<dt>
+i
+</dt>
+<dd>
+<p>
+    Activate <a href="#insert">Insert mode</a>
+</p>
+</dd>
+<dt>
+v
+</dt>
+<dd>
+<p>
+    Activate <a href="#visual">Visual mode</a>
+</p>
+</dd>
+<dt>
+g
+</dt>
+<dd>
+<p>
+    Activate <a href="#gmode">G mode</a>
+</p>
+</dd>
+<dt>
+:
+</dt>
+<dd>
+<p>
+    Activate <a href="#exmode">Ex mode</a>
+</p>
+</dd>
+<dt>
+t
+</dt>
+<dd>
+<p>
+    Activate <a href="#tmode">T mode</a>
+</p>
+</dd>
+<dt>
+&gt;
+</dt>
+<dd>
+<p>
+    Activate <a href="#indent">Indent mode</a>
+</p>
+</dd>
+<dt>
+&lt;
+</dt>
+<dd>
+<p>
+    Activate <a href="#indent">Indent mode</a>
+</p>
+</dd>
+<dt>
+ctrl r
+</dt>
+<dd>
+<p>
+    redo (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+Delete
+</dt>
+<dd>
+<p>
+    Delete character the iter is currently over (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+V
+</dt>
+<dd>
+<p>
+    select the line the iter is currently over and enter into <a href="#selection">Selection mode</a>
+</p>
+</dd>
+<dt>
+D
+</dt>
+<dd>
+<p>
+    Cut the text from the iter to the end of the line.
+</p>
+</dd>
+<dt>
+P
+</dt>
+<dd>
+<p>
+    Paste the clipboard above the line the iter is currently over (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+p
+</dt>
+<dd>
+<p>
+    Paste the clipboard below the line the iter is currently over (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+n
+</dt>
+<dd>
+<p>
+    Go the next item in search results (if a search has been conducted (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+</dl>
+<h3><a id="visual"></a>Visual Mode:</h3>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Entered into by pressing "v" in command mode</tt></pre>
+</div></div>
+<dl>
+<dt>
+i
+</dt>
+<dd>
+<p>
+    Activate <a href="#insert">Insert mode</a>
+</p>
+</dd>
+<dt>
+x
+</dt>
+<dd>
+<p>
+    Cut the current selection
+</p>
+</dd>
+<dt>
+y
+</dt>
+<dd>
+<p>
+    Copy the current selection
+</p>
+</dd>
+<dt>
+p
+</dt>
+<dd>
+<p>
+    Paste the current selection (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+a
+</dt>
+<dd>
+<p>
+    Select all
+</p>
+</dd>
+</dl>
+<h3>Common to Visual and Command Modes:</h3>
+<div class="literalblock">
+<div class="content">
+<pre><tt>These commands are common to visual and command modes.
+The only difference is any command that moves the iter, will select the text the iter moves over when in visual mode, and doesn't select text when in command mode.</tt></pre>
+</div></div>
+<dl>
+<dt>
+l
+</dt>
+<dd>
+<p>
+    Move forward one character (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+h
+</dt>
+<dd>
+<p>
+    Move backward one character (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+j
+</dt>
+<dd>
+<p>
+    Move down one line (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+k
+</dt>
+<dd>
+<p>
+    Move up one line (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+w
+</dt>
+<dd>
+<p>
+    Move forward one word (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+b
+</dt>
+<dd>
+<p>
+    Move backward one word (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+G
+</dt>
+<dd>
+<p>
+    Move the end of the document
+</p>
+</dd>
+<dt>
+$
+</dt>
+<dd>
+<p>
+    Move the end of the line (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+%
+</dt>
+<dd>
+<p>
+    Move to the beginning of the line
+</p>
+</dd>
+<dt>
+u
+</dt>
+<dd>
+<p>
+    Undo last command (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+A
+</dt>
+<dd>
+<p>
+    Move to the end of the line and enter <a href="#insert">Insert mode</a>
+</p>
+</dd>
+<dt>
+I
+</dt>
+<dd>
+<p>
+    Move the beginning of the line and enter <a href="#insert">Insert mode</a>
+</p>
+</dd>
+<dt>
+o
+</dt>
+<dd>
+<p>
+    Insert a line below the line the iter is currently over and enter <a href="#insert">Insert mode</a> (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+O
+</dt>
+<dd>
+<p>
+    Insert a line above the line the iter is currently over and enter <a href="#insert">Insert mode</a> (<span style="color: red;">repeatable</span>)
+</p>
+</dd>
+<dt>
+a
+</dt>
+<dd>
+<p>
+    Move the iter forward one character and enter <a href="#insert">Insert mode</a>
+</p>
+</dd>
+<dt>
+/
+</dt>
+<dd>
+<p>
+    Start a search
+</p>
+</dd>
+</dl>
+<h3><a id="insert"></a>Insert Mode:</h3>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Entered into by pressing "i" in command mode</tt></pre>
+</div></div>
 <h3>Selection Mode:</h3>
-<p>Entered into by selecting some text whilst in command mode
-Once entered into, deselecting the text without modifying said text will return the user to command mode</p>
-<p>Pressing a modifier (control, alt, shift) will not edit the text
-Global shortcuts defined in gedit will still work in this mode</p>
-<p>Pressing any character key whilst in this mode will delete the selection of text, insert the character you just pressed and set the mode to insert mode.</p>
-<p>Pressing Delete or backspace whilst in selection mode will delete only the selected text.</p>
-<h3>Delete Mode:</h3>
-<p>Entered into by pressing "d" in command mode</p>
-<h3>Indent Mode:</h3>
-<p>Entered into by pressing "&gt;" or "&lt;" in command mode</p>
-<h3>Ex Mode:</h3>
-<p>Entered into by pressing ":" in command mode</p>
-<h3>Yank Mode:</h3>
-<p>Entered into by pressing "y" in command mode</p>
-<h3>C Mode:</h3>
-<p>Entered into by pressing "c" in command mode</p>
-<h3>G Mode:</h3>
-<p>Entered into by pressing "g" in command mode</p>
-<h3>R Mode:</h3>
-<p>Entered into by pressing "r" in command mode</p>
-<h3>T Mode:</h3>
-<p>Entered into by pressing "t" in command mode</p>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Entered into by selecting some text whilst in command mode
+Once entered into, deselecting the text without modifying said text will return the user to command mode</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Pressing a modifier (control, alt, shift) will not edit the text
+Global shortcuts defined in gedit will still work in this mode</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Pressing any character key whilst in this mode will delete the selection of text, insert the character you just pressed and set the mode to insert mode.</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Pressing Delete or backspace whilst in selection mode will delete only the selected text.</tt></pre>
+</div></div>
+<h3><a id="delete"></a>Delete Mode:</h3>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Entered into by pressing "d" in command mode</tt></pre>
+</div></div>
+<h3><a id="indent"></a>Indent Mode:</h3>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Entered into by pressing "&gt;" or "&lt;" in command mode</tt></pre>
+</div></div>
+<h3><a id="ex"></a>Ex Mode:</h3>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Entered into by pressing ":" in command mode</tt></pre>
+</div></div>
+<h3><a id="yank"></a>Yank Mode:</h3>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Entered into by pressing "y" in command mode</tt></pre>
+</div></div>
+<h3><a id="cmode"></a>C Mode:</h3>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Entered into by pressing "c" in command mode</tt></pre>
+</div></div>
+<h3><a id="gmode"></a>G Mode:</h3>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Entered into by pressing "g" in command mode</tt></pre>
+</div></div>
+<h3><a id="rmode"></a>R Mode:</h3>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Entered into by pressing "r" in command mode</tt></pre>
+</div></div>
+<h3><a id="tmode"></a>T Mode:</h3>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Entered into by pressing "t" in command mode</tt></pre>
+</div></div>
 </div>
 <h2>OPTIONS</h2>
 <div class="sectionbody">
@@ -396,7 +790,7 @@ Free use of this software is granted under the terms of the GNU General Public L
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 18-Jun-2008 01:11:09 WST
+Last updated 18-Jun-2008 12:48:47 WST
 </div>
 </div>
 </body>

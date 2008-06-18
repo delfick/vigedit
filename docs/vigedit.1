@@ -31,47 +31,373 @@ Esc
 Switch to command mode\.
 .RE
 .SS "Command Mode:"
+.sp
+.RS 4
+.nf
 Entered into by pressing Escape
+.fi
+.RE
+.PP
+\fB<x> <keycombo> <y> <keycombo>\fR
 .sp
+.RS 4
+\h'-04'\(bu\h'+03'Where <x> and <y> are numbers, and a <keycombo> some keys that are pressed (usually a single letter, though can be a single letter with some modifer being pressed (like control)
+.RE
+.sp
+.RS 4
+\h'-04'\(bu\h'+03'If the action supports it, <x> will be the number of lines the action will apply to
+.RE
+.sp
+.RS 4
+\h'-04'\(bu\h'+03'If the action is repeatable, <y> will be the number of times the action is repeated on the number of lines specified by <x>
+.RE
+.sp
+.RS 4
+\h'-04'\(bu\h'+03'In the following descriptions of all the modes, if an actions supports the use of <x>, it will state selects lines and if it supports the use of <y> it will state repeatable
+.RE
+.sp
+.RS 4
+\h'-04'\(bu\h'+03'The only exception to the above rule is that no action in command mode will select lines, and if they are repeatable, then they will use <x> as the number of times to repeat
+.RE
+_
+.PP
+c
+.RS 4
+Activate
+C mode
+the section called \(lqC Mode:\(rq
+.RE
+.PP
+d
+.RS 4
+Activate
+delete mode
+???
+.RE
+.PP
+r
+.RS 4
+Activate
+R mode
+the section called \(lqR Mode:\(rq
+.RE
+.PP
+y
+.RS 4
+Activate
+Yank mode
+the section called \(lqYank Mode:\(rq
+.RE
+.PP
+i
+.RS 4
+Activate
+Insert mode
+the section called \(lqInsert Mode:\(rq
+.RE
+.PP
+v
+.RS 4
+Activate
+Visual mode
+the section called \(lqVisual Mode:\(rq
+.RE
+.PP
+g
+.RS 4
+Activate
+G mode
+the section called \(lqG Mode:\(rq
+.RE
+.PP
+:
+.RS 4
+Activate
+Ex mode
+???
+.RE
+.PP
+t
+.RS 4
+Activate
+T mode
+the section called \(lqT Mode:\(rq
+.RE
+.PP
+>
+.RS 4
+Activate
+Indent mode
+the section called \(lqIndent Mode:\(rq
+.RE
+.PP
+<
+.RS 4
+Activate
+Indent mode
+the section called \(lqIndent Mode:\(rq
+.RE
+.PP
+ctrl r
+.RS 4
+redo (repeatable)
+.RE
+.PP
+Delete
+.RS 4
+Delete character the iter is currently over (repeatable)
+.RE
+.PP
+V
+.RS 4
+select the line the iter is currently over and enter into
+Selection mode
+???
+.RE
+.PP
+D
+.RS 4
+Cut the text from the iter to the end of the line\.
+.RE
+.PP
+P
+.RS 4
+Paste the clipboard above the line the iter is currently over (repeatable)
+.RE
+.PP
+p
+.RS 4
+Paste the clipboard below the line the iter is currently over (repeatable)
+.RE
+.PP
+n
+.RS 4
+Go the next item in search results (if a search has been conducted (repeatable)
+.RE
 .SS "Visual Mode:"
+.sp
+.RS 4
+.nf
 Entered into by pressing "v" in command mode
+.fi
+.RE
+.PP
+i
+.RS 4
+Activate
+Insert mode
+the section called \(lqInsert Mode:\(rq
+.RE
+.PP
+x
+.RS 4
+Cut the current selection
+.RE
+.PP
+y
+.RS 4
+Copy the current selection
+.RE
+.PP
+p
+.RS 4
+Paste the current selection (repeatable)
+.RE
+.PP
+a
+.RS 4
+Select all
+.RE
+.SS "Common to Visual and Command Modes:"
 .sp
+.RS 4
+.nf
+These commands are common to visual and command modes\.
+The only difference is any command that moves the iter, will select the text the iter moves over when in visual mode, and doesn\'t select text when in command mode\.
+.fi
+.RE
+.PP
+l
+.RS 4
+Move forward one character (repeatable)
+.RE
+.PP
+h
+.RS 4
+Move backward one character (repeatable)
+.RE
+.PP
+j
+.RS 4
+Move down one line (repeatable)
+.RE
+.PP
+k
+.RS 4
+Move up one line (repeatable)
+.RE
+.PP
+w
+.RS 4
+Move forward one word (repeatable)
+.RE
+.PP
+b
+.RS 4
+Move backward one word (repeatable)
+.RE
+.PP
+G
+.RS 4
+Move the end of the document
+.RE
+.PP
+$
+.RS 4
+Move the end of the line (repeatable)
+.RE
+.PP
+%
+.RS 4
+Move to the beginning of the line
+.RE
+.PP
+u
+.RS 4
+Undo last command (repeatable)
+.RE
+.PP
+A
+.RS 4
+Move to the end of the line and enter
+Insert mode
+the section called \(lqInsert Mode:\(rq
+.RE
+.PP
+I
+.RS 4
+Move the beginning of the line and enter
+Insert mode
+the section called \(lqInsert Mode:\(rq
+.RE
+.PP
+o
+.RS 4
+Insert a line below the line the iter is currently over and enter
+Insert mode
+the section called \(lqInsert Mode:\(rq
+(repeatable)
+.RE
+.PP
+O
+.RS 4
+Insert a line above the line the iter is currently over and enter
+Insert mode
+the section called \(lqInsert Mode:\(rq
+(repeatable)
+.RE
+.PP
+a
+.RS 4
+Move the iter forward one character and enter
+Insert mode
+the section called \(lqInsert Mode:\(rq
+.RE
+.PP
+/
+.RS 4
+Start a search
+.RE
 .SS "Insert Mode:"
+.sp
+.RS 4
+.nf
 Entered into by pressing "i" in command mode
-.sp
+.fi
+.RE
 .SS "Selection Mode:"
-Entered into by selecting some text whilst in command mode Once entered into, deselecting the text without modifying said text will return the user to command mode
 .sp
-Pressing a modifier (control, alt, shift) will not edit the text Global shortcuts defined in gedit will still work in this mode
+.RS 4
+.nf
+Entered into by selecting some text whilst in command mode
+Once entered into, deselecting the text without modifying said text will return the user to command mode
+.fi
+.RE
 .sp
+.RS 4
+.nf
+Pressing a modifier (control, alt, shift) will not edit the text
+Global shortcuts defined in gedit will still work in this mode
+.fi
+.RE
+.sp
+.RS 4
+.nf
 Pressing any character key whilst in this mode will delete the selection of text, insert the character you just pressed and set the mode to insert mode\.
+.fi
+.RE
 .sp
+.RS 4
+.nf
 Pressing Delete or backspace whilst in selection mode will delete only the selected text\.
-.sp
+.fi
+.RE
 .SS "Delete Mode:"
+.sp
+.RS 4
+.nf
 Entered into by pressing "d" in command mode
-.sp
+.fi
+.RE
 .SS "Indent Mode:"
+.sp
+.RS 4
+.nf
 Entered into by pressing ">" or "<" in command mode
-.sp
+.fi
+.RE
 .SS "Ex Mode:"
+.sp
+.RS 4
+.nf
 Entered into by pressing ":" in command mode
-.sp
+.fi
+.RE
 .SS "Yank Mode:"
+.sp
+.RS 4
+.nf
 Entered into by pressing "y" in command mode
-.sp
+.fi
+.RE
 .SS "C Mode:"
+.sp
+.RS 4
+.nf
 Entered into by pressing "c" in command mode
-.sp
+.fi
+.RE
 .SS "G Mode:"
+.sp
+.RS 4
+.nf
 Entered into by pressing "g" in command mode
-.sp
+.fi
+.RE
 .SS "R Mode:"
+.sp
+.RS 4
+.nf
 Entered into by pressing "r" in command mode
-.sp
+.fi
+.RE
 .SS "T Mode:"
-Entered into by pressing "t" in command mode
 .sp
+.RS 4
+.nf
+Entered into by pressing "t" in command mode
+.fi
+.RE
 .SH "OPTIONS"
 Your only option is to modify the source code\.
 .sp
