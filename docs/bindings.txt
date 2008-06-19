@@ -1,0 +1,297 @@
+VIGEDIT BINDINGS
+================
+
+The three main modes are command, insert and visual mode. 
+
+Command mode can be reached at any point by pressing Escape, all other modes can be accessed via this mode.
+Insert mode makes the editor behave like an oridinary editor that doesn"t have modes.
+Visual mode makes it so when you move the iter (where text is to be inserted) via keyboard commands, then the text the iter is moved over will be selected.
+
+Using the Commands:
+~~~~~~~~~~~~~~~~~~~
+
+All actions are activated by a chain of key combinations with the following format:
+
+.<x> <keycombo> <y> <keycombo>
+* Where <x> and <y> are numbers, and a <keycombo> some keys that are pressed (usually a single letter, though can be a single letter with some modifer being pressed (like control) 
+* If the action supports it, <x> will be the number of lines the action will apply to
+* If the action is repeatable, <y> will be the number of times the action is repeated on the number of lines specified by <x> 
+* The only exception to the above rule is that no action in command mode will select lines, and if they are repeatable, then they will use <x> as the number of times to repeat 
+
+.Understanding the following explanations
+[NOTE]
+===============================
+The following contains the keys that have actions binded to them for each mode. Note that every binding have 2 flags associated with them, isFinal, isRepeatable.
+If isRepeatable is set then that means the action will be repeated, and the accumulator and two number flags will be reset after the action has been repeated the specified number of times
+if IsFinal is set, then the accumulator and the two flags will be reset after that action has been executed.
+
+The following listing of the currently implemented bindings will have a [sfrp] before the binding. Where each letter represents a different characteristic of the binding, if a letter is not there, then that means that characteristic is false.
+
+s means that action selects lines of text (uses <x>)
+
+f represents the isFinal flag
+
+r represents the isRepeatable flag (uses <y>)
+
+p means the action will preserve the position of the iter when it's executed.
+===============================
+
+
+Global to all modes:
+~~~~~~~~~~~~~~~~~~~~
+
+Esc::
+	Switch to command mode.
+
+[[command]]
+Command Mode:
+~~~~~~~~~~~~~
+    Entered into by pressing Escape
+
+[p] c::
+	Activate xref:cmode[C mode]
+    
+[p] d::
+    Activate xref:deleteMode[delete mode]
+    
+[p]  r::
+    Activate xref:rmode[R mode]
+
+[p]  y::
+    Activate xref:yank[Yank mode]
+    
+[p]  i::
+    Activate xref:insert[Insert mode]
+    
+[p]  v::
+    Activate xref:visual[Visual mode]
+    
+[p]  g::
+    Activate xref:gmode[G mode]
+    
+[p]  :::
+    Activate xref:exmode[Ex mode]
+    
+[p]  t::
+    Activate xref:tmode[T mode]
+    
+[p]  >::
+    Activate xref:indent[Indent mode]
+    
+[p]  <::
+    Activate xref:indent[Indent mode] 
+    
+[rp]  ctrl r::
+    redo  
+    
+[rp]  Delete::
+    Delete character the iter is currently over  
+    
+[fp]  V:: 
+    select the line the iter is currently over and enter into xref:selection[Selection mode]
+    
+[fp]  D::
+    Cut the text from the iter to the end of the line.
+    
+[srp]  P::
+    Paste the clipboard above the line the iter is currently over  
+    
+[srp]  p:: 
+    Paste the clipboard below the line the iter is currently over  
+    
+[r]  n::
+    Go the next item in search results (if a search has been conducted  
+    
+[f]  a::
+    Move the iter forward one character and enter xref:insert[Insert mode]
+    
+[[visual]]
+Visual Mode:
+~~~~~~~~~~~~
+    Entered into by pressing "v" in command mode
+    
+[p]  i::
+    Activate xref:insert[Insert mode]
+    
+[fp]  x::
+    Cut the current selection
+    
+[fp]  y::
+    Copy the current selection
+    
+[r]  p::    
+    Paste the current selection  
+    
+[f]  a::
+    Select all        
+        
+Common to Visual and Command Modes:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    These commands are common to visual and command modes. 
+    The only difference is any command that moves the iter, will select the text the iter moves over when in visual mode, and doesn't select text when in command mode.
+    
+[r]  l::
+    Move forward one character  
+    
+[r]  h::
+    Move backward one character  
+    
+[r]  j::
+    Move down one line  
+    
+[r]  k::
+    Move up one line  
+    
+[r]  w::
+    Move forward one word  
+    
+[r]  b::
+    Move backward one word  
+    
+[r]  G::
+    Move the end of the document
+    
+[f]  $::
+    Move the end of the line 
+   
+[f]  %::
+    Move to the beginning of the line
+    
+[r]  u::
+    Undo last command  
+    
+[f]  A::
+    Move to the end of the line and enter xref:insert[Insert mode] 
+    
+[f]  I::
+    Move the beginning of the line and enter xref:insert[Insert mode]
+    
+[r]  o::
+    Insert a line below the line the iter is currently over and enter xref:insert[Insert mode]  
+    
+[r]  O::
+    Insert a line above the line the iter is currently over and enter xref:insert[Insert mode]  
+    
+[f]  /::
+    Start a search  
+    
+[[insert]]
+Insert Mode:
+~~~~~~~~~~~~
+    Entered into by pressing "i" in command mode 
+
+Selection Mode:
+~~~~~~~~~~~~~~~
+    Entered into by selecting some text whilst in command mode
+    Once entered into, deselecting the text without modifying said text will return the user to command mode
+
+    Pressing a modifier (control, alt, shift) will not edit the text
+    Global shortcuts defined in gedit will still work in this mode
+
+    Pressing any character key whilst in this mode will delete the selection of text, insert the character you just pressed and set the mode to insert mode.
+
+    Pressing Delete or backspace whilst in selection mode will delete only the selected text.
+
+[[delete]]
+Delete Mode:
+~~~~~~~~~~~~
+    Entered into by pressing "d" in command mode
+    
+[sr] d::
+	Cuts whole lines into the clipboard
+	
+[fp] $::
+	Cuts from the iter to the end of the line into the clipboard
+	
+[f] w::
+	Cuts the next word into the clipboard
+
+[[indent]]
+Indent Mode:
+~~~~~~~~~~~~
+    Entered into by pressing ">" or "<" in command mode
+    
+[srp] <::
+	Indents lines to the left	
+	
+[srp] >::
+	Indents lines to the right        
+        
+[[ex]]
+Ex Mode:
+~~~~~~~~
+    Entered into by pressing ":" in command mode. You then type in the command and press enter to evaluation that expression. 
+    The following is the list of expressions you can choose from
+    
+w::
+	Save the current file
+	
+wq::
+	Save and quit the current file
+	
+<number>::
+	Where <number> is a number (i.e. 62), the iter will go to that line number
+	
+q::
+	Quit the current file (will ask if you want to save the file if that already hasn't been done)
+	
+q!::
+	Quit the file without asking if you want to save it first
+	
+tabnew::
+	Create a new tab
+	
+bn::
+	Go to the next tab
+	
+bp::
+	Go to the previous tab
+	
+tabnew <filename>::
+	Where <filename> is the path to a file (with respect to your home folder), it will open that file in a new tab
+	
+e <filename>::
+	Where <filename> is the path to a file (with respect to your home folder), it will close the current tab and open the specified file
+
+[[yank]]
+Yank Mode:
+~~~~~~~~~~
+    Entered into by pressing "y" in command mode
+    
+[sp] y::
+	Copies lines into the clipboard
+
+[[cmode]]
+C Mode:
+~~~~~~~
+    Entered into by pressing "c" in command mode
+    
+[] aw::
+	Overwrite the previous word and enter insert mode
+
+[[gmode]]
+G Mode:
+~~~~~~~
+    Entered into by pressing "g" in command mode
+    
+[] q}::
+	Split lines
+	
+[f] g::
+	Move to the top of the file
+	
+[f] t::
+	Select the next tab		
+
+[[rmode]]
+R Mode:
+~~~~~~~
+    Entered into by pressing "r" in command mode.
+   	Pressing any character whilst in this mode will replace the letter the iter is currently over with what was typed and then enter command mode. 
+
+[[tmode]]
+T Mode:
+~~~~~~~
+    Entered into by pressing "t" in command mode.
+    The iter will move through the file untill it finds the next occurance of what character is pressed next.
+    So for example, say you enter tmode and press the 'a' then the iter will move to the next 'a' character.

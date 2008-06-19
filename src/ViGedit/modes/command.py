@@ -6,6 +6,8 @@ class command_Mode(binding_base):
         
 
     def init_bindings(self):
+    	self.register(lambda : vibase.set_mode("example"), gtk.keysyms.E)
+    	
         self.register(lambda : vibase.set_mode("cmode"), gtk.keysyms.c)
         self.register(lambda : vibase.set_mode("delete"), gtk.keysyms.d)
         self.register(lambda : vibase.set_mode("rmode"), gtk.keysyms.r)

@@ -10,7 +10,7 @@ from rmode import rmode_Mode
 from tmode import tmode_Mode
 from selection import selection_Mode
 from indent import indent_Mode
-
+from example import example_Mode
 import gtk
 from ..actions import insert, lines, menus, others, text
 from ..actions import fileOperations as fileOps
@@ -35,6 +35,7 @@ class BindingRegistry(object):
         self.rmodeMode = rmode_Mode()
         self.tmodeMode = tmode_Mode()
         self.selectionMode = selection_Mode()
+        self.exampleMode = example_Mode()
         self.indentMode = indent_Mode()
 
     def set_mode(self, mode):

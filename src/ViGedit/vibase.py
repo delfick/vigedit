@@ -192,18 +192,10 @@ class ViBase(GObject):
 
     def on_key_press_event(self, view, event):
         """ initial key press processing """
-        
-        if (len(ViBase.vigtk.acc) == 1) and (ViBase.vigtk.mode == ViBase.vigtk.RMODE): 
-            set_mode("command")
             
         if view.get_buffer() != ViGtk.doc: 
             
             print "doc doesn't equal"
-            self.emit("update_vigtk", view, ViGtk.view, event, ViGtk.mode)
-            return False
-            
-        elif view != ViGtk.view:
-            print "view doesn't equal"
             self.emit("update_vigtk", view, ViGtk.view, event, ViGtk.mode)
             return False
             

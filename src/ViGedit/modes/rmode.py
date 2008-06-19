@@ -9,10 +9,11 @@ class rmode_Mode(binding_base):
         pass
         
     def handle_mode(self, event):
-        vibase.increment_accumulator(event)
-        vibase.set_overwrite(True)
-        base.vigtk.returnToMode = "command"
-        return False
+    	if vibase.isModifierPressed(event) == False:
+		    vibase.increment_accumulator(event)
+		    vibase.set_overwrite(True)
+		    base.vigtk.returnToMode = "command"
+		    return False
         
     def select_mode(self):
         base.vigtk.acc = []
