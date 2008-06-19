@@ -1,11 +1,11 @@
 .\"     Title: vigedit
 .\"    Author: 
 .\" Generator: DocBook XSL Stylesheets v1.73.2 <http://docbook.sf.net/>
-.\"      Date: 06/18/2008
+.\"      Date: 06/19/2008
 .\"    Manual: 
 .\"    Source: 
 .\"
-.TH "VIGEDIT" "1" "06/18/2008" "" ""
+.TH "VIGEDIT" "1" "06/19/2008" "" ""
 .\" disable hyphenation
 .nh
 .\" disable justification (adjust text to left margin only)
@@ -50,7 +50,15 @@ All actions are activated by a chain of key combinations with the following form
 Understanding the following explanations
 The following contains the keys that have actions binded to them for each mode\. Note that every binding have 2 flags associated with them, isFinal, isRepeatable\. If isRepeatable is set then that means the action will be repeated, and the accumulator and two number flags will be reset after the action has been repeated the specified number of times if IsFinal is set, then the accumulator and the two flags will be reset after that action has been executed\.
 .sp
-The following listing of the currently implemented bindings will have a [sfrp] before the binding\. Where each letter represents a different characteristic of the binding, if a letter is red, then that means that characteristic is true\. s means that action selects lines of text f represents the isFinal flag r represents the isRepeatable flag p means the action will preserve the position of the iter when it\'s executed\.
+The following listing of the currently implemented bindings will have a [sfrp] before the binding\. Where each letter represents a different characteristic of the binding, if a letter is not there, then that means that characteristic is false\.
+.sp
+s means that action selects lines of text (uses <x>)
+.sp
+f represents the isFinal flag
+.sp
+r represents the isRepeatable flag (uses <y>)
+.sp
+p means the action will preserve the position of the iter when it\'s executed\.
 .sp
 .SS "Global to all modes:"
 .PP
@@ -66,134 +74,125 @@ Entered into by pressing Escape
 .fi
 .RE
 .PP
-\fBhello\fR. Activate
+[p] c
+.RS 4
+Activate
 C mode
 the section called \(lqC Mode:\(rq
+.RE
 .PP
-\fBExample\ 1.\ A NOTE block\fR
-Qui in magna commodo, est labitur dolorum an\. Est ne magna primis adolescens\.
-.sp
-.sp
+[p] d
 .RS 4
-\h'-04' 1.\h'+02'Fusce euismod commodo velit\.
+Activate
+delete mode
+???
 .RE
-.sp
-.RS 4
-\h'-04' 2.\h'+02'Vivamus fringilla mi eu lacus\.
-.sp
-.RS 4
-\h'-04' 1.\h'+02'Fusce euismod commodo velit\.
-.RE
-.sp
-.RS 4
-\h'-04' 2.\h'+02'Vivamus fringilla mi eu lacus\.
-.RE
-.RE
-.sp
-.RS 4
-\h'-04' 3.\h'+02'Donec eget arcu bibendum nunc consequat lobortis\.
-.RE
-
-[sfrp] d Activate delete mode ???
 .PP
-[sfrp] r
+[p] r
 .RS 4
 Activate
 R mode
 the section called \(lqR Mode:\(rq
 .RE
 .PP
-[sfrp] y
+[p] y
 .RS 4
 Activate
 Yank mode
 the section called \(lqYank Mode:\(rq
 .RE
 .PP
-[sfrp] i
+[p] i
 .RS 4
 Activate
 Insert mode
 the section called \(lqInsert Mode:\(rq
 .RE
 .PP
-[sfrp] v
+[p] v
 .RS 4
 Activate
 Visual mode
 the section called \(lqVisual Mode:\(rq
 .RE
 .PP
-[sfrp] g
+[p] g
 .RS 4
 Activate
 G mode
 the section called \(lqG Mode:\(rq
 .RE
 .PP
-[sfrp] :
+[p] :
 .RS 4
 Activate
 Ex mode
 ???
 .RE
 .PP
-[sfrp] t
+[p] t
 .RS 4
 Activate
 T mode
 the section called \(lqT Mode:\(rq
 .RE
 .PP
-[sfrp] >
+[p] >
 .RS 4
 Activate
 Indent mode
 the section called \(lqIndent Mode:\(rq
 .RE
 .PP
-[sfrp] <
+[p] <
 .RS 4
 Activate
 Indent mode
 the section called \(lqIndent Mode:\(rq
 .RE
 .PP
-[sfrp] ctrl r
+[rp] ctrl r
 .RS 4
-redo (repeatable)
+redo
 .RE
 .PP
-[sfrp] Delete
+[rp] Delete
 .RS 4
-Delete character the iter is currently over (repeatable)
+Delete character the iter is currently over
 .RE
 .PP
-[sfrp] V
+[fp] V
 .RS 4
 select the line the iter is currently over and enter into
 Selection mode
 ???
 .RE
 .PP
-[sfrp] D
+[fp] D
 .RS 4
 Cut the text from the iter to the end of the line\.
 .RE
 .PP
-[sfrp] P
+[srp] P
 .RS 4
-Paste the clipboard above the line the iter is currently over (repeatable)
+Paste the clipboard above the line the iter is currently over
 .RE
 .PP
-[sfrp] p
+[srp] p
 .RS 4
-Paste the clipboard below the line the iter is currently over (repeatable)
+Paste the clipboard below the line the iter is currently over
 .RE
 .PP
-[sfrp] n
+[r] n
 .RS 4
-Go the next item in search results (if a search has been conducted (repeatable)
+Go the next item in search results (if a search has been conducted
+.RE
+.PP
+[f] a
+.RS 4
+Move the iter forward one character and enter
+Insert mode
+the section called \(lqInsert Mode:\(rq
 .RE
 .SS "Visual Mode:"
 .sp
@@ -203,29 +202,29 @@ Entered into by pressing "v" in command mode
 .fi
 .RE
 .PP
-[sfrp] i
+[p] i
 .RS 4
 Activate
 Insert mode
 the section called \(lqInsert Mode:\(rq
 .RE
 .PP
-[sfrp] x
+[fp] x
 .RS 4
 Cut the current selection
 .RE
 .PP
-[sfrp] y
+[fp] y
 .RS 4
 Copy the current selection
 .RE
 .PP
-[sfrp] p
+[r] p
 .RS 4
-Paste the current selection (repeatable)
+Paste the current selection
 .RE
 .PP
-[sfrp] a
+[f] a
 .RS 4
 Select all
 .RE
@@ -238,94 +237,85 @@ The only difference is any command that moves the iter, will select the text the
 .fi
 .RE
 .PP
-[sfrp] l
+[r] l
 .RS 4
-Move forward one character (repeatable)
+Move forward one character
 .RE
 .PP
-[sfrp] h
+[r] h
 .RS 4
-Move backward one character (repeatable)
+Move backward one character
 .RE
 .PP
-[sfrp] j
+[r] j
 .RS 4
-Move down one line (repeatable)
+Move down one line
 .RE
 .PP
-[sfrp] k
+[r] k
 .RS 4
-Move up one line (repeatable)
+Move up one line
 .RE
 .PP
-[sfrp] w
+[r] w
 .RS 4
-Move forward one word (repeatable)
+Move forward one word
 .RE
 .PP
-[sfrp] b
+[r] b
 .RS 4
-Move backward one word (repeatable)
+Move backward one word
 .RE
 .PP
-[sfrp] G
+[r] G
 .RS 4
 Move the end of the document
 .RE
 .PP
-[sfrp] $
+[f] $
 .RS 4
-Move the end of the line (repeatable)
+Move the end of the line
 .RE
 .PP
-[sfrp] %
+[f] %
 .RS 4
 Move to the beginning of the line
 .RE
 .PP
-[sfrp] u
+[r] u
 .RS 4
-Undo last command (repeatable)
+Undo last command
 .RE
 .PP
-[sfrp] A
+[f] A
 .RS 4
 Move to the end of the line and enter
 Insert mode
 the section called \(lqInsert Mode:\(rq
 .RE
 .PP
-[sfrp] I
+[f] I
 .RS 4
 Move the beginning of the line and enter
 Insert mode
 the section called \(lqInsert Mode:\(rq
 .RE
 .PP
-[sfrp] o
+[r] o
 .RS 4
 Insert a line below the line the iter is currently over and enter
 Insert mode
 the section called \(lqInsert Mode:\(rq
-(repeatable)
 .RE
 .PP
-[sfrp] O
+[r] O
 .RS 4
 Insert a line above the line the iter is currently over and enter
 Insert mode
 the section called \(lqInsert Mode:\(rq
-(repeatable)
 .RE
 .PP
-[sfrp] a
-.RS 4
-Move the iter forward one character and enter
-Insert mode
-the section called \(lqInsert Mode:\(rq
-.RE
-.PP
-[sfrp] /
+[f] /
 .RS 4
 Start a search
 .RE

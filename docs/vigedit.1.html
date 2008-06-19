@@ -353,11 +353,11 @@ The only exception to the above rule is that no action in command mode will sele
 <p>The following contains the keys that have actions binded to them for each mode. Note that every binding have 2 flags associated with them, isFinal, isRepeatable.
 If isRepeatable is set then that means the action will be repeated, and the accumulator and two number flags will be reset after the action has been repeated the specified number of times
 if IsFinal is set, then the accumulator and the two flags will be reset after that action has been executed.</p>
-<p>The following listing of the currently implemented bindings will have a [sfrp] before the binding. Where each letter represents a different characteristic of the binding, if a letter is red, then that means that characteristic is true.
-s means that action selects lines of text
-f represents the isFinal flag
-r represents the isRepeatable flag
-p means the action will preserve the position of the iter when it's executed.</p>
+<p>The following listing of the currently implemented bindings will have a [sfrp] before the binding. Where each letter represents a different characteristic of the binding, if a letter is not there, then that means that characteristic is false.</p>
+<p>s means that action selects lines of text (uses &lt;x&gt;)</p>
+<p>f represents the isFinal flag</p>
+<p>r represents the isRepeatable flag (uses &lt;y&gt;)</p>
+<p>p means the action will preserve the position of the iter when it's executed.</p>
 </td>
 </tr></table>
 </div>
@@ -377,49 +377,25 @@ Esc
 <div class="content">
 <pre><tt>Entered into by pressing Escape</tt></pre>
 </div></div>
-<div class="title">hello</div>
-<p>Activate <a href="#cmode">C mode</a></p>
-<div class="exampleblock">
-<div class="title">My Special NoteA NOTE block</div>
-<div class="exampleblock-content">
-<p>Qui in magna commodo, est labitur dolorum an. Est ne magna primis
-adolescens.</p>
-<ol>
-<li>
-<p>
-Fusce euismod commodo velit.
-</p>
-</li>
-<li>
-<p>
-Vivamus fringilla mi eu lacus.
-</p>
-<ol class="olist2">
-<li>
-<p>
-Fusce euismod commodo velit.
-</p>
-</li>
-<li>
-<p>
-Vivamus fringilla mi eu lacus.
-</p>
-</li>
-</ol>
-</li>
-<li>
-<p>
-Donec eget arcu bibendum
-  nunc consequat lobortis.
-</p>
-</li>
-</ol>
-</div></div>
-<p>[sfrp]  d
-    Activate <a href="#deleteMode">delete mode</a></p>
 <dl>
 <dt>
-[sfrp]  r
+[p] c
+</dt>
+<dd>
+<p>
+        Activate <a href="#cmode">C mode</a>
+</p>
+</dd>
+<dt>
+[p] d
+</dt>
+<dd>
+<p>
+    Activate <a href="#deleteMode">delete mode</a>
+</p>
+</dd>
+<dt>
+[p]  r
 </dt>
 <dd>
 <p>
@@ -427,7 +403,7 @@ Donec eget arcu bibendum
 </p>
 </dd>
 <dt>
-[sfrp]  y
+[p]  y
 </dt>
 <dd>
 <p>
@@ -435,7 +411,7 @@ Donec eget arcu bibendum
 </p>
 </dd>
 <dt>
-[sfrp]  i
+[p]  i
 </dt>
 <dd>
 <p>
@@ -443,7 +419,7 @@ Donec eget arcu bibendum
 </p>
 </dd>
 <dt>
-[sfrp]  v
+[p]  v
 </dt>
 <dd>
 <p>
@@ -451,7 +427,7 @@ Donec eget arcu bibendum
 </p>
 </dd>
 <dt>
-[sfrp]  g
+[p]  g
 </dt>
 <dd>
 <p>
@@ -459,7 +435,7 @@ Donec eget arcu bibendum
 </p>
 </dd>
 <dt>
-[sfrp]  :
+[p]  :
 </dt>
 <dd>
 <p>
@@ -467,7 +443,7 @@ Donec eget arcu bibendum
 </p>
 </dd>
 <dt>
-[sfrp]  t
+[p]  t
 </dt>
 <dd>
 <p>
@@ -475,7 +451,7 @@ Donec eget arcu bibendum
 </p>
 </dd>
 <dt>
-[sfrp]  &gt;
+[p]  &gt;
 </dt>
 <dd>
 <p>
@@ -483,7 +459,7 @@ Donec eget arcu bibendum
 </p>
 </dd>
 <dt>
-[sfrp]  &lt;
+[p]  &lt;
 </dt>
 <dd>
 <p>
@@ -491,23 +467,23 @@ Donec eget arcu bibendum
 </p>
 </dd>
 <dt>
-[sfrp]  ctrl r
+[rp]  ctrl r
 </dt>
 <dd>
 <p>
-    redo (<span style="color: red;">repeatable</span>)
+    redo
 </p>
 </dd>
 <dt>
-[sfrp]  Delete
+[rp]  Delete
 </dt>
 <dd>
 <p>
-    Delete character the iter is currently over (<span style="color: red;">repeatable</span>)
+    Delete character the iter is currently over
 </p>
 </dd>
 <dt>
-[sfrp]  V
+[fp]  V
 </dt>
 <dd>
 <p>
@@ -515,7 +491,7 @@ Donec eget arcu bibendum
 </p>
 </dd>
 <dt>
-[sfrp]  D
+[fp]  D
 </dt>
 <dd>
 <p>
@@ -523,27 +499,35 @@ Donec eget arcu bibendum
 </p>
 </dd>
 <dt>
-[sfrp]  P
+[srp]  P
 </dt>
 <dd>
 <p>
-    Paste the clipboard above the line the iter is currently over (<span style="color: red;">repeatable</span>)
+    Paste the clipboard above the line the iter is currently over
 </p>
 </dd>
 <dt>
-[sfrp]  p
+[srp]  p
 </dt>
 <dd>
 <p>
-    Paste the clipboard below the line the iter is currently over (<span style="color: red;">repeatable</span>)
+    Paste the clipboard below the line the iter is currently over
 </p>
 </dd>
 <dt>
-[sfrp]  n
+[r]  n
 </dt>
 <dd>
 <p>
-    Go the next item in search results (if a search has been conducted (<span style="color: red;">repeatable</span>)
+    Go the next item in search results (if a search has been conducted
+</p>
+</dd>
+<dt>
+[f]  a
+</dt>
+<dd>
+<p>
+    Move the iter forward one character and enter <a href="#insert">Insert mode</a>
 </p>
 </dd>
 </dl>
@@ -554,7 +538,7 @@ Donec eget arcu bibendum
 </div></div>
 <dl>
 <dt>
-[sfrp]  i
+[p]  i
 </dt>
 <dd>
 <p>
@@ -562,7 +546,7 @@ Donec eget arcu bibendum
 </p>
 </dd>
 <dt>
-[sfrp]  x
+[fp]  x
 </dt>
 <dd>
 <p>
@@ -570,7 +554,7 @@ Donec eget arcu bibendum
 </p>
 </dd>
 <dt>
-[sfrp]  y
+[fp]  y
 </dt>
 <dd>
 <p>
@@ -578,15 +562,15 @@ Donec eget arcu bibendum
 </p>
 </dd>
 <dt>
-[sfrp]  p
+[r]  p
 </dt>
 <dd>
 <p>
-    Paste the current selection (<span style="color: red;">repeatable</span>)
+    Paste the current selection
 </p>
 </dd>
 <dt>
-[sfrp]  a
+[f]  a
 </dt>
 <dd>
 <p>
@@ -602,55 +586,55 @@ The only difference is any command that moves the iter, will select the text the
 </div></div>
 <dl>
 <dt>
-[sfrp]  l
+[r]  l
 </dt>
 <dd>
 <p>
-    Move forward one character (<span style="color: red;">repeatable</span>)
+    Move forward one character
 </p>
 </dd>
 <dt>
-[sfrp]  h
+[r]  h
 </dt>
 <dd>
 <p>
-    Move backward one character (<span style="color: red;">repeatable</span>)
+    Move backward one character
 </p>
 </dd>
 <dt>
-[sfrp]  j
+[r]  j
 </dt>
 <dd>
 <p>
-    Move down one line (<span style="color: red;">repeatable</span>)
+    Move down one line
 </p>
 </dd>
 <dt>
-[sfrp]  k
+[r]  k
 </dt>
 <dd>
 <p>
-    Move up one line (<span style="color: red;">repeatable</span>)
+    Move up one line
 </p>
 </dd>
 <dt>
-[sfrp]  w
+[r]  w
 </dt>
 <dd>
 <p>
-    Move forward one word (<span style="color: red;">repeatable</span>)
+    Move forward one word
 </p>
 </dd>
 <dt>
-[sfrp]  b
+[r]  b
 </dt>
 <dd>
 <p>
-    Move backward one word (<span style="color: red;">repeatable</span>)
+    Move backward one word
 </p>
 </dd>
 <dt>
-[sfrp]  G
+[r]  G
 </dt>
 <dd>
 <p>
@@ -658,15 +642,15 @@ The only difference is any command that moves the iter, will select the text the
 </p>
 </dd>
 <dt>
-[sfrp]  $
+[f]  $
 </dt>
 <dd>
 <p>
-    Move the end of the line (<span style="color: red;">repeatable</span>)
+    Move the end of the line
 </p>
 </dd>
 <dt>
-[sfrp]  %
+[f]  %
 </dt>
 <dd>
 <p>
@@ -674,15 +658,15 @@ The only difference is any command that moves the iter, will select the text the
 </p>
 </dd>
 <dt>
-[sfrp]  u
+[r]  u
 </dt>
 <dd>
 <p>
-    Undo last command (<span style="color: red;">repeatable</span>)
+    Undo last command
 </p>
 </dd>
 <dt>
-[sfrp]  A
+[f]  A
 </dt>
 <dd>
 <p>
@@ -690,7 +674,7 @@ The only difference is any command that moves the iter, will select the text the
 </p>
 </dd>
 <dt>
-[sfrp]  I
+[f]  I
 </dt>
 <dd>
 <p>
@@ -698,31 +682,23 @@ The only difference is any command that moves the iter, will select the text the
 </p>
 </dd>
 <dt>
-[sfrp]  o
+[r]  o
 </dt>
 <dd>
 <p>
-    Insert a line below the line the iter is currently over and enter <a href="#insert">Insert mode</a> (<span style="color: red;">repeatable</span>)
+    Insert a line below the line the iter is currently over and enter <a href="#insert">Insert mode</a>
 </p>
 </dd>
 <dt>
-[sfrp]  O
+[r]  O
 </dt>
 <dd>
 <p>
-    Insert a line above the line the iter is currently over and enter <a href="#insert">Insert mode</a> (<span style="color: red;">repeatable</span>)
+    Insert a line above the line the iter is currently over and enter <a href="#insert">Insert mode</a>
 </p>
 </dd>
 <dt>
-[sfrp]  a
-</dt>
-<dd>
-<p>
-    Move the iter forward one character and enter <a href="#insert">Insert mode</a>
-</p>
-</dd>
-<dt>
-[sfrp]  /
+[f]  /
 </dt>
 <dd>
 <p>
@@ -827,7 +803,7 @@ Free use of this software is granted under the terms of the GNU General Public L
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 18-Jun-2008 21:13:05 WST
+Last updated 19-Jun-2008 09:33:50 WST
 </div>
 </div>
 </body>
