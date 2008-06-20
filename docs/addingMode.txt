@@ -1,0 +1,87 @@
+VIGEDIT ADDING MODES
+====================
+
+ADDING MODES
+------------
+
+To add a new mode can be fairly simple (sometimes not, take selection mode for an example :))
+
+This document will go through the basics of adding a new mode. In this example we'll call it the '[red]##example##' mode
+
+First, go into vigtk.py. Under the class decleration you'll see three blocks of code. The first one are effectively constants to represent a number for each mode. For our example we'll add _EXAMPLE\_MODE_ to the end of the list and change the range to reflect the new number of modes. 
+
+Next we assign the name of the mode to a number (first step was the other way round). In this example we add _12:'example'_ to the next list (at the time of writing, it's only up to 11)
+
+Finally, we then add what will appear in the statusbar when the user enters into that mode. This can be anything, in this case, we'll add _ViGtk.EXAMPLE_MODE: \_("The example mode")_
+
+Next, we'll go into the modes folder and make a copy of the template.py file and rename it to the name of the mode, so we call it _example.py_, go into this file.
+
+First we change the class declaration to say _class example\_Mode_ and then at the bottom in the select_mode() function, change the second line to set the mode to vibase.vigtk.EXAMPLE_MODE 
+
+The final preparatory step is to go into /modes/__init__.py and add to the top _from example import example\_Mode_ so to import the new mode we created, and then initialise it by adding _self.exampleMode = example\_Mode()_ to the init_modes() function
+
+The next step is to add some bindings to the mode. We do this by using the self.register command in the init_bindings() function for the mode. Just a little note, each mode inherits the binding_base class found in /modes/binding_base.py and self.register will use the register function declared there.
+
+For example, say we define a function in our mode called "test" that will print "test" (if you open gedit using the terminal, print statements will be printed in the terminal). so we add the following to our example
+
+[python]
+source~~~~
+	def test(self):
+		print "test"
+source~~~~
+
+and we want the letter 't' to activate this function when in the example mode, then we add
+_self.register(self.test, gtk.keysyms.t)_ to the init_bindings() function for the mode.
+
+So up to this point our mode file looks like this
+
+[python]
+source~~~~
+from binding_base import *
+class example_Mode(binding_base):
+
+    def __init__(self):
+        binding_base.__init__(self)
+        
+
+    def init_bindings(self):
+    	self.register(self.test, gtk.keysyms.t, True, True, "command")
+        
+    def handle_mode(self, event):
+        return True
+        
+    def select_mode(self):
+        base.select = False
+        base.vigtk.mode = base.vigtk.EXAMPLE_MODE
+        vibase.update()        
+        
+    def test(self):
+        print "test"
+
+source~~~~
+
+Once we've done that, we then add a binding somewhere else or in some other mode's handle_mode() function that will set the mode to our example mode. For example, if we want E to enter our example mode when we're in command mode, then we go into the /modes/command.py file and add _self.register(lambda : vibase.set_mode("example"), gtk.keysyms.E)_ to the init_bindings() function
+
+Now we close gedit and open it with the terminal, press 'E' (the statusbar should now say "the example mode") and then we press 't' and the terminal should now print out 'test'
+
+TIPS
+----
+
+Firstly, the function in the self.register function must be a reference to a function, so you can't pass in parameters when specifiying a function.
+
+Fortunately, python has this thing called lambda which allows you to create anonymous functions. 
+So for example, changing the mode is done by passing the name of the mode you want to change to to the vibase.set_mode function. To do this with a keybinding you could either create a function in the mode file and call the set_mode function there, or use lambda (as done in the above example) _lambda : vibase.set_mode("command")_
+
+Secondly, if you want to preserve the position of the cursor after doing the function, then when you specify the keybinding, use lambda with the wrap.preserve_position function, which accepts a reference to a another function as a parameter. What happens here is when that keybinding is activated, vigedit will execute your lambda function which will then execute the wrap.preserve_position function, which saves the position of the cursor, exectutes the function you passed in, and then returns the cursor to it's original position.
+
+If a binding is the final key combination in a chain of keys, then please set the isFinal flag to true. This means if you type in a number, then activate a command that doesn't use that number, then the number is wiped anyway, so that you don't then execute another command that is repeatable and have it apply itself an unexpected number of times.
+
+Every mode has access to the functions in the actions folder via <name of file>.<name of function> two exceptions are the position.py file which is referred to as pos, and the fileOperation.py file which is referred to as fileOps.
+So say you want to execute the delete_whole_lines command in the /actions/text.py file, then you use text.delete_whole_lines
+
+To use the commands defined above the class decleration in the vibase.py file, just use _vibase.<function>_. For example the set_mode function, which executes the select_mode function of the mode specify in the parameters, you use _vibase.set_mode(<mode>)_. The exception to this rule is within the vibase.py file, where the vibase. part is unnecessary. (so to use set_mode, you literally just say _set\_mode(<mode>)_
+
+To access the variables declared in the ViGtk class in the vigtk.py file, you use base.vigtk.<variable>. So say you want to access the view variable, you use _base.vigtk.view_. The exception to this rule is within vibase.py where you use _ViBase.vigtk.view_ and within vigtk file where you use _ViGtk.view_. Please don't modify the variables through ViGtk, rather use vibase.vigtk (otherwise you'll cause issues)
+
+And lastly, look at the other modes for examples.
+

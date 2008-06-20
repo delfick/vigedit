@@ -1,6 +1,5 @@
-VIGEDIT(1)
-==========
-Trond Danielsen <trond.danielsen@gmail.com>
+VIGEDIT EXPLANATION
+===================
 
 NAME
 ----
@@ -14,63 +13,11 @@ Place the ViGedit distribution files in ~/.gnome2/gedit/plugins.
 
 DESCRIPTION
 -----------
-Vi is a modal editor, where the insert mode is used to enter text, and the command mode is used to enter commands and move the cursor around the document. 
+ViGedit gives the editor different modes, where each mode assign different actions to particular key combinations.
 
-When a document is loaded in Gedit, the default mode is insert. While in insert mode, Gedit behaves just like normal. To get to command mode, press Esc. In command mode the following keyboard shortcuts can be used.
+ - explanation of the different bindings can be found here : link:bindings.html[Bindings]
 
-ViGedit supports the following key bindings:
-
-i:: 
-	Switch back to insert mode.
-v::
-	Switch to visual mode. Visual mode is used to select text.
-Esc::
-	Switch to command mode.
-
-    
-Basic movement:
-~~~~~~~~~~~~~~~
-j::
-    Down
-k::
-    Up
-h:: 
-    Left
-l:: 
-    Right
-w::
-    Move forward one word at the time.
-b::
-    Move backward, one word at the time.
-g::
-    Move to the beginning of the current document.
-G::
-    Move to the end of the current document.
-    
-Insert commands:
-~~~~~~~~~~~~~~~~
-A::
-	Insert at the end of the current line.
-I::
-	Insert at the beginning of the current line.
-O::
-	Open a new line above the current line.
-o::
-	Open a new line below the current line.
-
-Copy/Paste commands:
-~~~~~~~~~~~~~~~~~~~~
-y::
-	Copy (yank) selection clipboard.
-p::
-	Paste clipboard at cursor position.
-
-Various commands:
-~~~~~~~~~~~~~~~~~
-/::
-    Start interactive search (just like Ctrl-k).
-x::
-    Delete character after cursor.
+ - An explanation of how to add a new mode can be found here : link:addingMode.html[Adding a mode]
     
     
 OPTIONS
@@ -92,10 +39,11 @@ See the ViGedit distribution AUTHORS file.
 
 RESOURCES
 ---------
-Get the latest version from http://www.open-gnss.org/~trondd/cgi-bin/hgweb.cgi[]
+Get the latest version from https://launchpad.net/vigedit[]
 
 
 COPYING
 -------
-Copyright (C) 2006 Trond Danielsen. Free use of this software is
-granted under the terms of the GNU General Public License (GPL).
+Copyright (C) 2006 Trond Danielsen,
+Copyright (C) 2008 Stephen Moore. 
+Free use of this software is granted under the terms of the GNU General Public License (GPL).
