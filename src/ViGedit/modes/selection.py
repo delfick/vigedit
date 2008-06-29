@@ -9,7 +9,6 @@ class selection_Mode(binding_base):
         pass
         
     def handle_mode(self, event):
-    	print "hello"
     	if vibase.isDirectionalPressed(event):
     		vibase.set_mode("command")
     		return False    	
