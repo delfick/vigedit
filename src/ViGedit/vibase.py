@@ -220,8 +220,8 @@ class ViBase(GObject):
                 return True
                 
             # directional keys in selection mode
-            elif (ViBase.vigtk.mode is ViBase.vigtk.SELECTION_MODE):
-            	if isDirectionalPressed(event):
+            elif (ViBase.vigtk.mode is ViBase.vigtk.SELECTION_MODE) \
+            	and (isDirectionalPressed(event)):
             		set_mode("command")
             		return False
                 
