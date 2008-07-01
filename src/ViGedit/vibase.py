@@ -74,6 +74,19 @@ def isModifierPressed(event):
         return True
     return False
     
+def isDirectionalPressed(event):
+	if event.keyval == gtk.keysyms.Up:
+		return True
+	elif event.keyval == gtk.keysyms.Down:
+		return True
+	elif event.keyval == gtk.keysyms.Left:
+		return True
+	elif event.keyval == gtk.keysyms.Right:
+		return True
+	else:
+		return False
+		
+    
 """ update/deactivate """
 
 def update():
@@ -205,6 +218,12 @@ class ViBase(GObject):
             if (event.keyval == gtk.keysyms.Escape):
                 set_mode("command")
                 return True
+                
+            # directional keys in selection mode
+            elif (ViBase.vigtk.mode is ViBase.vigtk.SELECTION_MODE) \
+            	and (isDirectionalPressed(event)):
+            		set_mode("command")
+            		return False
                 
             # Ignored keys.  
             elif (ViBase.vigtk.mode is ViBase.vigtk.INSERT_MODE) \

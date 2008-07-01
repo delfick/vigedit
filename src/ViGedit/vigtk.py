@@ -27,13 +27,13 @@ from actions.menus import Menus
 class ViGtk:
     (COMMAND_MODE, VISUAL_MODE, DELETE_MODE, 
     INSERT_MODE, EX_MODE, YANK_MODE, GMODE, 
-    CMODE, RMODE, TMODE, SELECTION_MODE, INDENT_MODE, EXAMPLE_MODE) = range(13)
+    CMODE, RMODE, TMODE, SELECTION_MODE, INDENT_MODE) = range(12)
 
     modes = { 0 : 'command', 1 : 'visual', 
               2: 'delete',   3 : 'insert', 
               4: 'ex', 5: 'yank', 6: 'gmode', 
               7:'cmode', 8: 'rmode', 9: 'tmode',
-              10:'selection', 11:'indent', 12:'example'}    
+              10:'selection', 11:'indent'}    
               
     def get_mode_desc(self, mode):
         """ Get mode text """
@@ -49,8 +49,7 @@ class ViGtk:
                 ViGtk.RMODE: _("R Mode"),
                 ViGtk.TMODE: _("T Mode"),
                 ViGtk.SELECTION_MODE: _("Selection Mode"),
-                ViGtk.INDENT_MODE: _("Indent Mode"),
-                ViGtk.EXAMPLE_MODE: _("The example mode")
+                ViGtk.INDENT_MODE: _("Indent Mode")
                 }.get(mode)
               
     initial = True

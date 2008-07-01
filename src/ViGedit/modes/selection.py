@@ -9,7 +9,10 @@ class selection_Mode(binding_base):
         pass
         
     def handle_mode(self, event):
-        if vibase.isModifierPressed(event) == False:
+    	if vibase.isDirectionalPressed(event):
+    		vibase.set_mode("command")
+    		return False    	
+        elif vibase.isModifierPressed(event) == False:
             start, end = base.vigtk.doc.get_selection_bounds()
             vibase.increment_accumulator(event)
             base.vigtk.doc.delete(start, end)
