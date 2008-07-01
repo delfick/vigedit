@@ -25,6 +25,10 @@ import gtk
 from actions.menus import Menus
         
 class ViGtk:
+    """ This is a kind of singleton that reinitializes to point at whatever
+    view (corresponds to a tab) that the user is looking at. Everything is
+    stored on the class. """
+
     (COMMAND_MODE, VISUAL_MODE, DELETE_MODE, 
     INSERT_MODE, EX_MODE, YANK_MODE, GMODE, 
     CMODE, RMODE, TMODE, SELECTION_MODE, INDENT_MODE) = range(12)

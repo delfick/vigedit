@@ -30,138 +30,6 @@ from gettext import gettext as _
 from vigtk import ViGtk
 from gobject import GObject
 
-""" functions to determine if certain modifiers have been pressed """
-
-def isControlPressed(event):
-    ctrl = event.state & gtk.gdk.CONTROL_MASK
-    if ctrl:
-        return True 
-    else:
-        # necessary if control has been pressed on it's own
-        if event.keyval == 65507:
-            return True
-        elif event.keyval == 65508:
-            return True
-        else:
-            return False
-            
-def isAltPressed(event):
-    alt = event.state & gtk.gdk.MOD1_MASK
-    if alt:
-        return True
-    else:
-        # necessary if control has been pressed on it's own
-        if event.keyval == 65513:
-            return True
-        elif event.keyval == 65514:
-            return True
-        else: 
-            return False
-            
-            
-def isShiftPressed(event):
-    if (event.keyval == 65505) or (event.keyval == 65506):
-        return True
-    else:
-        return False
-        
-def isModifierPressed(event):
-    if isControlPressed(event) == True:
-        return True
-    if isAltPressed(event) == True:
-        return True
-    if isShiftPressed(event) == True:
-        return True
-    return False
-    
-def isDirectionalPressed(event):
-	if event.keyval == gtk.keysyms.Up:
-		return True
-	elif event.keyval == gtk.keysyms.Down:
-		return True
-	elif event.keyval == gtk.keysyms.Left:
-		return True
-	elif event.keyval == gtk.keysyms.Right:
-		return True
-	else:
-		return False
-		
-    
-""" update/deactivate """
-
-def update():
-    ViGtk.statusbar.update(get_mode_desc())
-    
-def deactivate():
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[0])
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[1])
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[2])
-    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[3])
-    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[4])
-    ViBase.vigtk.bindings.set_mode("insert")
-    ViBase.vigtk.statusbar.update(None)
-    ViBase.vigtk.view = None
-    ViBase.vigtk.statusbar = None
-    
-    
-""" dealing with modes """
-
-def get_mode_desc():
-    return ViBase.vigtk.get_mode_desc(ViBase.vigtk.mode)                
-    
-def set_mode(mode):
-    ViBase.vigtk.bindings.set_mode(mode)
-    
-def get_mode_name():
-    return ViBase.vigtk.modes[ViBase.vigtk.mode]
-    
-def handle_mode(mode, event):
-    return ViBase.vigtk.bindings.handle_mode(mode, event)
-    
-    
-""" dealing with menus """
-
-def get_menu(menu):
-    return ViBase.vigtk.menus.get_menu(menu)
-    
-def activate_menu(menu):
-    return ViBase.vigtk.menus.activate_menu(menu)
-    
-    
-""" other functions """
-    
-def set_overwrite(boolean):
-    ViBase.vigtk.set_overwrite(boolean)
-    
-def increment_accumulator(event):
-    ViBase.vigtk.increment_accumulator(event)
-    
-def set_overwrite(boolean):
-    ViBase.vigtk.view.set_overwrite(boolean)    
-    if ViBase.vigtk.view.get_overwrite() != boolean:
-        print "Setting overwrite to %s, currently %s" % (boolean, ViBase.vigtk.view.get_overwrite())
-        ViBase.vigtk.doc.emit("toggle-overwrite")
-    
-def is_visual_mode():
-    return ViBase.vigtk.mode is ViBase.vigtk.VISUAL_MODE
-
-def increment_accumulator(event):
-    if event.keyval in range(256):
-        ViBase.vigtk.acc +=chr(event.keyval) 
-        
-""" nice function I found here http://diveintopython.org/power_of_introspection/index.html#apihelper.divein """    
-    
-def info(object, spacing=10, collapse=1):
-    """Print methods and doc strings.
-    
-    Takes module, class, list, dictionary, or string."""
-    methodList = [method for method in dir(object) if callable(getattr(object, method))]
-    processFunc = collapse and (lambda s: " ".join(s.split())) or (lambda s: s)
-    print "\n".join(["%s %s" %
-                      (method.ljust(spacing),
-                       processFunc(str(getattr(object, method).__doc__)))
-                     for method in methodList])
-
 class ViBase(GObject):
     """ class that holds an instance of vitgk and processes certain events (see handler_ids below) """
     vigtk = None
@@ -319,3 +187,67 @@ class ViBase(GObject):
             ViBase.vigtk.already_selected = True
         else:
             ViBase.vigtk.already_selected = False
+
+""" update/deactivate """
+
+def update():
+    ViGtk.statusbar.update(get_mode_desc())
+    
+def deactivate():
+    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[0])
+    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[1])
+    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[2])
+    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[3])
+    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[4])
+    ViBase.vigtk.bindings.set_mode("insert")
+    ViBase.vigtk.statusbar.update(None)
+    ViBase.vigtk.view = None
+    ViBase.vigtk.statusbar = None
+    
+    
+""" dealing with modes """
+
+def get_mode_desc():
+    return ViBase.vigtk.get_mode_desc(ViBase.vigtk.mode)                
+    
+def set_mode(mode):
+    ViBase.vigtk.bindings.set_mode(mode)
+    
+def get_mode_name():
+    return ViBase.vigtk.modes[ViBase.vigtk.mode]
+    
+def handle_mode(mode, event):
+    return ViBase.vigtk.bindings.handle_mode(mode, event)
+    
+    
+""" dealing with menus """
+
+def get_menu(menu):
+    return ViBase.vigtk.menus.get_menu(menu)
+    
+def activate_menu(menu):
+    return ViBase.vigtk.menus.activate_menu(menu)
+    
+    
+""" other functions """
+    
+def set_overwrite(boolean):
+    ViBase.vigtk.set_overwrite(boolean)
+    
+def increment_accumulator(event):
+    ViBase.vigtk.increment_accumulator(event)
+    
+def set_overwrite(boolean):
+    ViBase.vigtk.view.set_overwrite(boolean)    
+    if ViBase.vigtk.view.get_overwrite() != boolean:
+        print "Setting overwrite to %s, currently %s" % (boolean, ViBase.vigtk.view.get_overwrite())
+        ViBase.vigtk.doc.emit("toggle-overwrite")
+    
+def is_visual_mode():
+    return ViBase.vigtk.mode is ViBase.vigtk.VISUAL_MODE
+
+def increment_accumulator(event):
+    if event.keyval in range(256):
+        ViBase.vigtk.acc +=chr(event.keyval) 
+        
+

@@ -29,7 +29,7 @@ class VigeditStatusbar:
     def __init__(self, window):
         self.statusbar = window.get_statusbar()
         self.context_id = self.statusbar.get_context_id("VigeditStatusbar")
-        
+
     def update(self, text=None):
         """Update statusbar"""
         self.statusbar.pop(self.context_id)
@@ -38,6 +38,9 @@ class VigeditStatusbar:
 
 
 class VigeditWindowHelper:
+    """ One of these gets created when the plugin is installed. A ViBase is
+    added to each view if it already exists or as it's created. """
+
     VIEW_DATA_KEY = "VigeditPluginViewData"
 
     def __init__(self, plugin, window, bindings):
@@ -60,20 +63,20 @@ class VigeditWindowHelper:
         vibase = tab.get_view().get_data(self.VIEW_DATA_KEY)
         if vibase is not None:
             tab.get_view().get_data(self.VIEW_DATA_KEY).update_vigtk(tab.get_view(), 0)
-            
+
     def update_vigtk(self, obj, view, old_view, event, mode):
         view.get_data(self.VIEW_DATA_KEY).update_vigtk(view, mode)
 
     def on_tab_added(self, window, tab):
         print "on_tab_added" #: attach to %s on %s" % (tab.get_view(), tab)
         self.attach_vigtk(tab.get_view(), window)
-        
+
     def attach_vigtk(self, view, window):
         view.set_data("statusbar", self.statusbar)
         view.set_data("menus", self.menus)
         view.set_data("window", window)
         view.set_data("bindings", self.bindings)
-        
+
         vi_plugin = vibase.ViBase(view)
         vi_plugin.connect("update_vigtk", self.update_vigtk)
         print "attach_vigtk" #: %s in %s" % (vi_plugin, view)
@@ -90,7 +93,6 @@ class VigeditWindowHelper:
         self.window = None
 
     def update_ui(self):
-        # TODO Something about this operation?
         tab = self.window.get_active_tab()
         if tab: 
             view = tab.get_view()
@@ -99,24 +101,25 @@ class VigeditWindowHelper:
         if view:
             vi_plugin = view.get_data(self.VIEW_DATA_KEY)
             if vi_plugin:
-           #     print "update_ui:    %s in %s" % (vi_plugin, view)
                 vi_plugin.update()
-        
+
 
 class VigeditPlugin(gedit.Plugin):
+    """ Creates the VigeditWindowHelper on activate. """
+
     WINDOW_DATA_KEY = "VigeditPluginWindowData"
-    
+
     def __init__(self):
         self.bindings = BindingRegistry()
 
     def activate(self, window):
         helper = VigeditWindowHelper(self, window, self.bindings)
         window.set_data(self.WINDOW_DATA_KEY, helper)
-    
+
     def deactivate(self, window):
         window.get_data(self.WINDOW_DATA_KEY).deactivate()        
         window.set_data(self.WINDOW_DATA_KEY, None)
-        
+
     def update_ui(self, window):
         window.get_data(self.WINDOW_DATA_KEY).update_ui()
 
