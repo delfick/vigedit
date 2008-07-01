@@ -59,7 +59,7 @@ class ViGtk:
     initial = True
     
     def __init__(self, view):
-        self.update_vigtk(view, 0)
+        self.update_vigtk(view, ViGtk.COMMAND_MODE)
         if ViGtk.initial:
             """ these things only need to be set once """
             ViGtk.initial = False

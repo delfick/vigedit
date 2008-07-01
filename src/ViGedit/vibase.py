@@ -31,6 +31,68 @@ from vigtk import ViGtk
 from gobject import GObject
 from utilities import *
 
+""" update/deactivate """
+
+def update():
+    ViGtk.statusbar.update(get_mode_desc())
+
+def deactivate():
+    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[0])
+    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[1])
+    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[2])
+    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[3])
+    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[4])
+    ViBase.vigtk.bindings.set_mode("insert")
+    ViBase.vigtk.statusbar.update(None)
+    ViBase.vigtk.view = None
+    ViBase.vigtk.statusbar = None
+    
+    
+""" dealing with modes """
+
+def get_mode_desc():
+    return ViBase.vigtk.get_mode_desc(ViBase.vigtk.mode)                
+    
+def set_mode(mode):
+    ViBase.vigtk.bindings.set_mode(mode)
+    
+def get_mode_name():
+    return ViBase.vigtk.modes[ViBase.vigtk.mode]
+    
+def handle_mode(mode, event):
+    return ViBase.vigtk.bindings.handle_mode(mode, event)
+    
+    
+""" dealing with menus """
+
+def get_menu(menu):
+    return ViBase.vigtk.menus.get_menu(menu)
+    
+def activate_menu(menu):
+    return ViBase.vigtk.menus.activate_menu(menu)
+    
+    
+""" other functions """
+    
+def set_overwrite(boolean):
+    ViBase.vigtk.set_overwrite(boolean)
+    
+def increment_accumulator(event):
+    ViBase.vigtk.increment_accumulator(event)
+    
+def set_overwrite(boolean):
+    ViBase.vigtk.view.set_overwrite(boolean)    
+    if ViBase.vigtk.view.get_overwrite() != boolean:
+        print "Setting overwrite to %s, currently %s" % (boolean, ViBase.vigtk.view.get_overwrite())
+        ViBase.vigtk.doc.emit("toggle-overwrite")
+    
+def is_visual_mode():
+    return ViBase.vigtk.mode is ViBase.vigtk.VISUAL_MODE
+
+def increment_accumulator(event):
+    if event.keyval in range(256):
+        ViBase.vigtk.acc +=chr(event.keyval) 
+
 class ViBase(GObject):
     """ class that holds an instance of vitgk and processes certain events (see handler_ids below) """
     vigtk = None
@@ -51,6 +113,7 @@ class ViBase(GObject):
             ViGtk.doc.connect("saved", lambda document,view: self.update()),
             ViGtk.doc.connect("loaded", lambda document, view: self.update())
             ]
+        self.set_mode("command")
         self.connect_after("update_vigtk", self.retry_event)
             
     def do_update_vigtk(self, view, old_view, event, mode):
@@ -188,65 +251,3 @@ class ViBase(GObject):
             ViBase.vigtk.already_selected = True
         else:
             ViBase.vigtk.already_selected = False
-
-""" update/deactivate """
-
-def update():
-    ViGtk.statusbar.update(get_mode_desc())
-    
-def deactivate():
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[0])
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[1])
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[2])
-    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[3])
-    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[4])
-    ViBase.vigtk.bindings.set_mode("insert")
-    ViBase.vigtk.statusbar.update(None)
-    ViBase.vigtk.view = None
-    ViBase.vigtk.statusbar = None
-    
-    
-""" dealing with modes """
-
-def get_mode_desc():
-    return ViBase.vigtk.get_mode_desc(ViBase.vigtk.mode)                
-    
-def set_mode(mode):
-    ViBase.vigtk.bindings.set_mode(mode)
-    
-def get_mode_name():
-    return ViBase.vigtk.modes[ViBase.vigtk.mode]
-    
-def handle_mode(mode, event):
-    return ViBase.vigtk.bindings.handle_mode(mode, event)
-    
-    
-""" dealing with menus """
-
-def get_menu(menu):
-    return ViBase.vigtk.menus.get_menu(menu)
-    
-def activate_menu(menu):
-    return ViBase.vigtk.menus.activate_menu(menu)
-    
-    
-""" other functions """
-    
-def set_overwrite(boolean):
-    ViBase.vigtk.set_overwrite(boolean)
-    
-def increment_accumulator(event):
-    ViBase.vigtk.increment_accumulator(event)
-    
-def set_overwrite(boolean):
-    ViBase.vigtk.view.set_overwrite(boolean)    
-    if ViBase.vigtk.view.get_overwrite() != boolean:
-        print "Setting overwrite to %s, currently %s" % (boolean, ViBase.vigtk.view.get_overwrite())
-        ViBase.vigtk.doc.emit("toggle-overwrite")
-    
-def is_visual_mode():
-    return ViBase.vigtk.mode is ViBase.vigtk.VISUAL_MODE
-
-def increment_accumulator(event):
-    if event.keyval in range(256):
-        ViBase.vigtk.acc +=chr(event.keyval) 

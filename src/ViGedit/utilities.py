@@ -1,3 +1,4 @@
+import gtk
 from vigtk import ViGtk
 
 """ functions to determine if certain modifiers have been pressed """
