@@ -29,6 +29,7 @@ import os
 from gettext import gettext as _
 from vigtk import ViGtk
 from gobject import GObject
+from utilities import *
 
 class ViBase(GObject):
     """ class that holds an instance of vitgk and processes certain events (see handler_ids below) """
@@ -41,7 +42,7 @@ class ViBase(GObject):
     
     def __init__(self, view):
         gobject.GObject.__init__(self)
-        """ iniitalise vigtk """
+        """ initalise vigtk """
         ViBase.vigtk = ViGtk(view)
         ViBase.vigtk.handler_ids = [
             ViGtk.view.connect("key-press-event", self.on_key_press_event),
@@ -249,5 +250,3 @@ def is_visual_mode():
 def increment_accumulator(event):
     if event.keyval in range(256):
         ViBase.vigtk.acc +=chr(event.keyval) 
-        
-
