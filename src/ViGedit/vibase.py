@@ -117,11 +117,6 @@ class ViBase(GObject):
             ]
             
         self.connect_after("update_vigtk", self.retry_event)
-        
-        # using set_mode here causes errors on startup :
-          #   GtkWarning: gdk_window_invalidate_rect: assertion `window != NULL' failed
-          #       ViBase.vigtk.view.set_overwrite(boolean)
-        # and isn't necessary to do anyways :)
 
         
     def retry_event(self, obj, view, old_view, event, mode):
@@ -144,8 +139,8 @@ class ViBase(GObject):
         ViBase.vigtk.already_selected = False
         ViBase.vigtk.returnToMode = None
         ViBase.vigtk.statusbar = view.get_data("statusbar")
-        ViBase.vigtk.mode = view.get_data("mode")
         ViBase.vigtk.menus = view.get_data("menus")
+        set_mode(ViBase.vigtk.modes[view.get_data("mode")])
         update()
         
     def update(self):
