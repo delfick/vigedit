@@ -1,4 +1,10 @@
 ViGedit TODO
 ============
 
+Bugs:
+-----
+* Starts in visual indent mode
+* Yank should go to command mode
+
+
 create a capture mode

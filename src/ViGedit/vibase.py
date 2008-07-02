@@ -29,69 +29,13 @@ import os
 from gettext import gettext as _
 from vigtk import ViGtk
 from gobject import GObject
+from utilities import *
 
-""" functions to determine if certain modifiers have been pressed """
-
-def isControlPressed(event):
-    ctrl = event.state & gtk.gdk.CONTROL_MASK
-    if ctrl:
-        return True 
-    else:
-        # necessary if control has been pressed on it's own
-        if event.keyval == 65507:
-            return True
-        elif event.keyval == 65508:
-            return True
-        else:
-            return False
-            
-def isAltPressed(event):
-    alt = event.state & gtk.gdk.MOD1_MASK
-    if alt:
-        return True
-    else:
-        # necessary if control has been pressed on it's own
-        if event.keyval == 65513:
-            return True
-        elif event.keyval == 65514:
-            return True
-        else: 
-            return False
-            
-            
-def isShiftPressed(event):
-    if (event.keyval == 65505) or (event.keyval == 65506):
-        return True
-    else:
-        return False
-        
-def isModifierPressed(event):
-    if isControlPressed(event) == True:
-        return True
-    if isAltPressed(event) == True:
-        return True
-    if isShiftPressed(event) == True:
-        return True
-    return False
-    
-def isDirectionalPressed(event):
-	if event.keyval == gtk.keysyms.Up:
-		return True
-	elif event.keyval == gtk.keysyms.Down:
-		return True
-	elif event.keyval == gtk.keysyms.Left:
-		return True
-	elif event.keyval == gtk.keysyms.Right:
-		return True
-	else:
-		return False
-		
-    
 """ update/deactivate """
 
 def update():
     ViGtk.statusbar.update(get_mode_desc())
-    
+
 def deactivate():
     ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[0])
     ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[1])
@@ -148,19 +92,6 @@ def is_visual_mode():
 def increment_accumulator(event):
     if event.keyval in range(256):
         ViBase.vigtk.acc +=chr(event.keyval) 
-        
-""" nice function I found here http://diveintopython.org/power_of_introspection/index.html#apihelper.divein """    
-    
-def info(object, spacing=10, collapse=1):
-    """Print methods and doc strings.
-    
-    Takes module, class, list, dictionary, or string."""
-    methodList = [method for method in dir(object) if callable(getattr(object, method))]
-    processFunc = collapse and (lambda s: " ".join(s.split())) or (lambda s: s)
-    print "\n".join(["%s %s" %
-                      (method.ljust(spacing),
-                       processFunc(str(getattr(object, method).__doc__)))
-                     for method in methodList])
 
 class ViBase(GObject):
     """ class that holds an instance of vitgk and processes certain events (see handler_ids below) """
@@ -173,7 +104,7 @@ class ViBase(GObject):
     
     def __init__(self, view):
         gobject.GObject.__init__(self)
-        """ iniitalise vigtk """
+        """ initalise vigtk """
         ViBase.vigtk = ViGtk(view)
         ViBase.vigtk.handler_ids = [
             ViGtk.view.connect("key-press-event", self.on_key_press_event),
@@ -182,6 +113,7 @@ class ViBase(GObject):
             ViGtk.doc.connect("saved", lambda document,view: self.update()),
             ViGtk.doc.connect("loaded", lambda document, view: self.update())
             ]
+        self.set_mode("command")
         self.connect_after("update_vigtk", self.retry_event)
             
     def do_update_vigtk(self, view, old_view, event, mode):

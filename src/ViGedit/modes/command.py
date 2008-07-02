@@ -3,7 +3,6 @@ class command_Mode(binding_base):
 
     def __init__(self):
         binding_base.__init__(self)       
-        
 
     def init_bindings(self):
     	self.register(lambda : vibase.set_mode("example"), gtk.keysyms.E)
@@ -23,6 +22,7 @@ class command_Mode(binding_base):
         self.register(others.redo, gtk.keysyms.r, True, True, None, True)
         self.register(others.undo, gtk.keysyms.u, True, True)
         self.register(text.delete_char, gtk.keysyms.Delete, True, True)
+        self.register(text.delete_char, gtk.keysyms.x, True, True)
         self.register(lines.select_one_line, gtk.keysyms.V, True, False, "selection")
         self.register(text.cut_until_end_of_line, gtk.keysyms.D, True, False, "command")
         self.register(lambda : wrap.preserve_position(text.paste_clipboard_above), gtk.keysyms.P, True, True, "command")
