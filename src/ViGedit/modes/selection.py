@@ -27,5 +27,3 @@ class selection_Mode(binding_base):
     def select_mode(self):
         """Switches to selection mode."""
         base.vigtk.acc = []
-        base.vigtk.mode = base.vigtk.SELECTION_MODE
-        vibase.update()

@@ -54,6 +54,7 @@ class VigeditWindowHelper:
             view.set_data("menus", self.menus)
             view.set_data("window", self.window)
             view.set_data("bindings", self.bindings)
+            view.set_data("mode", 0)
             self.attach_vigtk(view, window, self.menus)
         self.id_1 = self.window.connect("tab-added", self.on_tab_added)
         self.id_2 = self.window.connect("active-tab-changed", self.on_active_tab_changed)
@@ -64,9 +65,6 @@ class VigeditWindowHelper:
         if vibase is not None:
             tab.get_view().get_data(self.VIEW_DATA_KEY).update_vigtk(tab.get_view(), 0)
 
-    def update_vigtk(self, obj, view, old_view, event, mode):
-        view.get_data(self.VIEW_DATA_KEY).update_vigtk(view, mode)
-
     def on_tab_added(self, window, tab):
         print "on_tab_added" #: attach to %s on %s" % (tab.get_view(), tab)
         self.attach_vigtk(tab.get_view(), window)
@@ -76,9 +74,9 @@ class VigeditWindowHelper:
         view.set_data("menus", self.menus)
         view.set_data("window", window)
         view.set_data("bindings", self.bindings)
+        view.set_data("mode", 0)
 
         vi_plugin = vibase.ViBase(view)
-        vi_plugin.connect("update_vigtk", self.update_vigtk)
         print "attach_vigtk" #: %s in %s" % (vi_plugin, view)
         view.set_data(self.VIEW_DATA_KEY, vi_plugin)
         vi_plugin.update()

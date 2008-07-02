@@ -11,7 +11,7 @@
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
 #   
-#  This program is distributed in the hope that it will be useful,
+#  This pdogram is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
@@ -58,6 +58,10 @@ def set_mode(mode):
     
 def get_mode_name():
     return ViBase.vigtk.modes[ViBase.vigtk.mode]
+   
+    
+def get_mode_number(mode):
+	return [k for k, v in ViBase.vigtk.modes.iteritems() if v == mode][0]
     
 def handle_mode(mode, event):
     return ViBase.vigtk.bindings.handle_mode(mode, event)
@@ -73,9 +77,6 @@ def activate_menu(menu):
     
     
 """ other functions """
-    
-def set_overwrite(boolean):
-    ViBase.vigtk.set_overwrite(boolean)
     
 def increment_accumulator(event):
     ViBase.vigtk.increment_accumulator(event)
@@ -106,20 +107,25 @@ class ViBase(GObject):
         gobject.GObject.__init__(self)
         """ initalise vigtk """
         ViBase.vigtk = ViGtk(view)
+     	self.update_vigtk(view, ViBase.vigtk.COMMAND_MODE)
         ViBase.vigtk.handler_ids = [
-            ViGtk.view.connect("key-press-event", self.on_key_press_event),
-            ViGtk.view.connect("button-release-event", self.on_button_release_event),
-            ViGtk.view.connect("button-press-event", self.on_button_press_event),
-            ViGtk.doc.connect("saved", lambda document,view: self.update()),
-            ViGtk.doc.connect("loaded", lambda document, view: self.update())
+            ViBase.vigtk.view.connect("key-press-event", self.on_key_press_event),
+            ViBase.vigtk.view.connect("button-release-event", self.on_button_release_event),
+            ViBase.vigtk.view.connect("button-press-event", self.on_button_press_event),
+            ViBase.vigtk.doc.connect("saved", lambda document,view: self.update()),
+            ViBase.vigtk.doc.connect("loaded", lambda document, view: self.update())
             ]
-        self.set_mode("command")
-        self.connect_after("update_vigtk", self.retry_event)
             
-    def do_update_vigtk(self, view, old_view, event, mode):
-        print "updating vigtk"
+        self.connect_after("update_vigtk", self.retry_event)
+        
+        # using set_mode here causes errors on startup :
+          #   GtkWarning: gdk_window_invalidate_rect: assertion `window != NULL' failed
+          #       ViBase.vigtk.view.set_overwrite(boolean)
+        # and isn't necessary to do anyways :)
+
         
     def retry_event(self, obj, view, old_view, event, mode):
+        self.update_vigtk(view, mode)
         self.on_key_press_event(view, event)
         
     def set_mode(self, mode):
@@ -127,7 +133,20 @@ class ViBase(GObject):
         
     def update_vigtk(self, view, mode):
         """ update vigtk when the tab or window changes """
-        ViBase.vigtk.update_vigtk(view, mode)
+        ViBase.vigtk.window = view.get_data("window")
+        ViBase.vigtk.view = view
+        ViBase.vigtk.doc = view.get_buffer()
+        ViBase.vigtk.select = True
+        ViBase.vigtk.acc = []
+        ViBase.vigtk.number = 0
+        ViBase.vigtk.numLines = 0
+        ViBase.vigtk.old_mode = mode
+        ViBase.vigtk.already_selected = False
+        ViBase.vigtk.returnToMode = None
+        ViBase.vigtk.statusbar = view.get_data("statusbar")
+        ViBase.vigtk.mode = view.get_data("mode")
+        ViBase.vigtk.menus = view.get_data("menus")
+        update()
         
     def update(self):
         update()
@@ -138,10 +157,10 @@ class ViBase(GObject):
     def on_key_press_event(self, view, event):
         """ initial key press processing """
             
-        if view.get_buffer() != ViGtk.doc: 
+        if view.get_buffer() != ViBase.vigtk.doc: 
             
             print "doc doesn't equal"
-            self.emit("update_vigtk", view, ViGtk.view, event, ViGtk.mode)
+            self.emit("update_vigtk", view, ViBase.vigtk.view, event, ViBase.vigtk.mode)
             return False
             
         else:
@@ -243,8 +262,8 @@ class ViBase(GObject):
                 set_mode("command")
                 
     def on_button_press_event(self, view, event):
-        if view != ViGtk.view:
-            self.emit("update_vigtk", view, ViGtk.view, event, ViGtk.mode)
+        if view != ViBase.vigtk.view:
+            self.emit("update_vigtk", view, ViBase.vigtk.view, event, ViBase.vigtk.mode)
         """ check if the user deselects text by clicking on already selected text, so it can be used by on_button_release_event
         to determine wether to change back to command mode or not if there is no selection """
         if ViBase.vigtk.doc.get_selection_bounds() != ():

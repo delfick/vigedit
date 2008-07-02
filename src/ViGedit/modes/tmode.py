@@ -30,5 +30,3 @@ class tmode_Mode(binding_base):
     def select_mode(self):
         base.vigtk.acc =[]
         base.vigtk.old_mode = base.vigtk.mode
-        base.vigtk.mode = base.vigtk.TMODE
-        vibase.update()

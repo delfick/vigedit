@@ -59,7 +59,7 @@ class ViGtk:
     initial = True
     
     def __init__(self, view):
-        self.update_vigtk(view, ViGtk.COMMAND_MODE)
+    	self.initialise_Values(view, ViGtk.COMMAND_MODE)
         if ViGtk.initial:
             """ these things only need to be set once """
             ViGtk.initial = False
@@ -72,9 +72,8 @@ class ViGtk:
         
         print "__init__:" #     %s in %s" % (self, ViGtk.view)
         
-        
-    def update_vigtk(self, view, mode):
-        """ update information held by the class """
+    def initialise_Values(self, view, mode):
+        """ update vigtk when the tab or window changes """
         ViGtk.window = view.get_data("window")
         ViGtk.view = view
         ViGtk.doc = view.get_buffer()
@@ -86,6 +85,6 @@ class ViGtk:
         ViGtk.already_selected = False
         ViGtk.returnToMode = None
         ViGtk.statusbar = view.get_data("statusbar")
-        ViGtk.mode = ViGtk.COMMAND_MODE
+        ViGtk.mode = mode
         ViGtk.menus = view.get_data("menus")
 

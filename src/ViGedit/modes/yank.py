@@ -13,6 +13,4 @@ class yank_Mode(binding_base):
             
     def select_mode(self):
         base.vigtk.select = False
-        base.vigtk.mode = base.vigtk.YANK_MODE
-        vibase.update()
         

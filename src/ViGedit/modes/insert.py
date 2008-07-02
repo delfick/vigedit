@@ -15,7 +15,5 @@ class insert_Mode(binding_base):
         """Switches to insert mode."""
         vibase.set_overwrite(False)
         base.vigtk.view.emit("select-all", False)
-        base.vigtk.mode = base.vigtk.INSERT_MODE
         base.vigtk.select = False
-        vibase.update()
         

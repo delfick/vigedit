@@ -12,9 +12,7 @@ class cmode_Mode(binding_base):
         return True
         
     def select_mode(self):
-        base.acc = []
-        base.vigtk.mode = base.vigtk.CMODE
-        vibase.update()        
+        base.acc = []     
         
     def handle_w(self):
         """overwrite next word"""

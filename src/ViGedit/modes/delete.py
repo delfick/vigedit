@@ -16,6 +16,4 @@ class delete_Mode(binding_base):
     def select_mode(self):
         """Switches to 'delete' mode"""
         base.select = False
-        base.vigtk.mode = base.vigtk.DELETE_MODE
-        vibase.update()        
 

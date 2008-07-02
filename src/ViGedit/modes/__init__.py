@@ -40,6 +40,10 @@ class BindingRegistry(object):
         the_mode = getattr(self, "%sMode" % mode, None)
         if the_mode is None:return
         the_mode.select_mode()
+        mode_number = vibase.get_mode_number(mode)
+        base.vigtk.mode = mode_number
+        base.vigtk.view.set_data("mode", mode_number)
+        vibase.update()
 
     def handle_mode(self, mode, event):
         the_mode = getattr(self, "%sMode" % mode, None)
