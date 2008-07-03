@@ -17,5 +17,3 @@ class rmode_Mode(binding_base):
         
     def select_mode(self):
         base.vigtk.acc = []
-        base.vigtk.mode = base.vigtk.RMODE
-        vibase.update()

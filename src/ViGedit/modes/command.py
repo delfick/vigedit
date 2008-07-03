@@ -59,7 +59,5 @@ class command_Mode(binding_base):
         base.vigtk.acc = []
         vibase.set_overwrite(True)
         base.vigtk.view.emit("select-all", False)
-        base.vigtk.mode = base.vigtk.COMMAND_MODE
         base.vigtk.number = 0
         base.vigtk.select = False
-        vibase.update()

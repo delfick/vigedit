@@ -22,8 +22,6 @@ class gmode_Mode(binding_base):
         
     def select_mode(self):
         base.vigtk.acc = []
-        base.vigtk.mode = base.vigtk.GMODE
-        vibase.update()
         
     def next_tab(self):
         documents = base.vigtk.window.get_documents()

@@ -14,6 +14,4 @@ class indent_Mode(binding_base):
         
     def select_mode(self):
         """Switches to insert mode."""
-        base.vigtk.mode = base.vigtk.INDENT_MODE
         base.vigtk.select = False
-        vibase.update()

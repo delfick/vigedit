@@ -42,7 +42,5 @@ class visual_Mode(binding_base):
             return True
         
     def select_mode(self):
-        base.vigtk.mode = base.vigtk.VISUAL_MODE
         base.vigtk.select = True
-        vibase.update()
         
