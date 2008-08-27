@@ -6,7 +6,7 @@ class yank_Mode(binding_base):
         
 
     def init_bindings(self):
-        self.register(lambda : wrap.preserve_position(text.yank_line), gtk.keysyms.y, True, True, "command")
+        self.register_ppos(text.yank_line, gtk.keysyms.y, True, True, "command")
         
     def handle_mode(self, event):
         return True

@@ -6,8 +6,8 @@ class indent_Mode(binding_base):
         
 
     def init_bindings(self):  
-        self.register(lambda : wrap.preserve_position(lines.indent_left), gtk.keysyms.less, True, True, "command")
-        self.register(lambda : wrap.preserve_position(lines.indent_right), gtk.keysyms.greater, True, True, "command")
+        self.register_ppos(lines.indent_left, gtk.keysyms.less, True, True, "command")
+        self.register_ppos(lines.indent_right, gtk.keysyms.greater, True, True, "command")
         
     def handle_mode(self, event):
         return True

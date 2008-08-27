@@ -55,7 +55,7 @@ class VigeditWindowHelper:
             view.set_data("window", self.window)
             view.set_data("bindings", self.bindings)
             view.set_data("mode", 0)
-            self.attach_vigtk(view, window, self.menus)
+            self.attach_vigtk(view, window)
         self.id_1 = self.window.connect("tab-added", self.on_tab_added)
         self.id_2 = self.window.connect("active-tab-changed", self.on_active_tab_changed)
 

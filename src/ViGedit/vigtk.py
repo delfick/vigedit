@@ -87,4 +87,3 @@ class ViGtk:
         ViGtk.statusbar = view.get_data("statusbar")
         ViGtk.mode = mode
         ViGtk.menus = view.get_data("menus")
-

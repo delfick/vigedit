@@ -25,8 +25,8 @@ class command_Mode(binding_base):
         self.register(text.delete_char, gtk.keysyms.x, True, True)
         self.register(lines.select_one_line, gtk.keysyms.V, True, False, "selection")
         self.register(text.cut_until_end_of_line, gtk.keysyms.D, True, False, "command")
-        self.register(lambda : wrap.preserve_position(text.paste_clipboard_above), gtk.keysyms.P, True, True, "command")
-        self.register(lambda : wrap.preserve_position(text.paste_clipboard_below), gtk.keysyms.p, True, True, "command")
+        self.register_ppos(text.paste_clipboard_above, gtk.keysyms.P, True, True, "command")
+        self.register_ppos(text.paste_clipboard_below, gtk.keysyms.p, True, True, "command")
         self.register(others.next_search_item, gtk.keysyms.n, True, True)
         
         self.register(pos.move_forward, gtk.keysyms.l, True, True)
@@ -41,8 +41,8 @@ class command_Mode(binding_base):
 
         self.register(insert.insert_end_line, gtk.keysyms.A, True, False, "insert")
         self.register(insert.insert_begin_line, gtk.keysyms.I, True, False, "insert")
-        self.register(lambda : wrap.preserve_mode(insert.open_line_below), gtk.keysyms.o, True, True)
-        self.register(lambda : wrap.preserve_mode(insert.open_line_above), gtk.keysyms.O, True, True)
+        self.register(insert.open_line_below, gtk.keysyms.o, True, True, "command")
+        self.register(insert.open_line_above, gtk.keysyms.O, True, True, "command")
         self.register(insert.append_after, gtk.keysyms.a, True, False, "insert")
         self.register(others.search, gtk.keysyms.slash, True)
         

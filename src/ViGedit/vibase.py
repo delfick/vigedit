@@ -37,11 +37,11 @@ def update():
     ViGtk.statusbar.update(get_mode_desc())
 
 def deactivate():
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[0])
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[1])
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[2])
-    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[3])
-    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[4])
+    ViBase.vigtk.view.disconnect(ViBase.vigtk.view.get_data("keyPressHandler"))
+#    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[1])
+#    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[2])
+#    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[3])
+#    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[4])
     ViBase.vigtk.bindings.set_mode("insert")
     ViBase.vigtk.statusbar.update(None)
     ViBase.vigtk.view = None
@@ -61,7 +61,7 @@ def get_mode_name():
    
     
 def get_mode_number(mode):
-	return [k for k, v in ViBase.vigtk.modes.iteritems() if v == mode][0]
+    return [k for k, v in ViBase.vigtk.modes.iteritems() if v == mode][0]
     
 def handle_mode(mode, event):
     return ViBase.vigtk.bindings.handle_mode(mode, event)
@@ -107,7 +107,8 @@ class ViBase(GObject):
         gobject.GObject.__init__(self)
         """ initalise vigtk """
         ViBase.vigtk = ViGtk(view)
-     	self.update_vigtk(view, ViBase.vigtk.COMMAND_MODE)
+        self.update_vigtk(view, ViBase.vigtk.COMMAND_MODE)
+                  
         ViBase.vigtk.handler_ids = [
             ViBase.vigtk.view.connect("key-press-event", self.on_key_press_event),
             ViBase.vigtk.view.connect("button-release-event", self.on_button_release_event),
@@ -117,7 +118,6 @@ class ViBase(GObject):
             ]
             
         self.connect_after("update_vigtk", self.retry_event)
-
         
     def retry_event(self, obj, view, old_view, event, mode):
         self.update_vigtk(view, mode)
@@ -167,9 +167,9 @@ class ViBase(GObject):
                 
             # directional keys in selection mode
             elif (ViBase.vigtk.mode is ViBase.vigtk.SELECTION_MODE) \
-            	and (isDirectionalPressed(event)):
-            		set_mode("command")
-            		return False
+                and (isDirectionalPressed(event)):
+                    set_mode("command")
+                    return False
                 
             # Ignored keys.  
             elif (ViBase.vigtk.mode is ViBase.vigtk.INSERT_MODE) \
@@ -215,7 +215,16 @@ class ViBase(GObject):
             isFinal = f["Final"]
             isRepeatable = f["Repeatable"]
             returnToMode = f["ReturnToMode"]
+            preservePos = f["PreservePos"]
+            
             if callable(function) is True:
+            
+                if preservePos:
+                    origin = ViBase.vigtk.doc.get_insert()
+                    cursor = ViBase.vigtk.doc.get_iter_at_mark(origin)
+                    line = cursor.get_line()
+                    lineOffset = cursor.get_line_offset()
+                    
                 print "\tfunction is callable"
                 if isRepeatable:
                     print "\tfunction is repeatable"
@@ -233,8 +242,16 @@ class ViBase(GObject):
                         ViBase.vigtk.number = 0
                         ViBase.vigtk.numLines = 0
                         ViBase.vigtk.acc = []
-                        
+                
+                if preservePos:
+                    origin = ViBase.vigtk.doc.get_insert()
+                    cursor = ViBase.vigtk.doc.get_iter_at_mark(origin)
+                    cursor.set_line(line)
+                    cursor.set_line_offset(lineOffset)    
+                    origin = ViBase.vigtk.doc.move_mark_by_name("insert", cursor)  
+
                 set_mode(returnToMode)
+                    
             else:
                 print "\tfunction is not callable"
                 if function is None: increment_accumulator(event)
