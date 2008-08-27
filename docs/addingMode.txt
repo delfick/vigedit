@@ -72,7 +72,7 @@ Firstly, the function in the self.register function must be a reference to a fun
 Fortunately, python has this thing called lambda which allows you to create anonymous functions. 
 So for example, changing the mode is done by passing the name of the mode you want to change to to the vibase.set_mode function. To do this with a keybinding you could either create a function in the mode file and call the set_mode function there, or use lambda (as done in the above example) _lambda : vibase.set_mode("command")_
 
-Secondly, if you want to preserve the position of the cursor after doing the function, then when you specify the keybinding, use lambda with the wrap.preserve_position function, which accepts a reference to a another function as a parameter. What happens here is when that keybinding is activated, vigedit will execute your lambda function which will then execute the wrap.preserve_position function, which saves the position of the cursor, exectutes the function you passed in, and then returns the cursor to it's original position.
+Secondly, if you want to preserve the position of the cursor after doing the function, then use the self.register_ppos function instead of self.register (or just set the last paramater to True when calling the self.register function).
 
 If a binding is the final key combination in a chain of keys, then please set the isFinal flag to true. This means if you type in a number, then activate a command that doesn't use that number, then the number is wiped anyway, so that you don't then execute another command that is repeatable and have it apply itself an unexpected number of times.
 
