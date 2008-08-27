@@ -37,11 +37,11 @@ def update():
     ViGtk.statusbar.update(get_mode_desc())
 
 def deactivate():
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.view.get_data("keyPressHandler"))
-#    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[1])
-#    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[2])
-#    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[3])
-#    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[4])
+    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[0])
+    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[1])
+    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[2])
+    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[3])
+    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[4])
     ViBase.vigtk.bindings.set_mode("insert")
     ViBase.vigtk.statusbar.update(None)
     ViBase.vigtk.view = None
