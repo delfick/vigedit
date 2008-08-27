@@ -36,16 +36,15 @@ from utilities import *
 def update():
     ViGtk.statusbar.update(get_mode_desc())
 
-def deactivate():
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[0])
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[1])
-    ViBase.vigtk.view.disconnect(ViBase.vigtk.handler_ids[2])
-    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[3])
-    ViBase.vigtk.doc.disconnect(ViBase.vigtk.handler_ids[4])
+def deactivate(inView):
     ViBase.vigtk.bindings.set_mode("insert")
-    ViBase.vigtk.statusbar.update(None)
-    ViBase.vigtk.view = None
-    ViBase.vigtk.statusbar = None
+    handler_ids = inView.get_data("handler_ids")
+    doc = inView.get_buffer()
+    inView.disconnect(handler_ids[0])
+    inView.disconnect(handler_ids[1])
+    inView.disconnect(handler_ids[2])
+    doc.disconnect(handler_ids[3])
+    doc.disconnect(handler_ids[4])
     
     
 """ dealing with modes """
@@ -109,19 +108,23 @@ class ViBase(GObject):
         ViBase.vigtk = ViGtk(view)
         self.update_vigtk(view, ViBase.vigtk.COMMAND_MODE)
                   
-        ViBase.vigtk.handler_ids = [
+        view.set_data("handler_ids", [
             ViBase.vigtk.view.connect("key-press-event", self.on_key_press_event),
             ViBase.vigtk.view.connect("button-release-event", self.on_button_release_event),
             ViBase.vigtk.view.connect("button-press-event", self.on_button_press_event),
             ViBase.vigtk.doc.connect("saved", lambda document,view: self.update()),
             ViBase.vigtk.doc.connect("loaded", lambda document, view: self.update())
-            ]
+            ])
             
         self.connect_after("update_vigtk", self.retry_event)
         
     def retry_event(self, obj, view, old_view, event, mode):
         self.update_vigtk(view, mode)
-        self.on_key_press_event(view, event)
+        try:
+            self.on_key_press_event(view, event)
+        except :
+        	print "no event to retry"
+        
         
     def set_mode(self, mode):
         set_mode(mode)
@@ -146,8 +149,8 @@ class ViBase(GObject):
     def update(self):
         update()
         
-    def deactivate(self):
-        deactivate()
+    def deactivate(self, inView):
+        deactivate(inView)
 
     def on_key_press_event(self, view, event):
         """ initial key press processing """
