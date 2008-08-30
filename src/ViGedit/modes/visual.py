@@ -4,7 +4,6 @@ class visual_Mode(binding_base):
     def __init__(self):
         binding_base.__init__(self)
         
-
     def init_bindings(self):
         self.register(lambda : vibase.set_mode("insert"), gtk.keysyms.i)
         
@@ -27,8 +26,8 @@ class visual_Mode(binding_base):
 
         self.register(insert.insert_end_line, gtk.keysyms.A, True, False, "insert")
         self.register(insert.insert_begin_line, gtk.keysyms.I, True, False, "insert")
-        self.register(lambda : wrap.preserve_mode(insert.open_line_below), gtk.keysyms.o, True, True)
-        self.register(lambda : wrap.preserve_mode(insert.open_line_above), gtk.keysyms.O, True, True)
+        self.register(insert.open_line_below, gtk.keysyms.o, True, True, "visual")
+        self.register(insert.open_line_above, gtk.keysyms.O, True, True, "visual")
 
         self.register(others.undo, gtk.keysyms.u, True, True)
         self.register(others.search, gtk.keysyms.slash, True)
