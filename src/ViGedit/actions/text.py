@@ -8,7 +8,7 @@ from gettext import gettext as _
 
 from .. import vibase
 from ..vibase import ViBase as base
-import insert, lines, others, wrap, position as pos, fileOperations as fileOps
+import insert, lines, others, position as pos, fileOperations as fileOps
 
 """ deletion """
 

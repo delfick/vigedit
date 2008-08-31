@@ -8,7 +8,7 @@ from gettext import gettext as _
 
 from .. import vibase
 from ..vibase import ViBase as base
-import insert, lines, text, position as pos, wrap, fileOperations as fileOps
+import insert, lines, text, position as pos, fileOperations as fileOps
 
 def next_search_item():
     if base.vigtk.doc.get_can_search_again():

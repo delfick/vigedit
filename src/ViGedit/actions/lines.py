@@ -8,7 +8,7 @@ from gettext import gettext as _
 
 from .. import vibase
 from ..vibase import ViBase as base
-import insert, others, text, wrap, position as pos, fileOperations as fileOps
+import insert, others, text, position as pos, fileOperations as fileOps
 
 """ selecting whole lines """
 

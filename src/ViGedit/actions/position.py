@@ -8,7 +8,7 @@ from gettext import gettext as _
 
 from .. import vibase
 from ..vibase import ViBase as base
-import insert, lines, others, text, wrap, fileOperations as fileOps
+import insert, lines, others, text, fileOperations as fileOps
 
 def get_cursor_iter():
     return base.vigtk.doc.get_iter_at_mark(base.vigtk.doc.get_mark('insert'))   
