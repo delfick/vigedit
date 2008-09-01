@@ -11,6 +11,8 @@ from ..vibase import ViBase as base
 import insert, others, text, position as pos, fileOperations as fileOps
 
 """ selecting whole lines """
+def select_line():
+    select_one_line()
 
 def select_lines(number):
     if number > 0:
@@ -45,13 +47,21 @@ def select_many_lines(number):
 def select_one_line():
     pos.move_line_begin()
     vibase.set_mode("visual")
-    pos.move_line_end()
+    if pos.get_cursor_iter().is_end():
+        pos.move_backward()
+    else:
+        pos.move_line_end()
     
 """ select part of a line """
 
 def select_to_line_end():
     vibase.set_mode("visual")
+    cursor = get_current_iter()
     pos.move_line_end()
+    cursor = get_current_iter()
+    if cursor.end_line() != True :
+        print "Didn't move to line end!"
+        pos.move_buffer_end()
     
 def select_to_line_begin():
     vibase.set_mode("visual")

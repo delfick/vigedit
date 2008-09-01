@@ -86,8 +86,3 @@ def move_line_end():
     
 def move_line_begin():
     base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_PARAGRAPH_ENDS, -1, base.vigtk.select)
-   
-    
-    
-    
-    

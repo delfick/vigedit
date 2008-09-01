@@ -73,13 +73,10 @@ def cut_until_end_of_line():
     cut_selection()
     
 def cut_line():
-    select_line()
+    lines.select_line()
     cut_selection()
 
 def cut_next_word():
     vibase.set_mode("visual")
     pos.move_word_forward()
     cut_selection()
-
-
-
