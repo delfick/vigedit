@@ -45,23 +45,25 @@ def select_many_lines(number):
         pos.move_backward()
         
 def select_one_line():
+    # I'm trying to get deletion of the last line correct, 
+    # but now am breaking yank for the last line, so they probably 
+    # need to use separate selections
+
     pos.move_line_begin()
-    vibase.set_mode("visual")
-    if pos.get_cursor_iter().is_end():
+    if get_lines_till_end() == 1:
         pos.move_backward()
+        vibase.set_mode("visual")
+        pos.move_forward()
+        pos.move_forward()
     else:
-        pos.move_line_end()
+        vibase.set_mode("visual")
+    pos.move_line_end()
     
 """ select part of a line """
 
 def select_to_line_end():
     vibase.set_mode("visual")
-    cursor = get_current_iter()
     pos.move_line_end()
-    cursor = get_current_iter()
-    if cursor.end_line() != True :
-        print "Didn't move to line end!"
-        pos.move_buffer_end()
     
 def select_to_line_begin():
     vibase.set_mode("visual")
