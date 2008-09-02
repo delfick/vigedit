@@ -52,6 +52,8 @@ def select_one_line():
             vibase.set_mode("visual")
             pos.move_forward()
             pos.move_forward()
+        else:
+            vibase.set_mode("visual")
     else:
         vibase.set_mode("visual")
     pos.move_line_end()
