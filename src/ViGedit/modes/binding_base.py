@@ -10,7 +10,8 @@ from .. import vibase
 from ..vibase import ViBase as base
 from ..actions import fileOperations as fileOps
 from ..actions import position as pos
-from ..actions import insert, lines, others, text, wrap
+from ..actions import insert, lines, others, text
+
 class binding_base:
 
     def __init__(self):

@@ -3,7 +3,6 @@ class delete_Mode(binding_base):
 
     def __init__(self):
         binding_base.__init__(self)
-        
 
     def init_bindings(self):
         self.register(text.delete_whole_lines, gtk.keysyms.d, True, True, "command")

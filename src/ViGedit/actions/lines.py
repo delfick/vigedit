@@ -8,9 +8,11 @@ from gettext import gettext as _
 
 from .. import vibase
 from ..vibase import ViBase as base
-import insert, others, text, wrap, position as pos, fileOperations as fileOps
+import insert, others, text, position as pos, fileOperations as fileOps
 
 """ selecting whole lines """
+def select_line():
+    select_one_line()
 
 def select_lines(number):
     if number > 0:
@@ -44,7 +46,16 @@ def select_many_lines(number):
         
 def select_one_line():
     pos.move_line_begin()
-    vibase.set_mode("visual")
+    if get_lines_till_end() == 1:
+        if vibase.get_mode_name() != "yank":
+            pos.move_backward()
+            vibase.set_mode("visual")
+            pos.move_forward()
+            pos.move_forward()
+        else:
+            vibase.set_mode("visual")
+    else:
+        vibase.set_mode("visual")
     pos.move_line_end()
     
 """ select part of a line """

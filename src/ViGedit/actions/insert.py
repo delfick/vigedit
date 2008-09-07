@@ -8,7 +8,7 @@ from gettext import gettext as _
 
 from .. import vibase
 from ..vibase import ViBase as base
-import lines, others, text, position as pos, wrap, fileOperations as fileOps
+import lines, others, text, position as pos, fileOperations as fileOps
 
 def append_after():
     iter = pos.get_cursor_iter()
@@ -32,16 +32,15 @@ def insert_begin_line():
     cursor.backward_sentence_start()
     base.vigtk.doc.place_cursor(cursor)
     
-    
 def open_line_above():
-    print "Opening line above" # in %s" % base.vigtk.view
+    print "Opening line above"
     pos.move_line_begin()
     vibase.set_mode("insert")
     base.vigtk.view.emit("insert-at-cursor", "\n")
     pos.move_up()
 
 def open_line_below():
-    print "Opening line below" # in %s" % base.vigtk.view
+    print "Opening line below"
     pos.move_line_end()
     vibase.set_mode("insert")
     base.vigtk.view.emit("insert-at-cursor", "\n")
