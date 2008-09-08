@@ -91,7 +91,7 @@ def is_visual_mode():
 
 def increment_accumulator(event):
     if event.keyval in range(256):
-        ViBase.vigtk.acc +=chr(event.keyval) 
+        ViBase.vigtk.acc.append(chr(event.keyval))
 
 class ViBase(GObject):
     """ class that holds an instance of vitgk and processes certain events (see handler_ids below) """
@@ -202,7 +202,11 @@ class ViBase(GObject):
         modifiers = isControlPressed(event), isAltPressed(event)
         print "%s %s %s" % (ViBase.vigtk.mode, event.keyval, modifiers)
         should_print = ViBase.vigtk.mode != ViBase.vigtk.INSERT_MODE
-        f = ViBase.vigtk.bindings.retrieve(ViBase.vigtk.mode, event.keyval, modifiers[0], modifiers[1])
+        if ViBase.vigtk.acc:
+            acc = "".join(ViBase.vigtk.acc)
+        else:
+            acc = "default"
+        f = ViBase.vigtk.bindings.retrieve(ViBase.vigtk.mode, event.keyval, modifiers[0], modifiers[1], acc)
         if f is None: 
             print "\tBindings don't exist"
             if event.keyval > 47 and event.keyval < 58:
@@ -211,7 +215,6 @@ class ViBase(GObject):
             if event.keyval > 65455 and event.keyval < 65465:
                 ViBase.vigtk.number = ViBase.vigtk.number * 10 + event.keyval-65456
                 
-            
             should_print = handle_mode(get_mode_name(), event)
         else:
             function = f["function"]

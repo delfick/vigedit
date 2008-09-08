@@ -9,15 +9,9 @@ class gmode_Mode(binding_base):
         self.register(pos.move_buffer_top, gtk.keysyms.g, True, False, "command")
         self.register(self.next_tab, gtk.keysyms.t, True, True, "command")
         self.register(None, gtk.keysyms.q, True)
+        self.register_acc(lines.split_lines, "q", gtk.keysyms.braceright, True, False, "command")
         
     def handle_mode(self, event):
-        if event.keyval in (gtk.keysyms.Shift_L, gtk.keysyms.Shift_R):
-            """ only shift was pressed, so let it pass """
-            return True
-        elif (event.keyval == gtk.keysyms.braceright) and (base.vigtk.acc == ["q"]):
-            print "hit gq}"
-            lines.split_lines()
-        vibase.set_mode("command")
         return True  
         
     def select_mode(self):

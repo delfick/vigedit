@@ -64,6 +64,7 @@ def select_to_line_begin():
 
 def split_lines():
     if vibase.get_menu("split_lines") == None:
+    	print "split lines menu doesn't exist"
         return False
     begin = pos.to_empty_line(False)
     end = pos.to_empty_line(True)

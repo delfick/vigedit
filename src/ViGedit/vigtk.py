@@ -50,7 +50,7 @@ class ViGtk:
                 ViGtk.EX_MODE: _(": "),
                 ViGtk.YANK_MODE: _("Yank Mode"),
                 ViGtk.GMODE: _("G Mode"),
-                ViGtk.CHANGE_MODE: _("Capture Mode"),
+                ViGtk.CHANGE_MODE: _("Change Mode"),
                 ViGtk.RMODE: _("R Mode"),
                 ViGtk.TMODE: _("T Mode"),
                 ViGtk.SELECTION_MODE: _("Selection Mode"),
