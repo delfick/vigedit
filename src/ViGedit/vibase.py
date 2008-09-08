@@ -123,7 +123,7 @@ class ViBase(GObject):
         try:
             self.on_key_press_event(view, event)
         except :
-        	print "no event to retry"
+            print "no event to retry"
         
         
     def set_mode(self, mode):

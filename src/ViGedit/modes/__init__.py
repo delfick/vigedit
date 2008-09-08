@@ -5,7 +5,8 @@ from insert import insert_Mode
 from ex import ex_Mode
 from yank import yank_Mode
 from gmode import gmode_Mode
-from cmode import cmode_Mode
+from capture import capture_Mode
+from change import change_Mode
 from rmode import rmode_Mode
 from tmode import tmode_Mode
 from selection import selection_Mode
@@ -30,7 +31,8 @@ class BindingRegistry(object):
         self.exMode = ex_Mode()
         self.yankMode = yank_Mode()
         self.gmodeMode = gmode_Mode()
-        self.cmodeMode = cmode_Mode()
+        self.captureMode = capture_Mode()
+        self.changeMode = change_Mode()
         self.rmodeMode = rmode_Mode()
         self.tmodeMode = tmode_Mode()
         self.selectionMode = selection_Mode()
