@@ -52,7 +52,7 @@ class BindingRegistry(object):
         if the_mode is None:return
         return the_mode.handle_mode(event)
 
-    def retrieve(self, mode, keycode, control=False, meta=False, acc="default"):
+    def retrieve(self, mode, keycode, control=False, meta=False, acc=""):
         """ retrieve a binding from the current mode if it exists """
         the_mode = getattr(self, "%sMode" % vibase.get_mode_name(), None)
         if the_mode is None: return

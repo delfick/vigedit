@@ -20,7 +20,7 @@ class binding_base:
         self.init_bindings()
  
     def register(self, func, keycode, isFinal=False, isRepeatable=False, returnToMode=None, 
-    				control=False, meta=False, preservePos=False, useAcc=False, accMatch = "default"):
+    				control=False, meta=False, preservePos=False, useAcc=False, accMatch = ""):
         """ create a key in the bindingsObject equal to the keycombo with the relevant information in it """
         keycombo = keycode, control, meta, accMatch
         self.bindingsObject[keycombo] = {}
@@ -50,10 +50,10 @@ class binding_base:
     	self.register(func, keycode, isFinal, isRepeatable, returnToMode, control, meta, True, True, accMatch)
     	
     
-    def retrieve(self, keycode, control=False, meta=False, acc="default"):
+    def retrieve(self, keycode, control=False, meta=False, acc=""):
         bindings = self.bindingsObject.get((keycode, control, meta, acc), None)
         if bindings is not None:
         	return bindings
         else :
-            return self.bindingsObject.get((keycode, control, meta, "default"), None)
+            return self.bindingsObject.get((keycode, control, meta, ""), None)
             
