@@ -52,8 +52,8 @@ def deactivate(inView):
 def get_mode_desc():
     return ViBase.vigtk.get_mode_desc(ViBase.vigtk.mode)                
     
-def set_mode(mode):
-    ViBase.vigtk.bindings.set_mode(mode)
+def set_mode(mode, option=None):
+    ViBase.vigtk.bindings.set_mode(mode, option)
     
 def get_mode_name():
     return ViBase.vigtk.modes[ViBase.vigtk.mode]
@@ -126,8 +126,8 @@ class ViBase(GObject):
             print "no event to retry"
         
         
-    def set_mode(self, mode):
-        set_mode(mode)
+    def set_mode(self, mode, option=None):
+        set_mode(mode, option)
         
     def update_vigtk(self, view, mode):
         """ update vigtk when the tab or window changes """

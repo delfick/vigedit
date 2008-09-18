@@ -38,10 +38,10 @@ class BindingRegistry(object):
         self.selectionMode = selection_Mode()
         self.indentMode = indent_Mode()
 
-    def set_mode(self, mode):
+    def set_mode(self, mode, option=None):
         the_mode = getattr(self, "%sMode" % mode, None)
         if the_mode is None:return
-        the_mode.select_mode()
+        the_mode.select_mode(option)
         mode_number = vibase.get_mode_number(mode)
         base.vigtk.mode = mode_number
         base.vigtk.view.set_data("mode", mode_number)

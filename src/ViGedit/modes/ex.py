@@ -30,7 +30,7 @@ class ex_Mode(binding_base):
             vibase.set_mode("command")       
        
         
-    def select_mode(self):
+    def select_mode(self, option=None):
         base.vigtk.acc = []
         base.vigtk.view.emit("select-all", False)
         base.vigtk.select = False

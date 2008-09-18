@@ -11,7 +11,7 @@ class insert_Mode(binding_base):
     def handle_mode(self, event):
         return False
 
-    def select_mode(self):
+    def select_mode(self, option=None):
         """Switches to insert mode."""
         vibase.set_overwrite(False)
         base.vigtk.view.emit("select-all", False)

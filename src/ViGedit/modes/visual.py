@@ -12,6 +12,7 @@ class visual_Mode(binding_base):
         self.register(lambda : vibase.activate_menu("paste"), gtk.keysyms.p, True, True)
         self.register(lambda : vibase.activate_menu("select_all"), gtk.keysyms.a, True)
         
+        self.register(lambda : vibase.set_mode("tmode", ["select", base.vigtk.number]), gtk.keysyms.t)
         
         
         self.register(pos.move_forward, gtk.keysyms.l, True, True)
@@ -40,6 +41,6 @@ class visual_Mode(binding_base):
         else:
             return True
         
-    def select_mode(self):
+    def select_mode(self, option=None):
         base.vigtk.select = True
         

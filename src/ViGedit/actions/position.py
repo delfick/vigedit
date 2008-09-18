@@ -57,32 +57,32 @@ def to_empty_line(forward = True):
         elif end_cursor.is_end():
             return end_cursor
             
-def move_forward():
-    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_VISUAL_POSITIONS, 1, base.vigtk.select)
+def move_forward(num=1):
+    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_VISUAL_POSITIONS, num, base.vigtk.select)
     
-def move_up():
-    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_DISPLAY_LINES, -1, base.vigtk.select)
+def move_up(num=1):
+    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_DISPLAY_LINES, -num, base.vigtk.select)
     
-def move_down():
-    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_DISPLAY_LINES, 1, base.vigtk.select)
+def move_down(num=1):
+    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_DISPLAY_LINES, num, base.vigtk.select)
     
-def move_backward():
-    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_VISUAL_POSITIONS, -1, base.vigtk.select)
+def move_backward(num=1):
+    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_VISUAL_POSITIONS, -num, base.vigtk.select)
     
-def move_word_forward():
-    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_WORDS, 1, base.vigtk.select)
+def move_word_forward(num=1):
+    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_WORDS, num, base.vigtk.select)
    
-def move_word_backward():
-    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_WORDS, -1, base.vigtk.select)
+def move_word_backward(num=1):
+    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_WORDS, -num, base.vigtk.select)
     
-def move_buffer_top():
-    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_BUFFER_ENDS, -1, base.vigtk.select)
+def move_buffer_top(num=1):
+    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_BUFFER_ENDS, -num, base.vigtk.select)
     
-def move_buffer_end():
-    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_BUFFER_ENDS, 1, base.vigtk.select)
+def move_buffer_end(num=1):
+    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_BUFFER_ENDS, num, base.vigtk.select)
     
-def move_line_end():
-    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_PARAGRAPH_ENDS, 1, base.vigtk.select)
+def move_line_end(num=1):
+    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_PARAGRAPH_ENDS, num, base.vigtk.select)
     
-def move_line_begin():
-    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_PARAGRAPH_ENDS, -1, base.vigtk.select)
+def move_line_begin(num=1):
+    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_PARAGRAPH_ENDS, -num, base.vigtk.select)

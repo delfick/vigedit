@@ -24,6 +24,6 @@ class selection_Mode(binding_base):
         else:
             return False
         
-    def select_mode(self):
+    def select_mode(self, option=None):
         """Switches to selection mode."""
         base.vigtk.acc = []

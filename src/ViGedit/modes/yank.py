@@ -11,6 +11,6 @@ class yank_Mode(binding_base):
     def handle_mode(self, event):
         return True
             
-    def select_mode(self):
+    def select_mode(self, option=None):
         base.vigtk.select = False
         
