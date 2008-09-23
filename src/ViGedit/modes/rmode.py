@@ -15,5 +15,5 @@ class rmode_Mode(binding_base):
 		    base.vigtk.returnToMode = "command"
 		    return False
         
-    def select_mode(self):
+    def select_mode(self, option=None):
         base.vigtk.acc = []

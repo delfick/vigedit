@@ -31,8 +31,8 @@ def delete_whole_line():
 def delete_whole_lines():
     number = base.vigtk.numLines
     lines.select_lines(number)
-    base.vigtk.menus.activate_menu("cut")
-    delete_char()
+    cut_selection()
+    lines.join_with_prev_line()
         
 def delete_to_line_end():
     lines.select_to_line_end()
@@ -43,7 +43,7 @@ def delete_to_line_end():
 def yank_line():
     number = base.vigtk.numLines
     lines.select_lines(number)
-    base.vigtk.menus.activate_menu("copy")
+    yank_selection()
     pos.return_to_origin(number+1)
     
 def yank_selection():
@@ -75,8 +75,14 @@ def cut_until_end_of_line():
 def cut_line():
     lines.select_line()
     cut_selection()
+    
+def cut_till_end_of_word():
+    vibase.set_mode("visual")
+    pos.move_word_forward()
+    cut_selection()
 
 def cut_next_word():
+    pos.move_word_backward()
     vibase.set_mode("visual")
     pos.move_word_forward()
     cut_selection()

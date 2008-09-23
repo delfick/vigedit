@@ -25,19 +25,20 @@ def get_lines_till_end():
     cursor = pos.get_cursor_iter()
     line = cursor.get_line()
     total = base.vigtk.doc.get_line_count()
-    print total-line
+    print "lines till end of document : ", total-line
     return total-line
         
 def select_many_lines(number):
     will_not_reach_end = False
     linesTillEnd = get_lines_till_end()
-    if linesTillEnd != number:
+    if linesTillEnd > number:
         will_not_reach_end = True
         
     pos.move_line_begin()
     vibase.set_mode("visual")
     #select the number of lines specified
     while number > 0:
+    	print "moving down"
         pos.move_down()
         number = number-1 
         
@@ -45,17 +46,8 @@ def select_many_lines(number):
         pos.move_backward()
         
 def select_one_line():
-    pos.move_line_begin()
-    if get_lines_till_end() == 1:
-        if vibase.get_mode_name() != "yank":
-            pos.move_backward()
-            vibase.set_mode("visual")
-            pos.move_forward()
-            pos.move_forward()
-        else:
-            vibase.set_mode("visual")
-    else:
-        vibase.set_mode("visual")
+    pos.move_line_begin()    
+    vibase.set_mode("visual")
     pos.move_line_end()
     
 """ select part of a line """
@@ -72,6 +64,7 @@ def select_to_line_begin():
 
 def split_lines():
     if vibase.get_menu("split_lines") == None:
+    	print "split lines menu doesn't exist"
         return False
     begin = pos.to_empty_line(False)
     end = pos.to_empty_line(True)
@@ -95,3 +88,8 @@ def indent_right():
     if vibase.get_menu("indent_right") is not None:
         vibase.get_menu("indent_right").activate()
     pos.return_to_origin(number)
+    
+def join_with_prev_line():
+    pos.move_line_begin()
+    pos.move_backward()
+    text.delete_char()

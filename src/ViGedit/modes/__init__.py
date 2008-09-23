@@ -5,7 +5,8 @@ from insert import insert_Mode
 from ex import ex_Mode
 from yank import yank_Mode
 from gmode import gmode_Mode
-from cmode import cmode_Mode
+from capture import capture_Mode
+from change import change_Mode
 from rmode import rmode_Mode
 from tmode import tmode_Mode
 from selection import selection_Mode
@@ -30,16 +31,17 @@ class BindingRegistry(object):
         self.exMode = ex_Mode()
         self.yankMode = yank_Mode()
         self.gmodeMode = gmode_Mode()
-        self.cmodeMode = cmode_Mode()
+        self.captureMode = capture_Mode()
+        self.changeMode = change_Mode()
         self.rmodeMode = rmode_Mode()
         self.tmodeMode = tmode_Mode()
         self.selectionMode = selection_Mode()
         self.indentMode = indent_Mode()
 
-    def set_mode(self, mode):
+    def set_mode(self, mode, option=None):
         the_mode = getattr(self, "%sMode" % mode, None)
         if the_mode is None:return
-        the_mode.select_mode()
+        the_mode.select_mode(option)
         mode_number = vibase.get_mode_number(mode)
         base.vigtk.mode = mode_number
         base.vigtk.view.set_data("mode", mode_number)
@@ -50,11 +52,11 @@ class BindingRegistry(object):
         if the_mode is None:return
         return the_mode.handle_mode(event)
 
-    def retrieve(self, mode, keycode, control=False, meta=False):
+    def retrieve(self, mode, keycode, control=False, meta=False, acc=""):
         """ retrieve a binding from the current mode if it exists """
         the_mode = getattr(self, "%sMode" % vibase.get_mode_name(), None)
         if the_mode is None: return
-        return the_mode.retrieve(keycode, control, meta)
+        return the_mode.retrieve(keycode, control, meta, acc)
 
 
 # vim: ai ts=4 sts=4 et sw=4

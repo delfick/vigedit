@@ -52,8 +52,8 @@ def deactivate(inView):
 def get_mode_desc():
     return ViBase.vigtk.get_mode_desc(ViBase.vigtk.mode)                
     
-def set_mode(mode):
-    ViBase.vigtk.bindings.set_mode(mode)
+def set_mode(mode, option=None):
+    ViBase.vigtk.bindings.set_mode(mode, option)
     
 def get_mode_name():
     return ViBase.vigtk.modes[ViBase.vigtk.mode]
@@ -91,7 +91,7 @@ def is_visual_mode():
 
 def increment_accumulator(event):
     if event.keyval in range(256):
-        ViBase.vigtk.acc +=chr(event.keyval) 
+        ViBase.vigtk.acc.append(chr(event.keyval))
 
 class ViBase(GObject):
     """ class that holds an instance of vitgk and processes certain events (see handler_ids below) """
@@ -123,11 +123,11 @@ class ViBase(GObject):
         try:
             self.on_key_press_event(view, event)
         except :
-        	print "no event to retry"
+            print "no event to retry"
         
         
-    def set_mode(self, mode):
-        set_mode(mode)
+    def set_mode(self, mode, option=None):
+        set_mode(mode, option)
         
     def update_vigtk(self, view, mode):
         """ update vigtk when the tab or window changes """
@@ -185,24 +185,50 @@ class ViBase(GObject):
 
     def process_keypress(self, event):
         """ second level of keypress processing
-        this checks to see if the current mode has a binding that corresponds to the key combination
-        if there isn't, then two things happen :
-            if a number, it will add it to the end of the ViBase.vigtk.number variable
-            the current mode's handle_mode function is called
-        If there is a binding, then it will check if the function is callable
-            if it isn't and the function is None, then the key pressed is added to the ViBase.vigtk.acc variable
-            if it is callable, then it checks if it's repeatable
-                if it's repeatable, then it will call the function the specified number of times (held by ViBase.vigtk.number)
-                if it's not repeatable, then it calls the function, sets numLines to number and resets number and acc
-                    resets ViBase.vigtk.number and ViBase.vigtk.acc
-                    it then checks if it's final, 
-                        if it is, then it resets numLines, number and acc
-        Finally, it checks if ViBase.vigtk.returnToMode is set to something, if it is, then that mode is set        
+        
+        create string representation of the accumulator
+        if a binding doesn't exist for the event passed in 
+        	if it's a number, 
+        		it's added to ViBase.vigtk.number
+        	otherwise
+        		the current mode's handle_mode() is called
+        otherwise
+        	if the function isn't callable,
+        		key pressed is added to ViBase.vigtk.acc (see increment_accumulator)
+        	otherwise
+        		create a mark where the cursor currently is 
+        		
+        		if it's repeatable,
+        			call function specified number of times (ViBase.vigtk.number)
+        			reset numLines, number and acc in ViBase.vigtk
+        		otherwise
+        			call function
+        			set numLines to number
+        			reset number in ViBase.vigtk
+        			
+        			if the functino is final,
+        				reset numLines and acc in ViBase.vigtk
+        				
+        		if the position is to be preserverd,
+        			move the cursor back to where it started at
+        
+        finally, if ViBase.vigtk.returnToMode is set to something,
+        	set that mode.       
         """
+        
         modifiers = isControlPressed(event), isAltPressed(event)
+
         print "%s %s %s" % (ViBase.vigtk.mode, event.keyval, modifiers)
+        
+        if ViBase.vigtk.acc:
+            acc = "".join(ViBase.vigtk.acc)
+        else:
+            acc = ""
+
         should_print = ViBase.vigtk.mode != ViBase.vigtk.INSERT_MODE
-        f = ViBase.vigtk.bindings.retrieve(ViBase.vigtk.mode, event.keyval, modifiers[0], modifiers[1])
+
+        f = ViBase.vigtk.bindings.retrieve(ViBase.vigtk.mode, event.keyval, modifiers[0], modifiers[1], acc)
+
         if f is None: 
             print "\tBindings don't exist"
             if event.keyval > 47 and event.keyval < 58:
@@ -211,7 +237,6 @@ class ViBase(GObject):
             if event.keyval > 65455 and event.keyval < 65465:
                 ViBase.vigtk.number = ViBase.vigtk.number * 10 + event.keyval-65456
                 
-            
             should_print = handle_mode(get_mode_name(), event)
         else:
             function = f["function"]
@@ -242,7 +267,6 @@ class ViBase(GObject):
                     ViBase.vigtk.number = 0
                     if isFinal:
                         print "\tfunction is final"
-                        ViBase.vigtk.number = 0
                         ViBase.vigtk.numLines = 0
                         ViBase.vigtk.acc = []
                 
@@ -262,6 +286,7 @@ class ViBase(GObject):
         if ViBase.vigtk.returnToMode is not None:
             set_mode(ViBase.vigtk.returnToMode)
             ViBase.vigtk.returnToMode = None
+
         return should_print
     
     def on_button_release_event(self, event, user_data):

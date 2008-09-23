@@ -7,7 +7,8 @@ class command_Mode(binding_base):
     def init_bindings(self):
     	self.register(lambda : vibase.set_mode("example"), gtk.keysyms.E)
     	
-        self.register(lambda : vibase.set_mode("cmode"), gtk.keysyms.c)
+        self.register(lambda : vibase.set_mode("change"), gtk.keysyms.c)
+        self.register(lambda : vibase.set_mode("capture"), gtk.keysyms.C)
         self.register(lambda : vibase.set_mode("delete"), gtk.keysyms.d)
         self.register(lambda : vibase.set_mode("rmode"), gtk.keysyms.r)
         self.register(lambda : vibase.set_mode("yank"), gtk.keysyms.y)
@@ -15,7 +16,7 @@ class command_Mode(binding_base):
         self.register(lambda : vibase.set_mode("visual"), gtk.keysyms.v)
         self.register(lambda : vibase.set_mode("gmode"), gtk.keysyms.g)
         self.register(lambda : vibase.set_mode("ex"), gtk.keysyms.colon)
-        self.register(lambda : vibase.set_mode("tmode"), gtk.keysyms.t)
+        self.register(lambda : vibase.set_mode("tmode", ["find", base.vigtk.number]), gtk.keysyms.t)
         self.register(lambda : vibase.set_mode("indent"), gtk.keysyms.less)
         self.register(lambda : vibase.set_mode("indent"), gtk.keysyms.greater)
 
@@ -54,7 +55,7 @@ class command_Mode(binding_base):
         else:
             return True
         
-    def select_mode(self):
+    def select_mode(self, option=None):
         """Switches to command mode."""
         base.vigtk.acc = []
         vibase.set_overwrite(True)
