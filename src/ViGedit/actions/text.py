@@ -23,6 +23,9 @@ def delete_char():
         base.vigtk.view.emit("delete-from-cursor", gtk.DELETE_CHARS, 1)
     pos.get_cursor_iter().backward_cursor_position()
     
+def delete_prev_char():
+	pos.move_backward()
+	delete_char()    
     
 def delete_whole_line():
     lines.select_line()

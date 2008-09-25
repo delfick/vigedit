@@ -14,7 +14,7 @@ class visual_Mode(binding_base):
         
         self.register(lambda : vibase.set_mode("tmode", ["select", base.vigtk.number]), gtk.keysyms.t)
         
-        
+        self.register(text.delete_prev_char, gtk.keysyms.X, True, True)
         self.register(pos.move_forward, gtk.keysyms.l, True, True)
         self.register(pos.move_backward, gtk.keysyms.h, True, True)
         self.register(pos.move_down, gtk.keysyms.j, True, True)
