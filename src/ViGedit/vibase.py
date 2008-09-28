@@ -34,7 +34,13 @@ from utilities import *
 """ update/deactivate """
 
 def update():
-    ViGtk.statusbar.update(get_mode_desc())
+    message = get_mode_desc()
+    if ViBase.vigtk.captureNum > 0:
+        if ViBase.vigtk.captureNum > 1:
+            message += " ___ Capturing next %d key presses (%d caught)" % (ViBase.vigtk.captureNum, len(ViBase.vigtk.capturedEvents))
+        else:
+            message += " ___ Capturing next key press (%d caught)" % (len(ViBase.vigtk.capturedEvents))
+    ViGtk.statusbar.update(message)
 
 def deactivate(inView):
     ViBase.vigtk.bindings.set_mode("insert")
@@ -154,6 +160,17 @@ class ViBase(GObject):
 
     def on_key_press_event(self, view, event):
         """ initial key press processing """
+        
+        if ViBase.vigtk.captureNum > 0:
+            if len(ViBase.vigtk.capturedEvents) == 0:
+                ViBase.vigtk.initialCaptureMode = get_mode_name()
+            nextEvent = gtk.gdk.Event(gtk.gdk.KEY_PRESS)
+            nextEvent.keyval = event.keyval
+            nextEvent.state = event.state
+            nextEvent.time = 0 
+            ViBase.vigtk.capturedEvents.append(nextEvent)
+            ViBase.vigtk.captureNum -= 1
+            update()
             
         if view.get_buffer() != ViBase.vigtk.doc: 
             
@@ -188,32 +205,32 @@ class ViBase(GObject):
         
         create string representation of the accumulator
         if a binding doesn't exist for the event passed in 
-        	if it's a number, 
-        		it's added to ViBase.vigtk.number
-        	otherwise
-        		the current mode's handle_mode() is called
+            if it's a number, 
+                it's added to ViBase.vigtk.number
+            otherwise
+                the current mode's handle_mode() is called
         otherwise
-        	if the function isn't callable,
-        		key pressed is added to ViBase.vigtk.acc (see increment_accumulator)
-        	otherwise
-        		create a mark where the cursor currently is 
-        		
-        		if it's repeatable,
-        			call function specified number of times (ViBase.vigtk.number)
-        			reset numLines, number and acc in ViBase.vigtk
-        		otherwise
-        			call function
-        			set numLines to number
-        			reset number in ViBase.vigtk
-        			
-        			if the functino is final,
-        				reset numLines and acc in ViBase.vigtk
-        				
-        		if the position is to be preserverd,
-        			move the cursor back to where it started at
+            if the function isn't callable,
+                key pressed is added to ViBase.vigtk.acc (see increment_accumulator)
+            otherwise
+                create a mark where the cursor currently is 
+                
+                if it's repeatable,
+                    call function specified number of times (ViBase.vigtk.number)
+                    reset numLines, number and acc in ViBase.vigtk
+                otherwise
+                    call function
+                    set numLines to number
+                    reset number in ViBase.vigtk
+                    
+                    if the functino is final,
+                        reset numLines and acc in ViBase.vigtk
+                        
+                if the position is to be preserverd,
+                    move the cursor back to where it started at
         
         finally, if ViBase.vigtk.returnToMode is set to something,
-        	set that mode.       
+            set that mode.       
         """
         
         modifiers = isControlPressed(event), isAltPressed(event)

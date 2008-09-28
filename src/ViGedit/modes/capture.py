@@ -1,33 +1,59 @@
 from binding_base import *
 class capture_Mode(binding_base):
-
-    """I don't have enough time to implement this atm, but my idea for the moment 
-        (and it's a quick idea, so there may exist better ideas :p) is to :
+            
+            
+    """
+        TODO :
+                Ability to save the saved capture into a specific name (maybe even accessable across all tabs)
+                Ability to load saved capture from a specific name
+    """
     
-        have keybindings to :
-            add the next key to the current capture (where a number typed before this keybinding says how many keys to capture before accepting more capture.py keybindings.) and it would show you in the statusbar how many more keys will be captured
-            
-            delete the last key from the capture, and same rule for number before this keybinding as for adding.
-            
-            save the capture to a particular name. And maybe have an external file where we can have already defined captures (similar to say the snippets plugin, where snippets are stored externally to application)
-            
-            and of course a keybinding to execute a particular capture
-            
-        Implementation :
-            have a flag that is checked by vibase->key_press_event() and determines wether it should add the key event to the current capture.
-            
-            then when envoking a specific capture, find a way of making gedit think each event in the capture is being envoked by the user.
-            
-            """
-            
     def __init__(self):
         binding_base.__init__(self)
 
     def init_bindings(self):
-        pass
-        
+        self.register(self.captureNextEvents, gtk.keysyms.a, True, False, "command")
+        self.register(self.clearCapturedEvents, gtk.keysyms.c, True, False, "command")
+        self.register(self.emitCapturedEvents, gtk.keysyms.e, True, True)
+                
     def handle_mode(self, event):
         return True
         
     def select_mode(self, option=None):
         base.acc = []
+        
+    def captureNextEvents(self):
+        base.vigtk.captureNum = base.vigtk.number
+        
+    def emitCapturedEvents(self):
+        vibase.set_mode(base.vigtk.initialCaptureMode)
+        message = "captured keys : ["
+        for nextEvent in base.vigtk.capturedEvents:
+            keyName = gtk.gdk.keyval_name(nextEvent.keyval)
+            
+            message += "%s " % keyName
+            
+            if keyName == "Left":
+                pos.move_backward()
+            elif keyName == "Right":
+                pos.move_forward()
+            elif keyName == "Up":
+                pos.move_up()
+            elif keyName == "Down" :
+                pos.move_down()
+            elif keyName == "End" :
+                pos.move_line_end()
+            elif keyName == "Home" :
+                pos.move_line_begin()
+            elif keyName == "Page_Down":
+            	pos.move_page_down()
+            elif keyName == "Page_Up":
+            	pos.move_page_up()
+            else:
+                base.vigtk.view.emit("key-press-event", nextEvent)
+                
+        print "%s]" % message
+            
+    def clearCapturedEvents(self):
+        base.vigtk.capturedEvents = []
+        base.vigtk.captureNum = 0
