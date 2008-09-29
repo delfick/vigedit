@@ -12,7 +12,7 @@ class visual_Mode(binding_base):
         self.register(lambda : vibase.activate_menu("paste"), gtk.keysyms.p, True, True)
         self.register(lambda : vibase.activate_menu("select_all"), gtk.keysyms.a, True)
         
-        self.register(lambda : vibase.set_mode("tmode", ["select", base.vigtk.number]), gtk.keysyms.t)
+        self.register(lambda : vibase.set_mode("tmode", ["select", base.vigtk.number, "f"]), gtk.keysyms.t)
         
         self.register(text.delete_prev_char, gtk.keysyms.X, True, True)
         self.register(pos.move_forward, gtk.keysyms.l, True, True)
@@ -32,6 +32,26 @@ class visual_Mode(binding_base):
 
         self.register(others.undo, gtk.keysyms.u, True, True)
         self.register(others.search, gtk.keysyms.slash, True)
+        
+        self.register(None, gtk.keysyms.a, False, False)
+        self.register(None, gtk.keysyms.t, False, False)
+
+        self.register_acc(text.select_next_word, "a", gtk.keysyms.w, True, True)
+
+        self.register_acc(lambda : blocks.select_whole("braceleft", "braceright"),   "a", gtk.keysyms.braceleft, True, True)
+        self.register_acc(lambda : blocks.select_whole("parenleft", "parenright"),   "a", gtk.keysyms.parenleft, True, True)
+        self.register_acc(lambda : blocks.select_whole("quotedbl", "quotedbl"),      "a", gtk.keysyms.quotedbl, True, True)
+        self.register_acc(lambda : blocks.select_whole("apostrophe", "apostrophe"),  "a", gtk.keysyms.apostrophe, True, True)
+
+        self.register_acc(lambda : blocks.select_till("braceleft"),   "t", gtk.keysyms.braceleft, True, True)
+        self.register_acc(lambda : blocks.select_till("parenleft"),   "t", gtk.keysyms.parenleft, True, True)
+        self.register_acc(lambda : blocks.select_till("braceright"),  "t", gtk.keysyms.braceright, True, True)
+        self.register_acc(lambda : blocks.select_till("parenright"),  "t", gtk.keysyms.parenright, True, True)
+        self.register_acc(lambda : blocks.select_till("quotedbl"),    "t", gtk.keysyms.quotedbl, True, True)
+        self.register_acc(lambda : blocks.select_till("apostrophe"),  "t", gtk.keysyms.apostrophe, True, True)
+        
+        
+        self.register_acc(lambda : lines.select_lines(base.vigtk.number), "a", gtk.keysyms.l, True, False)
       
     def handle_mode(self, event):
         """ if a modifier is pressed, let it pass through so it can be registered by gedit 

@@ -16,7 +16,7 @@ class command_Mode(binding_base):
         self.register(lambda : vibase.set_mode("visual"), gtk.keysyms.v)
         self.register(lambda : vibase.set_mode("gmode"), gtk.keysyms.g)
         self.register(lambda : vibase.set_mode("ex"), gtk.keysyms.colon)
-        self.register(lambda : vibase.set_mode("tmode", ["find", base.vigtk.number]), gtk.keysyms.t)
+        self.register(lambda : vibase.set_mode("tmode", ["find", base.vigtk.number, "f"]), gtk.keysyms.t)
         self.register(lambda : vibase.set_mode("indent"), gtk.keysyms.less)
         self.register(lambda : vibase.set_mode("indent"), gtk.keysyms.greater)
 

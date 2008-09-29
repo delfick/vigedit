@@ -30,27 +30,8 @@ class capture_Mode(binding_base):
         message = "captured keys : ["
         for nextEvent in base.vigtk.capturedEvents:
             keyName = gtk.gdk.keyval_name(nextEvent.keyval)
-            
+            emit.event(nextEvent)
             message += "%s " % keyName
-            
-            if keyName == "Left":
-                pos.move_backward()
-            elif keyName == "Right":
-                pos.move_forward()
-            elif keyName == "Up":
-                pos.move_up()
-            elif keyName == "Down" :
-                pos.move_down()
-            elif keyName == "End" :
-                pos.move_line_end()
-            elif keyName == "Home" :
-                pos.move_line_begin()
-            elif keyName == "Page_Down":
-            	pos.move_page_down()
-            elif keyName == "Page_Up":
-            	pos.move_page_up()
-            else:
-                base.vigtk.view.emit("key-press-event", nextEvent)
                 
         print "%s]" % message
             

@@ -8,7 +8,7 @@ from gettext import gettext as _
 
 from .. import vibase
 from ..vibase import ViBase as base
-import lines, others, text, position as pos, fileOperations as fileOps
+import emit, blocks, lines, others, text, position as pos, fileOperations as fileOps
 
 def append_after():
     iter = pos.get_cursor_iter()

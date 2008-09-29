@@ -167,6 +167,7 @@ class ViBase(GObject):
             nextEvent = gtk.gdk.Event(gtk.gdk.KEY_PRESS)
             nextEvent.keyval = event.keyval
             nextEvent.state = event.state
+            print "\t\t\t %s" % event.state
             nextEvent.time = 0 
             ViBase.vigtk.capturedEvents.append(nextEvent)
             ViBase.vigtk.captureNum -= 1
