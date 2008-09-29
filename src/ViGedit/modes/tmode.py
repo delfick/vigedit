@@ -34,7 +34,7 @@ class tmode_Mode(binding_base):
             if cursor.get_char() == self.other:
             	self.numTimes += 1
             	
-            if cursor.get_char() == wanted:
+            elif cursor.get_char() == wanted:
                 if self.numTimes > 1 :
                     self.numTimes -= 1
                 else :
