@@ -12,9 +12,9 @@ class capture_Mode(binding_base):
         binding_base.__init__(self)
 
     def init_bindings(self):
-        self.register(self.captureNextEvents, gtk.keysyms.a, True, False, "command")
-        self.register(self.clearCapturedEvents, gtk.keysyms.c, True, False, "command")
-        self.register(self.emitCapturedEvents, gtk.keysyms.e, True, True)
+        self.register(self.capture_next_events, gtk.keysyms.a, True, False, "command")
+        self.register(self.clear_captured_events, gtk.keysyms.c, True, False, "command")
+        self.register(self.emit_captured_events, gtk.keysyms.e, True, True)
                 
     def handle_mode(self, event):
         return True
@@ -22,10 +22,10 @@ class capture_Mode(binding_base):
     def select_mode(self, option=None):
         base.acc = []
         
-    def captureNextEvents(self):
+    def capture_next_events(self):
         base.vigtk.captureNum = base.vigtk.number
         
-    def emitCapturedEvents(self):
+    def emit_captured_events(self):
         vibase.set_mode(base.vigtk.initialCaptureMode)
         message = "captured keys : ["
         for nextEvent in base.vigtk.capturedEvents:
@@ -35,6 +35,6 @@ class capture_Mode(binding_base):
                 
         print "%s]" % message
             
-    def clearCapturedEvents(self):
+    def clear_captured_events(self):
         base.vigtk.capturedEvents = []
         base.vigtk.captureNum = 0

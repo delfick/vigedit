@@ -15,10 +15,10 @@ import text, emit, blocks, insert, lines, others, position as pos, fileOperation
 def name(name):
 	nextEvent = gtk.gdk.Event(gtk.gdk.KEY_PRESS)
 	nextEvent.keyval = getattr(gtk.keysyms, name)
-	nextEvent.state = gtk.gdk.MODIFIER_MASK
+	nextEvent.state = gtk.gdk.MOD2_MASK
 	nextEvent.time = 0 
 	
-	base.vigtk.view.emit("key-press-event", nextEvent)
+	event(nextEvent)
 
 
 def number(keyval):
@@ -28,7 +28,7 @@ def number(keyval):
 	nextEvent.state = gtk.gdk.MODIFIER_MASK
 	nextEvent.time = 0 
 	
-	base.vigtk.view.emit("key-press-event", nextEvent)
+	event(nextEvent)
 	
 def array_names(array):
 	for key in array:

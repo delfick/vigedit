@@ -33,6 +33,8 @@ def change_whole(the_type, other_type):
     select_whole(the_type, other_type)
     text.cut_selection()
     vibase.set_mode("insert")
+    if the_type == "braceleft" and other_type == "braceright":
+        open_block()
     
 def change_till(the_type, other_type):
     select_till(the_type)
@@ -44,9 +46,18 @@ def change_till(the_type, other_type):
 def delete_whole(the_type, other_type):
     select_whole(the_type, other_type)
     text.cut_selection()
+    if the_type == "braceleft" and other_type == "braceright":
+        vibase.set_mode("insert")
+        open_block()
     vibase.set_mode("command")
     
 def delete_till(the_type, other_type):
     select_till(the_type)
     text.cut_selection()
     vibase.set_mode("command")
+    
+    
+""" other """
+
+def open_block():
+    emit.array_names(["Return", "Return", "Up", "Tab"])
