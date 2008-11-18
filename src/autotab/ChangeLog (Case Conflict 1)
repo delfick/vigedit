@@ -1,0 +1,20 @@
+Auto Tab (0.5)  2008-09-19
+  * Bugfix release: Closes issues #4 and #5
+
+Auto Tab (0.4)  2008-02-27
+  * New, smarter algorithm courtesy of Lars Uebernickel.
+  * Bugfix for Gedit 2.20 and above (fixes issue #2 and #3)
+  * GPLv3
+
+Auto Tab (0.3)  2007-03-30
+  * Added a way for other plugins to tell Auto Tab to skip processing a 
+    document with view.set_data("AutoTabSkip", True).
+
+Auto Tab (0.2)  2007-03-23
+  * Changed to use "loaded" and "saved" signals instead of update_ui.
+  * Added Modelines plugin compatibility, if the Modelines plugin is active and
+    has set tab settings they will be respected and displayed as-is.
+  * Added CHANGELOG file.
+
+Auto Tab (0.1)  2007-03-11
+  * Initial release to http://code.google.com/p/gedit-autotab/
