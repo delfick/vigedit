@@ -113,8 +113,10 @@ class AutoTab(gedit.Plugin):
   def update_ui(self, window):
     self.update_status()
 
+  # These should be read out of gconf
   def set_sensible_defaults(self, language):
       language = language.lower()
+      # This can and should be made more configurable
       if language == "python":
           self.update_tabs(4, True)
       elif language == "ruby":
@@ -146,15 +148,7 @@ class AutoTab(gedit.Plugin):
 		# End of Modelines stuff,
 		# start of Auto Tabs own stuff
 
-    # This can and should be made more configurable
-    print "Getting language from file"
-    language = doc.get_language()
-    if language:
-        # The docs say say something about this being the localized name. Could
-        # be a problem?
-        language = language.get_name()
-        self.set_sensible_defaults(language)
-		    
+   		    
     start, end = doc.get_bounds()
     if not end:
       return
@@ -185,6 +179,13 @@ class AutoTab(gedit.Plugin):
 
     # no indentations, leave old values
     if sum(indent_count.values()) == 0:
+      # Use the filetype as the rule after everything else has been tried 
+      language = doc.get_language()
+      if language:
+      # The docs say say something about this being the localized name. Could
+      # be a problem?
+        language = language.get_name()
+        self.set_sensible_defaults(language)
       return
 
     winner = max(indent_count, key=indent_count.get)
