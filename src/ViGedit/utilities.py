@@ -46,16 +46,16 @@ def isModifierPressed(event):
     return False
 
 def isDirectionalPressed(event):
-	if event.keyval == gtk.keysyms.Up:
-		return True
-	elif event.keyval == gtk.keysyms.Down:
-		return True
-	elif event.keyval == gtk.keysyms.Left:
-		return True
-	elif event.keyval == gtk.keysyms.Right:
-		return True
-	else:
-		return False
+    if event.keyval == gtk.keysyms.Up:
+        return True
+    elif event.keyval == gtk.keysyms.Down:
+        return True
+    elif event.keyval == gtk.keysyms.Left:
+        return True
+    elif event.keyval == gtk.keysyms.Right:
+        return True
+    else:
+        return False
 
 """ nice function I found here http://diveintopython.org/power_of_introspection/index.html#apihelper.divein """    
 

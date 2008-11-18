@@ -35,10 +35,10 @@ class ViGtk:
     INDENT_MODE, CAPTURE_MODE) = range(13)
 
     modes = { 0 : 'command', 1 : 'visual', 2: 'delete',   
-    		  3 : 'insert', 4: 'ex', 5: 'yank', 
-    		  6: 'gmode', 7:'change', 8: 'rmode', 
-    		  9: 'tmode', 10:'selection', 11:'indent', 
-    		  12:'capture'}    
+              3 : 'insert', 4: 'ex', 5: 'yank', 
+              6: 'gmode', 7:'change', 8: 'rmode', 
+              9: 'tmode', 10:'selection', 11:'indent', 
+              12:'capture'}    
               
     def get_mode_desc(self, mode):
         """ Get mode text """
@@ -61,7 +61,7 @@ class ViGtk:
     initial = True
     
     def __init__(self, view):
-    	self.initialise_Values(view, ViGtk.COMMAND_MODE)
+        self.initialise_Values(view, ViGtk.COMMAND_MODE)
         if ViGtk.initial:
             """ these things only need to be set once """
             ViGtk.initial = False

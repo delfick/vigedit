@@ -49,8 +49,27 @@ def yank_line():
     yank_selection()
     pos.return_to_origin(number+1)
     
+def yank_until_end_of_line():
+    vibase.set_mode("visual")
+    pos.move_line_end()
+    yank_selection()
+    
+def yank_till_end_of_word():
+    vibase.set_mode("visual")
+    pos.move_word_forward()
+    yank_selection()
+
+def yank_next_word():
+    select_next_word()
+    yank_selection()
+    
+def yank_to_line_end():
+    lines.select_to_line_end()
+    yank_selection()
+    
 def yank_selection():
     base.vigtk.view.copy_clipboard()
+    
     
 """ pasting """
     

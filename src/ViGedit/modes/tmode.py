@@ -32,8 +32,8 @@ class tmode_Mode(binding_base):
             #print cursor.get_char(), wanted
             
             if cursor.get_char() == self.other:
-            	self.numTimes += 1
-            	
+                self.numTimes += 1
+                
             elif cursor.get_char() == wanted:
                 if self.numTimes > 1 :
                     self.numTimes -= 1
@@ -62,9 +62,9 @@ class tmode_Mode(binding_base):
         self.numTimes = option[1]
         self.direction = option[2]
         if len(option) ==4 :
-        	#if this character is found, then numTimes is increased
-        	#helpful for selecting nested blocks
-        	self.other = chr(option[3])
+            #if this character is found, then numTimes is increased
+            #helpful for selecting nested blocks
+            self.other = chr(option[3])
         else:
-        	self.other = None
+            self.other = None
         base.vigtk.acc =[]

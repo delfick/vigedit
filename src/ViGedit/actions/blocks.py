@@ -36,7 +36,7 @@ def change_whole(the_type, other_type):
     if the_type == "braceleft" and other_type == "braceright":
         open_block()
     
-def change_till(the_type, other_type):
+def change_till(the_type):
     select_till(the_type)
     text.cut_selection()
     vibase.set_mode("insert")
@@ -51,9 +51,21 @@ def delete_whole(the_type, other_type):
         open_block()
     vibase.set_mode("command")
     
-def delete_till(the_type, other_type):
+def delete_till(the_type):
     select_till(the_type)
     text.cut_selection()
+    vibase.set_mode("command")
+    
+""" yank """
+
+def yank_whole(the_type, other_type):
+    select_whole(the_type, other_type)
+    text.yank_selection()
+    vibase.set_mode("command")
+    
+def yank_till(the_type):
+    select_till(the_type)
+    text.yank_selection()
     vibase.set_mode("command")
     
     
