@@ -8,14 +8,16 @@ from gettext import gettext as _
 
 from .. import vibase
 from ..vibase import ViBase as base
-import insert, others, text, position as pos, fileOperations as fileOps
+import emit, blocks, insert, others, text, position as pos, fileOperations as fileOps
 
 """ selecting whole lines """
 def select_line():
     select_one_line()
 
 def select_lines(number):
-    if number > 0:
+    if vibase.get_mode_name() == "visual":
+        vibase.set_mode("command")
+    if number > 1:
         select_many_lines(number)
     else:
         select_one_line()
@@ -38,10 +40,10 @@ def select_many_lines(number):
     vibase.set_mode("visual")
     #select the number of lines specified
     while number > 0:
-    	print "moving down"
+        print "moving down"
         pos.move_down()
         number = number-1 
-        
+       
     if will_not_reach_end:
         pos.move_backward()
         
@@ -64,7 +66,7 @@ def select_to_line_begin():
 
 def split_lines():
     if vibase.get_menu("split_lines") == None:
-    	print "split lines menu doesn't exist"
+        print "split lines menu doesn't exist"
         return False
     begin = pos.to_empty_line(False)
     end = pos.to_empty_line(True)

@@ -6,7 +6,7 @@ class rmode_Mode(binding_base):
         
 
     def init_bindings(self):
-        pass
+        self.register(pos.move_backward, gtk.keysyms.BackSpace, True, False)
         
     def handle_mode(self, event):
     	if vibase.isModifierPressed(event) == False:

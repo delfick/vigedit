@@ -8,7 +8,7 @@ from gettext import gettext as _
 
 from .. import vibase
 from ..vibase import ViBase as base
-import insert, lines, others, position as pos, fileOperations as fileOps
+import emit, blocks, insert, lines, others, position as pos, fileOperations as fileOps
 
 """ deletion """
 
@@ -23,6 +23,9 @@ def delete_char():
         base.vigtk.view.emit("delete-from-cursor", gtk.DELETE_CHARS, 1)
     pos.get_cursor_iter().backward_cursor_position()
     
+def delete_prev_char():
+    pos.move_backward()
+    delete_char()    
     
 def delete_whole_line():
     lines.select_line()
@@ -82,7 +85,14 @@ def cut_till_end_of_word():
     cut_selection()
 
 def cut_next_word():
+    select_next_word()
+    cut_selection()
+    
+""" selection """
+
+def select_next_word():
+    if vibase.get_mode_name() == "visual":
+        vibase.set_mode("command")
     pos.move_word_backward()
     vibase.set_mode("visual")
     pos.move_word_forward()
-    cut_selection()

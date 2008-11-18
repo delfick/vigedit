@@ -65,7 +65,7 @@ class ViGtk:
         if ViGtk.initial:
             """ these things only need to be set once """
             ViGtk.initial = False
-            ViGtk.last_search = None
+            ViGtk.last_search = None 
             ViGtk.ignored_keys = map( gtk.gdk.keyval_from_name, \
                     ['Up', 'Down', 'Left', 'Right', 'Page_Up', 'Page_Down', 'Home', 'End'] + \
                     ["F%d" % n for n in range(1,13)] )
@@ -89,3 +89,6 @@ class ViGtk:
         ViGtk.statusbar = view.get_data("statusbar")
         ViGtk.mode = mode
         ViGtk.menus = view.get_data("menus")
+        ViGtk.initialCaptureMode=None
+        ViGtk.captureNum = 0
+        ViGtk.capturedEvents = []

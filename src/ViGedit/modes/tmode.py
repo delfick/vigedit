@@ -12,21 +12,33 @@ class tmode_Mode(binding_base):
         """ moves cursor to next occurance of the next key to be pressed """
         cursor = pos.get_cursor_iter()
         count = 0
+        wanted = chr(event.keyval)
         
         while True:
             count+=1
             
-            if cursor.is_end():
-                break
+            if self.direction == "f":
+                if cursor.is_end():
+                    break
+                
+                cursor.forward_char()
+                
+            elif self.direction == "b" :
+                if cursor.is_start():
+                    break
+                
+                cursor.backward_char()
             
-            cursor.forward_char()
+            #print cursor.get_char(), wanted
             
-            #print cursor.get_char(), gtk.gdk.keyval_name(event.keyval)
-            if cursor.get_char() == gtk.gdk.keyval_name(event.keyval):
-            	if self.numTimes > 1 :
-            		self.numTimes -= 1
-            	else :
-            		break
+            if cursor.get_char() == self.other:
+            	self.numTimes += 1
+            	
+            elif cursor.get_char() == wanted:
+                if self.numTimes > 1 :
+                    self.numTimes -= 1
+                else :
+                    break
                     
         if self.option == "find" :
             if not cursor.is_end():
@@ -48,4 +60,11 @@ class tmode_Mode(binding_base):
     def select_mode(self, option=None):
         self.option = option[0]
         self.numTimes = option[1]
+        self.direction = option[2]
+        if len(option) ==4 :
+        	#if this character is found, then numTimes is increased
+        	#helpful for selecting nested blocks
+        	self.other = chr(option[3])
+        else:
+        	self.other = None
         base.vigtk.acc =[]

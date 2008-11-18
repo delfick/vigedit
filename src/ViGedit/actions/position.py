@@ -8,7 +8,7 @@ from gettext import gettext as _
 
 from .. import vibase
 from ..vibase import ViBase as base
-import insert, lines, others, text, fileOperations as fileOps
+import emit, blocks, insert, lines, others, text, fileOperations as fileOps
 
 def get_cursor_iter():
     return base.vigtk.doc.get_iter_at_mark(base.vigtk.doc.get_mark('insert'))   
@@ -65,6 +65,12 @@ def move_up(num=1):
     
 def move_down(num=1):
     base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_DISPLAY_LINES, num, base.vigtk.select)
+    
+def move_page_up(num=1):
+    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_PAGES, -num, base.vigtk.select)
+    
+def move_page_down(num=1):
+    base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_PAGES, num, base.vigtk.select)
     
 def move_backward(num=1):
     base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_VISUAL_POSITIONS, -num, base.vigtk.select)

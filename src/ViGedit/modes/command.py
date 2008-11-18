@@ -16,7 +16,7 @@ class command_Mode(binding_base):
         self.register(lambda : vibase.set_mode("visual"), gtk.keysyms.v)
         self.register(lambda : vibase.set_mode("gmode"), gtk.keysyms.g)
         self.register(lambda : vibase.set_mode("ex"), gtk.keysyms.colon)
-        self.register(lambda : vibase.set_mode("tmode", ["find", base.vigtk.number]), gtk.keysyms.t)
+        self.register(lambda : vibase.set_mode("tmode", ["find", base.vigtk.number, "f"]), gtk.keysyms.t)
         self.register(lambda : vibase.set_mode("indent"), gtk.keysyms.less)
         self.register(lambda : vibase.set_mode("indent"), gtk.keysyms.greater)
 
@@ -24,6 +24,7 @@ class command_Mode(binding_base):
         self.register(others.undo, gtk.keysyms.u, True, True)
         self.register(text.delete_char, gtk.keysyms.Delete, True, True)
         self.register(text.delete_char, gtk.keysyms.x, True, True)
+        self.register(text.delete_prev_char, gtk.keysyms.X, True, True)
         self.register(lines.select_one_line, gtk.keysyms.V, True, False, "selection")
         self.register(text.cut_until_end_of_line, gtk.keysyms.D, True, False, "command")
         self.register_ppos(text.paste_clipboard_above, gtk.keysyms.P, True, True, "command")

@@ -7,3 +7,4 @@ Bugs:
 * Yank should go to command mode
 
 create a capture mode
+	## sort of done, just need to implement saving and restoring captures
