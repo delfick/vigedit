@@ -25,7 +25,18 @@ def redo():
 
 def update_ex_bar():
     base.vigtk.statusbar.update(":" + "".join(base.vigtk.acc))
-    
+
+def get_terminal():
+    # Get the terminal
+    # TODO Probably needs a more sophisticated lookup, e.g., python terminal not installed, etc.
+    window = vibase.ViBase.vigtk.window 
+    bottom_panel = window.get_bottom_panel()
+    notebook = bottom_panel.get_children()[0].get_children()[0]
+    if len(notebook.get_children()) != 0: 
+        terminal = notebook.get_children()[1]
+        return terminal
+    return None   
+
 def evaluate_ex(acc):
     command = "".join(acc)
     print "ex command is %s" % command
@@ -54,12 +65,19 @@ def evaluate_ex(acc):
     elif command == "bp":
         print "Select previous tab."
     elif re.compile("tabnew (.+)$").match(command):
+        # Open the file at command in a new tab 
         # os.getcwd seems to only get the home directory
         file_name = "file://" + os.getcwd() + "/"+ re.compile("tabnew (.+)$").match(command).group(1)
         if not base.vigtk.window.get_active_document().get_uri():
             base.vigtk.window.close_tab(base.vigtk.window.get_active_tab())
         base.vigtk.window.create_tab_from_uri(file_name, gedit.encoding_get_utf8(), 1, True, True)
     elif re.compile("e (.+)$").match(command):
+        # Open the file at command in the current view
         file_name = "file://" + os.getcwd() + "/"+ re.compile("e (.+)$").match(command).group(1)
         base.vigtk.window.close_tab(base.vigtk.window.get_active_tab())
         base.vigtk.window.create_tab_from_uri(file_name, gedit.encoding_get_utf8(), 1, True, True)
+    elif re.compile("^!(.+)$").match(command):
+        # Send the command after ! to the terminal
+        terminal_command = re.compile("^!(.+)$").match(command).group(1)
+        terminal = get_terminal()
+        terminal._vte.feed_child(terminal_command + "\n")

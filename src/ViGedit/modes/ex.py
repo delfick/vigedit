@@ -89,16 +89,13 @@ class ex_Mode(binding_base):
                 break
             tab_press += 1
 
-
     def handle_mode(self, event):
         if event.keyval == gtk.keysyms.BackSpace:
             if base.vigtk.acc:
                 base.vigtk.acc.pop()
                 others.update_ex_bar()
-                
         if event.keyval == gtk.keysyms.Escape:
             vibase.set_mode("command")
-
         elif (event.keyval != gtk.keysyms.Return) and (event.keyval != gtk.keysyms.BackSpace):
             vibase.increment_accumulator(event)
             others.update_ex_bar()
