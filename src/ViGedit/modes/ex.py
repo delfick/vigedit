@@ -10,7 +10,7 @@ class ex_Mode(binding_base):
         self.register(self.evaluate_ex, gtk.keysyms.Return, True)
         self.register(self.evaluate_ex, gtk.keysyms.KP_Enter, True)
         self.register(self.cycle_completions, gtk.keysyms.Tab, False)
-        self.register(self.handle_right_button, gtk.keysyms.Right, False)
+        self.register(self.handle_right_button, gtk.keysyms.Right, True)
 
     def handle_right_button(self):
         print "handle_right_button"
@@ -18,34 +18,32 @@ class ex_Mode(binding_base):
 
     def parse_ls(self, part):
         # I'm sure this isn't how you do it
-        ls_readout = os.popen(r"ls -a1 %s*" % re.escape(part)).read()
+        ls_readout = os.popen(r"ls -a1d %s*" % re.escape(part)).read()
         listed_files = ls_readout.split("\n")
-        start_of_dirs = False
         keep_files = []
         for file in listed_files:
             if file == "":
                 continue
-            if file.find(":") != -1:
-                file = file.replace(":", "/")
+            if os.path.isdir(file):
+                file = file + "/"
                 keep_files.append(file)
                 start_of_dirs = True
-            elif start_of_dirs == False:
-                keep_files.append(file)
-            elif start_of_dirs == True:
-                pass
-
         return keep_files
 
 
     def cycle_completions(self): 
         # Wow, vim completion is tricky if you think about it
+        print os.getcwd()
         command = "".join(base.vigtk.acc)
         tab_options = []
-        if re.compile(r"tabnew (.+)$").match(command):
-            part = re.compile(r"tabnew (.+)$").match(command).group(1)
+        if re.compile(r"tabnew (.*)$").match(command):
+            part = re.compile(r"tabnew (.*)$").match(command).group(1)
+            print part
             listed_files = self.parse_ls(part) 
+            print listed_files
             matching_files = []
             for file in listed_files:
+                print "%s - %s" % (file, re.escape(part))
                 if re.compile(r"^%s" % re.escape(part)).match(file):
                     matching_files.append(file)
 
@@ -88,6 +86,7 @@ class ex_Mode(binding_base):
                 others.update_ex_bar()
                 break
             tab_press += 1
+        return True
 
     def handle_mode(self, event):
         if event.keyval == gtk.keysyms.BackSpace:
@@ -99,7 +98,6 @@ class ex_Mode(binding_base):
         elif (event.keyval != gtk.keysyms.Return) and (event.keyval != gtk.keysyms.BackSpace):
             vibase.increment_accumulator(event)
             others.update_ex_bar()
-
         base.vigtk.tabbing_through_entries = False 
         return True
         
@@ -113,8 +111,4 @@ class ex_Mode(binding_base):
         base.vigtk.acc = []
         base.vigtk.view.emit("select-all", False)
         base.vigtk.select = False
-        
-        
-        
-        
         
