@@ -1,6 +1,8 @@
 import os
 import sys
 from binding_base import *
+import glob
+
 class ex_Mode(binding_base):
 
     def __init__(self):
@@ -10,16 +12,12 @@ class ex_Mode(binding_base):
         self.register(self.evaluate_ex, gtk.keysyms.Return, True)
         self.register(self.evaluate_ex, gtk.keysyms.KP_Enter, True)
         self.register(self.cycle_completions, gtk.keysyms.Tab, False)
-        self.register(self.handle_right_button, gtk.keysyms.Right, True)
-
-    def handle_right_button(self):
-        print "handle_right_button"
-        base.vigtk.tabbing_through_entries = False 
+        self.register(self.cycle_completions, gtk.keysyms.Up, False)
+        self.register(self.cycle_completions_down, gtk.keysyms.Down, False)
 
     def parse_ls(self, part):
-        # I'm sure this isn't how you do it
-        ls_readout = os.popen(r"ls -a1d %s*" % re.escape(part)).read()
-        listed_files = ls_readout.split("\n")
+        query = "%s*" % part
+        listed_files = glob.glob(query)
         keep_files = []
         for file in listed_files:
             if file == "":
@@ -27,36 +25,49 @@ class ex_Mode(binding_base):
             if os.path.isdir(file):
                 file = file + "/"
                 keep_files.append(file)
-                start_of_dirs = True
+            else:
+                keep_files.append(file)
         return keep_files
 
+    def complete_file_operation(self, command):
+        tab_options = []
+        pieces = command.split()
+        command = pieces[0]
+        if len(pieces) == 2:
+            argument = pieces[1]
+        else:
+            argument = ""
+        listed_files = self.parse_ls(argument) 
+        matching_files = []
+        for file in listed_files:
+            if re.compile(r"^%s" % argument).match(file):
+                matching_files.append(file)
+        for match in matching_files:
+            full_command = command + " " + match
+            tab_options.append([full_command, False])
+        return tab_options
 
-    def cycle_completions(self): 
+    def ex_action_completions(self):
+        return [["tabnew", True], ["e", True], ["sp", True], ["vsplit", True]]
+
+    def cycle_completions_down(self):
+        self.cycle_completions(False)
+
+    def cycle_completions(self, up = True): 
         # Wow, vim completion is tricky if you think about it
         print os.getcwd()
         command = "".join(base.vigtk.acc)
         tab_options = []
-        if re.compile(r"tabnew (.*)$").match(command):
-            part = re.compile(r"tabnew (.*)$").match(command).group(1)
-            print part
-            listed_files = self.parse_ls(part) 
-            print listed_files
-            matching_files = []
-            for file in listed_files:
-                print "%s - %s" % (file, re.escape(part))
-                if re.compile(r"^%s" % re.escape(part)).match(file):
-                    matching_files.append(file)
-
-            print "matching_files: %s" % matching_files
-
-            for match in matching_files:
-                full_command = "tabnew " + match
-                tab_options.append([full_command, False])
-
-        print "tab_options were: %s" % base.vigtk.tab_press_items
+        
+        if command != "":
+            pieces = command.split()
+            if len(pieces) == 1:
+                tab_options = self.ex_action_completions()
+            elif len(pieces) == 2:
+                if pieces[0] in ["tabnew", "e", "sp", "vsplit"]:
+                    tab_options = self.complete_file_operation(command)
 
         if base.vigtk.tabbing_through_entries != True:
-            print "resetting last_tabbed_entry"
             # We start with the first tab match
             base.vigtk.tab_press_items = tab_options 
             if len(base.vigtk.tab_press_items) != 0:
@@ -72,7 +83,9 @@ class ex_Mode(binding_base):
                 print "current tab_press_item is: %s" % tab_press_item[0]
                 # We're pushing the tab along
                 base.vigtk.tab_press_items[tab_press][1] = False
-                # This should be popping and pushing
+                # This should be popping and pushing, but my python's rusty
+
+                #TODO needs the up/down logic here
                 if tab_press != len(tab_press_items) - 1:
                     base.vigtk.tab_press_items[tab_press + 1][1] = True 
                 else:
@@ -86,9 +99,10 @@ class ex_Mode(binding_base):
                 others.update_ex_bar()
                 break
             tab_press += 1
-        return True
+        return False
 
     def handle_mode(self, event):
+        print "ex mode: %s - %s" % (event.keyval, event.keyval == gtk.keysyms.Right)
         if event.keyval == gtk.keysyms.BackSpace:
             if base.vigtk.acc:
                 base.vigtk.acc.pop()

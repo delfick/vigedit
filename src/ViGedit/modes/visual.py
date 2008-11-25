@@ -30,6 +30,9 @@ class visual_Mode(binding_base):
         self.register(insert.open_line_below, gtk.keysyms.o, True, True, "visual")
         self.register(insert.open_line_above, gtk.keysyms.O, True, True, "visual")
 
+        self.register(lines.indent_left, gtk.keysyms.less, True, True, "visual")
+        self.register(lines.indent_right, gtk.keysyms.greater, True, True, "visual")
+
         self.register(others.undo, gtk.keysyms.u, True, True)
         self.register(others.search, gtk.keysyms.slash, True)
         

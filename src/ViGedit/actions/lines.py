@@ -78,18 +78,24 @@ def split_lines():
     vibase.set_mode("command")
     
 def indent_left():
-    number = base.vigtk.numLines
-    select_lines(number)
+    visual = vibase.get_mode_name() == "visual"
+    if visual != True:
+        number = base.vigtk.numLines
+        select_lines(number)
     if vibase.get_menu("indent_left") is not None:
         vibase.get_menu("indent_left").activate()
-    pos.return_to_origin(number)
+    if visual != True:
+        pos.return_to_origin(number)
 
 def indent_right():
-    number = base.vigtk.numLines
-    select_lines(number)
+    visual = vibase.get_mode_name() == "visual"
+    if visual != True:
+        number = base.vigtk.numLines
+        select_lines(number)
     if vibase.get_menu("indent_right") is not None:
         vibase.get_menu("indent_right").activate()
-    pos.return_to_origin(number)
+    if visual != True:
+        pos.return_to_origin(number)
     
 def join_with_prev_line():
     pos.move_line_begin()
