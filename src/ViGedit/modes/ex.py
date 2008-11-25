@@ -53,6 +53,14 @@ class ex_Mode(binding_base):
     def cycle_completions_down(self):
         self.cycle_completions(False)
 
+    def get_ex_commands_history(self):
+        tab_options = []
+        for command in base.vigtk.ex_commands_history:
+            tab_options.append([command, False])
+        if len(tab_options) != 0:
+            tab_options[0][1] = True
+        return tab_options
+
     def cycle_completions(self, up = True): 
         # Wow, vim completion is tricky if you think about it
         print os.getcwd()
@@ -64,8 +72,10 @@ class ex_Mode(binding_base):
             if len(pieces) == 1:
                 tab_options = self.ex_action_completions()
             elif len(pieces) == 2:
-                if pieces[0] in ["tabnew", "e", "sp", "vsplit"]:
+                if pieces[0] in ["tabnew", "e", "sp", "vsplit", "!ls", "!cat", "!mv", "!cp"]:
                     tab_options = self.complete_file_operation(command)
+        else:
+            tab_options = self.get_ex_commands_history()
 
         if base.vigtk.tabbing_through_entries != True:
             # We start with the first tab match

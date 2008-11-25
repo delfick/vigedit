@@ -40,6 +40,7 @@ def get_terminal():
 def evaluate_ex(acc):
     command = "".join(acc)
     print "ex command is %s" % command
+    base.vigtk.ex_commands_history.append(command)
     if command == "w":
         fileOps.save_file()
     elif command == "wq":
