@@ -193,7 +193,8 @@ class ViBase(GObject):
                 
             # Ignored keys.  
             elif (ViBase.vigtk.mode is ViBase.vigtk.INSERT_MODE) \
-                or (event.keyval in ViGtk.ignored_keys):
+                or (event.keyval in ViGtk.ignored_keys \
+                    and ViBase.vigtk.mode is not ViBase.vigtk.EX_MODE):
                     return False
                     
             # Process keypress

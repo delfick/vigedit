@@ -80,7 +80,11 @@ class ViGtk:
         ViGtk.view = view
         ViGtk.doc = view.get_buffer()
         ViGtk.select = True
-        ViGtk.acc = []
+        ViGtk.acc  = []
+        ViGtk.tabbing_through_entries = False
+        ViGtk.last_tabbed_entry = None 
+        ViGtk.tab_press_items = []
+        ViGtk.ex_commands_history = []
         ViGtk.number = 0
         ViGtk.numLines = 0
         ViGtk.old_mode = mode
