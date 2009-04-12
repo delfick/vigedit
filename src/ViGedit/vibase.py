@@ -51,8 +51,7 @@ def deactivate(inView):
     inView.disconnect(handler_ids[2])
     doc.disconnect(handler_ids[3])
     doc.disconnect(handler_ids[4])
-    
-    
+
 """ dealing with modes """
 
 def get_mode_desc():

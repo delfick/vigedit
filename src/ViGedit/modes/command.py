@@ -47,6 +47,7 @@ class command_Mode(binding_base):
         self.register(insert.open_line_below, gtk.keysyms.o, True, True, "insert")
         self.register(insert.open_line_above, gtk.keysyms.O, True, True, "insert")
         self.register(insert.append_after, gtk.keysyms.a, True, False, "insert")
+        self.register(text.delete_char, gtk.keysyms.s, True, False, "insert")
         self.register(others.search, gtk.keysyms.slash, True)
         
     def handle_mode(self, event):
