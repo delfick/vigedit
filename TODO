@@ -1,10 +1,15 @@
 ViGedit TODO
 ============
 
+TODO:
+* Make the statusbar a list (so bindings can be activated via mouse clicks)
+* Make a search mode that implements a regex search and replace similar to s/<search>/<replace>/<options> in expression mode
+* Make it possible to save and restore captures in Capture Mode
+* Implement the ability to have many clipboards
+
+
+
 Bugs:
 -----
-* Starts in visual indent mode
-* Yank should go to command mode
+* s/<search>/<replace>/<options> in expression mode doesn't highlight found items
 
-create a capture mode
-	## sort of done, just need to implement saving and restoring captures
