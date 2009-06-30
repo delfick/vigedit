@@ -1,46 +1,23 @@
-""" functions to insert text """
-import gtk
-import re
-import gedit
-import gobject
-import os
-from gettext import gettext as _
-
-from .. import vibase
-from ..vibase import ViBase as base
-import emit, blocks, lines, others, text, position as pos, fileOperations as fileOps
-
-def append_after():
-    iter = pos.get_cursor_iter()
-    if iter.ends_line():
-        print "insert ' '"
-        base.vigtk.doc.insert_at_cursor(" ")
-    else:
-        print "move forward cursor position" 
-        base.vigtk.view.emit("move-cursor", gtk.MOVEMENT_VISUAL_POSITIONS, 1, base.vigtk.select)
-        #iter.forward_cursor_position()  
+def append_After(act):
+    cursor = act.pos.getIter(act)
+    if cursor.ends_line():
+        act.vibase.doc.insert_at_cursor(" ")
+    else: 
+        act.pos.move_Forward(act)
     return True
     
-def insert_after():
-    pos.move_forward()
-    
-def insert_end_line():
-    pos.move_line_end()
-    
-def insert_begin_line():
-    cursor = pos.get_cursor_iter()
+def insert_BeginLine(act):
+    cursor = act.pos.getIter(act)
     cursor.backward_sentence_start()
-    base.vigtk.doc.place_cursor(cursor)
+    act.vibase.doc.place_cursor(cursor)
     
-def open_line_above():
-    print "Opening line above"
-    pos.move_line_begin()
-    vibase.set_mode("insert")
-    base.vigtk.view.emit("insert-at-cursor", "\n")
-    pos.move_up()
+def open_LineAbove(act):
+    act.pos.move_LineBegin(act)
+    act.bindings.mode = act.modes.insert
+    act.keyboard.emitNewLine(act)
+    act.pos.move_Up(act)
 
-def open_line_below():
-    print "Opening line below"
-    pos.move_line_end()
-    vibase.set_mode("insert")
-    base.vigtk.view.emit("insert-at-cursor", "\n")
+def open_LineBelow(act):
+    act.pos.move_LineEnd(act)
+    act.bindings.mode = act.modes.insert
+    act.keyboard.emitNewLine(act)

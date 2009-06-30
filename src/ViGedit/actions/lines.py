@@ -1,103 +1,89 @@
-""" functions related to selecting and modifying lines of text """
-import gtk
-import re
-import gedit
-import gobject
-import os
-from gettext import gettext as _
+########################
+###
+###   SELECT WHOLE
+###
+########################
 
-from .. import vibase
-from ..vibase import ViBase as base
-import emit, blocks, insert, others, text, position as pos, fileOperations as fileOps
+def select_Line(act):
+    select_OneLine(act)
 
-""" selecting whole lines """
-def select_line():
-    select_one_line()
-
-def select_lines(number):
-    if vibase.get_mode_name() == "visual":
-        vibase.set_mode("command")
+def select_Lines(act, number):
+    if act.mode == act.modes.visual:
+        act.bindings.mode = act.modes.command
     if number > 1:
-        select_many_lines(number)
+        select_ManyLines(act, number)
     else:
-        select_one_line()
+        select_OneLine(act)
         
-def get_lines_till_end():
+def select_OneLine(act):
+    act.pos.move_LineBegin(act)   
+    
+    cursor = act.pos.getIter(act)
+    l1 = cursor.get_line()
+    cursor.forward_line()
+    if cursor.get_line() != l1:
+        cursor.backward_char()
+    
+    act.pos.moveInsert(act, cursor, True)
+        
+def select_ManyLines(act, number):
+    if type(number) in (list, tuple):
+        try:
+            number = int("".join(number))
+        except ValueError:
+            number = 0
+    
+    act.pos.move_LineBegin(act)
+    cursor = act.pos.getIter(act)
+    cursor.forward_lines(number)
+    
+    act.pos.moveInsert(act, cursor, True)
+        
+def getLinesTillEnd(act):
     """ determine how many lines from current position to the end of the file """
-    cursor = pos.get_cursor_iter()
+    cursor = act.pos.getIter(act)
     line = cursor.get_line()
-    total = base.vigtk.doc.get_line_count()
-    print "lines till end of document : ", total-line
+    total = act.vibase.doc.get_line_count()
+    act.trace.info(2, "lines till end of document : ", total-line)
     return total-line
-        
-def select_many_lines(number):
-    will_not_reach_end = False
-    linesTillEnd = get_lines_till_end()
-    if linesTillEnd > number:
-        will_not_reach_end = True
-        
-    pos.move_line_begin()
-    vibase.set_mode("visual")
-    #select the number of lines specified
-    while number > 0:
-        print "moving down"
-        pos.move_down()
-        number = number-1 
-       
-    if will_not_reach_end:
-        pos.move_backward()
-        
-def select_one_line():
-    pos.move_line_begin()    
-    vibase.set_mode("visual")
-    pos.move_line_end()
     
-""" select part of a line """
+########################
+###
+###   SELECT PART
+###
+########################
 
-def select_to_line_end():
-    vibase.set_mode("visual")
-    pos.move_line_end()
+def select_ToLineEnd(act):
+    act.bindings.mode = act.modes.visual
+    act.pos.move_LineEnd(act)
     
-def select_to_line_begin():
-    vibase.set_mode("visual")
-    pos.move_line_begin()
+def select_ToLineBegin(act):
+    act.bindings.mode = act.modes.visual
+    act.pos.move_LineBegin(act)
     
-""" other functions """
+########################
+###
+###   OTHER
+###
+########################
+    
+def indentLeft(act):
+    indent(act, "Left")
 
-def split_lines():
-    if vibase.get_menu("split_lines") == None:
-        print "split lines menu doesn't exist"
-        return False
-    begin = pos.to_empty_line(False)
-    end = pos.to_empty_line(True)
-    print begin, end
-    if (begin != None) and (end != None):
-        base.vigtk.doc.select_range(begin, end)
-        print "activate split_lines_menu"
-        vibase.get_menu("split_lines").activate()
-    vibase.set_mode("command")
-    
-def indent_left():
-    visual = vibase.get_mode_name() == "visual"
-    if visual != True:
-        number = base.vigtk.numLines
-        select_lines(number)
-    if vibase.get_menu("indent_left") is not None:
-        vibase.get_menu("indent_left").activate()
-    if visual != True:
-        pos.return_to_origin(number)
+def indentRight(act):
+    indent(act, "Right")
 
-def indent_right():
-    visual = vibase.get_mode_name() == "visual"
-    if visual != True:
-        number = base.vigtk.numLines
-        select_lines(number)
-    if vibase.get_menu("indent_right") is not None:
-        vibase.get_menu("indent_right").activate()
-    if visual != True:
-        pos.return_to_origin(number)
+def indent(act, direction):
+    numLines = act.vibase.numLines
     
-def join_with_prev_line():
-    pos.move_line_begin()
-    pos.move_backward()
-    text.delete_char()
+    cursor = act.pos.getIter(act)
+    select_Lines(act, numLines)
+        
+    if act.menus["indent%s" % direction] is not None:
+        act.menus["indent%s" % direction].activate()
+        
+    act.pos.moveInsert(act, cursor)
+    
+    
+    
+    

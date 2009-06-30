@@ -1,75 +1,85 @@
-""" functions for doing stuff to text """
-import gtk
-import re
-import gedit
-import gobject
-import os
-from gettext import gettext as _
+########################
+###
+###   SELECTION
+###
+########################
 
-from .. import vibase
-from ..vibase import ViBase as base
-import text, emit, blocks, insert, lines, others, position as pos, fileOperations as fileOps
+def selectWhole(act, type1, type2):
+    act.bindings.mode = act.modes.t, ["find", 1, "b", type2]
+    act.keyboard.emitName(act, type1)
 
-""" selection """
+    act.pos.move_Forward(act)
+    act.bindings.mode = act.modes.t, ["select", 1, "f", type1]
+    act.keyboard.emitName(act, type2)
+    
+    act.bindings.mode = act.modes.selection
+    
+def selectTill(act, type1):
+    act.bindings.mode = act.modes.t, ["select",1, "f"]
+    act.keyboard.emitName(act, type1) 
+    act.bindings.mode = act.modes.selection
+    
+    
+########################
+###
+###   CHANGE
+###
+########################
 
-def select_whole(the_type, other_type):
-    print "finding %s" % the_type
-    vibase.set_mode("tmode", ["find", 1, "b", getattr(gtk.keysyms, other_type)])
-    emit.name(the_type)
-    pos.move_forward()
-    vibase.set_mode("tmode", ["select",1, "f", getattr(gtk.keysyms, the_type)])
-    emit.name(other_type) 
-    vibase.set_mode("selection")
+def changeWhole(act, type1, type2):
+    selectWhole(act, type1, type2)
+    act.text.cut_Selection(act)
+    act.bindings.mode = act.modes.insert
+    if type1 == "braceleft" and type2 == "braceright":
+        openBlock(act)
     
-def select_till(the_type):
-    vibase.set_mode("tmode", ["select",1, "f"])
-    emit.name(the_type) 
-    vibase.set_mode("selection")
+def changeTill(act, type1):
+    selectTill(act, type1)
+    act.text.cut_Selection(act)
+    act.bindings.mode = act.modes.insert
     
-    
-""" change """
+########################
+###
+###   DELETE
+###
+########################
 
-def change_whole(the_type, other_type):
-    select_whole(the_type, other_type)
-    text.cut_selection()
-    vibase.set_mode("insert")
-    if the_type == "braceleft" and other_type == "braceright":
-        open_block()
+def deleteWhole(act, type1, type2):
+    selectWhole(act, type1, type2)
+    act.text.cut_Selection(act)
+    if type1 == "braceleft" and type2 == "braceright":
+        act.bindings.mode = act.modes.insert
+        openBlock(act)
+    act.bindings.mode = act.modes.command
     
-def change_till(the_type):
-    select_till(the_type)
-    text.cut_selection()
-    vibase.set_mode("insert")
+def deleteTill(act, type1):
+    selectTill(act, type1)
+    act.text.cut_Selection(act)
+    act.bindings.mode = act.modes.command
     
-""" delete """
+########################
+###
+###   YANK
+###
+########################
 
-def delete_whole(the_type, other_type):
-    select_whole(the_type, other_type)
-    text.cut_selection()
-    if the_type == "braceleft" and other_type == "braceright":
-        vibase.set_mode("insert")
-        open_block()
-    vibase.set_mode("command")
+def yankWhole(act, type1, type2):
+    selectWhole(act, type1, type2)
+    act.text.yank_Selection(act)
+    act.bindings.mode = act.modes.command
     
-def delete_till(the_type):
-    select_till(the_type)
-    text.cut_selection()
-    vibase.set_mode("command")
+def yankTill(act, type1):
+    selectTill(act, type1)
+    act.text.yank_Selection(act)
+    act.bindings.mode = act.modes.command
     
-""" yank """
+########################
+###
+###   OTHER
+###
+########################
 
-def yank_whole(the_type, other_type):
-    select_whole(the_type, other_type)
-    text.yank_selection()
-    vibase.set_mode("command")
-    
-def yank_till(the_type):
-    select_till(the_type)
-    text.yank_selection()
-    vibase.set_mode("command")
+def openBlock(act):
+    act.keyboard.emitNames(act, "Return", "Return", "Up", "Tab")
     
     
-""" other """
-
-def open_block():
-    emit.array_names(["Return", "Return", "Up", "Tab"])

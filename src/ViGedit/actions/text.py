@@ -1,117 +1,133 @@
-""" functions for doing stuff to text """
-import gtk
-import re
-import gedit
-import gobject
-import os
-from gettext import gettext as _
+########################
+###
+###   DELETION
+###
+########################
 
-from .. import vibase
-from ..vibase import ViBase as base
-import emit, blocks, insert, lines, others, position as pos, fileOperations as fileOps
+def delete_PrevChar(act):
+    act.vibase.doc.backspace(act.pos.getIter(act), False, True)  
+    
+def delete_Char(act):
+    act.pos.move_Forward(act)
+    delete_PrevChar(act)
 
-""" deletion """
-
-def delete_char():
-    # TODO This doesn't quite work right.
-    iter = pos.get_cursor_iter() 
-    if iter.ends_line():
-        print "deleting last char"
-        base.vigtk.doc.delete(iter, base.vigtk.doc.get_iter_at_offset(iter.get_offset() + 1))
-    else:
-        print "regular delete char"
-        base.vigtk.view.emit("delete-from-cursor", gtk.DELETE_CHARS, 1)
-    pos.get_cursor_iter().backward_cursor_position()
-    
-def delete_prev_char():
-    pos.move_backward()
-    delete_char()    
-    
-def delete_whole_line():
-    lines.select_line()
-    cut_selection()
-    
-def delete_whole_lines():
-    number = base.vigtk.numLines
-    lines.select_lines(number)
-    cut_selection()
-    lines.join_with_prev_line()
+def delete_WholeLines(act):
+    number = act.vibase.numLines
+    act.lines.select_Lines(act, number)
+    cut_Selection(act)
+    act.text.delete_Char(act)
         
-def delete_to_line_end():
-    lines.select_to_line_end()
-    cut_selection()
+def delete_ToLineEnd(act):
+    act.lines.select_ToLineEnd(act)
+    cut_Selection(act)
     
-""" copying """
+def delete_ToLineBegin(act):
+    act.lines.select_ToLineBegin(act)
+    cut_Selection(act)
+    
+########################
+###
+###   COPYING
+###
+########################
 
-def yank_line():
-    number = base.vigtk.numLines
-    lines.select_lines(number)
-    yank_selection()
-    pos.return_to_origin(number+1)
+def yank_Line(act):
+    number = act.vibase.numLines
+    act.lines.select_Lines(act, number)
+    yank_Selection(act)
     
-def yank_until_end_of_line():
-    vibase.set_mode("visual")
-    pos.move_line_end()
-    yank_selection()
+def yank_UntilEndOfLine(act):
+    act.lines.select_ToLineEnd(act)
+    yank_Selection(act)
     
-def yank_till_end_of_word():
-    vibase.set_mode("visual")
-    pos.move_word_forward()
-    yank_selection()
+def yank_TillEndOfWord(act):
+    select_ToWordEnd(act)
+    yank_Selection(act)
 
-def yank_next_word():
-    select_next_word()
-    yank_selection()
+def yank_NextWord(act):
+    select_NextWord(act)
+    yank_Selection(act)
     
-def yank_to_line_end():
-    lines.select_to_line_end()
-    yank_selection()
+def yank_ToLineEnd(act):
+    act.lines.selectToLineEnd(act)
+    yank_Selection(act)
     
-def yank_selection():
-    base.vigtk.view.copy_clipboard()
+def yank_Selection(act):
+    act.vibase.view.copy_clipboard()
     
     
-""" pasting """
+########################
+###
+###   PASTING
+###
+########################
     
-def paste_clipboard_above():
-    pos.move_line_begin()
-    base.vigtk.view.paste_clipboard()
-    base.vigtk.doc.insert_at_cursor("\n")
+def paste_ClipboardAbove(act):
+    act.pos.move_LineBegin(act)
+    act.vibase.view.paste_clipboard()
+    act.keyboard.emitNewLine(act)
 
-def paste_clipboard_below():
-    pos.move_line_end()
-    base.vigtk.doc.insert_at_cursor("\n")
-    base.vigtk.view.paste_clipboard()
+def paste_ClipboardBelow(act):
+    act.pos.move_LineEnd(act)
+    act.keyboard.emitNewLine(act)
+    act.vibase.view.paste_clipboard()
     
     
-""" cutting """
+########################
+###
+###   CUTTING
+###
+########################
     
-def cut_selection():
-    base.vigtk.view.cut_clipboard()
+def cut_Selection(act):
+    act.vibase.view.cut_clipboard()
     
-def cut_until_end_of_line():
-    vibase.set_mode("visual")
-    pos.move_line_end()
-    cut_selection()
+def cut_UntilEndOfLine(act):
+    act.lines.select_ToLineEnd(act)
+    cut_Selection(act)
     
-def cut_line():
-    lines.select_line()
-    cut_selection()
+def cut_Line(act):
+    number = act.vibase.numLines
+    act.lines.select_Lines(act, number)
+    cut_Selection(act)
     
-def cut_till_end_of_word():
-    vibase.set_mode("visual")
-    pos.move_word_forward()
-    cut_selection()
+def cut_TillEndOfWord(act):
+    select_ToWordEnd(act)
+    cut_Selection(act)
 
-def cut_next_word():
-    select_next_word()
-    cut_selection()
+def cut_NextWord(act):
+    select_NextWord(act)
+    cut_Selection(act)
     
-""" selection """
+########################
+###
+###   SELECTION
+###
+########################
 
-def select_next_word():
-    if vibase.get_mode_name() == "visual":
-        vibase.set_mode("command")
-    pos.move_word_backward()
-    vibase.set_mode("visual")
-    pos.move_word_forward()
+def select_ToWordEnd(act):
+    act.bindings.mode = act.modes.visual
+    act.pos.move_WordForward(act)
+    
+def select_NextWord(act):
+    act.pos.move_WordBackward(act)
+    act.bindings.mode = act.modes.visual
+    act.pos.move_WordForward(act)
+    
+########################
+###
+###   OTHER
+###
+########################
+
+def getAll(act):
+    start = act.vibase.doc.get_start_iter()
+    end = act.vibase.doc.get_end_iter()
+    return act.vibase.doc.get_text(start, end, False)
+
+
+def setAll(act, new):
+    start = act.vibase.doc.get_start_iter()
+    end = act.vibase.doc.get_end_iter()
+    return act.vibase.doc.set_text(new)
+
