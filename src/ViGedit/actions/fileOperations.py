@@ -12,20 +12,20 @@ def closeTab(act, save = True):
     else:
         act.vigtk.window.close_tab(act.vigtk.window.get_active_tab())
         
-    gobject.timeout_add(100, waitUntilDialogDone)
+    gobject.timeout_add(100, waitUntilDialogDone, act)
 
 def waitUntilDialogDone(act):
     if act.vigtk.window.get_active_tab() and act.vigtk.window.get_active_document().get_modified():
-        act.info(2, "Window still saving...")
+        act.trace.info(2, "Window still saving...")
         return True
     else:
-        act.info(1, "Window done saving!")
+        act.trace.info(1, "Window done saving!")
         tab = act.vigtk.window.get_active_tab()
         if tab:
             if tab.get_state() == gedit.TAB_STATE_CLOSING:
                 return True
         if act.vigtk.window.get_views() == []:
-            act.info(1, "No more views left, so shutting down!")
+            act.trace.info(1, "No more views left, so shutting down!")
             # This gives messy messages.
             act.menus["quit"].activate()
             act.gtk.main_quit()
@@ -36,7 +36,7 @@ def closeQuit(act):
     if tab.get_state() == gedit.TAB_STATE_SAVING:
         return True
     else:
-        closeTab()
+        closeTab(act)
         return False
     
 def getCurrentFolder(act):
