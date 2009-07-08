@@ -5,7 +5,12 @@
 ########################
 
 def delete_PrevChar(act):
-    act.vibase.doc.backspace(act.pos.getIter(act), False, True)  
+	oldMode = act.bindings.mode
+	act.bindings.mode = act.modes.visual
+	act.pos.move_Backward(act, True)
+	cut_Selection(act)
+	act.bindings.mode = oldMode
+    #act.vibase.doc.backspace(act.pos.getIter(act), False, True)  
     
 def delete_Char(act):
     act.pos.move_Forward(act)
@@ -130,4 +135,10 @@ def setAll(act, new):
     start = act.vibase.doc.get_start_iter()
     end = act.vibase.doc.get_end_iter()
     return act.vibase.doc.set_text(new)
+   
+def switchChar(act):
+	delete_Char(act)
+	act.pos.move_Forward(act)
+	act.menus['paste'].activate()
+	act.bindings.mode = act.modes.insert
 

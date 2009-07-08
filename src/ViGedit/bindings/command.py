@@ -28,6 +28,7 @@ class Mode(VIG_ModeBase):
         self.reg(act.others.nextSearchItem,     act.gtk.keysyms.n,                      **self.fr)
         self.reg(act.text.delete_PrevChar,      act.gtk.keysyms.X,                      **self.fr)
         self.reg(act.text.delete_Char,          act.gtk.keysyms.Delete,                 **self.fr)
+        self.reg(act.text.switchChar,			act.gtk.keysyms.S,						**self.fr)
 
         self.reg(act.pos.move_Forward,          act.gtk.keysyms.l,             **self.fr)
         self.reg(act.pos.move_Backward,         act.gtk.keysyms.h,             **self.fr)
