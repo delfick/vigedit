@@ -4,23 +4,25 @@
 ###
 ########################
 
-def delete_PrevChar(act):
-	oldMode = act.bindings.mode
-	act.bindings.mode = act.modes.visual
-	act.pos.move_Backward(act, True)
-	cut_Selection(act)
-	act.bindings.mode = oldMode
-    #act.vibase.doc.backspace(act.pos.getIter(act), False, True)  
+def delete_PrevChar(act, withBackSpace=False):
+	if withBackSpace:
+		act.vibase.doc.backspace(act.pos.getIter(act), False, True) 
+	else:
+		oldMode = act.bindings.mode
+		act.bindings.mode = act.modes.visual
+		act.pos.move_Backward(act, True)
+		cut_Selection(act)
+		act.bindings.mode = oldMode
     
-def delete_Char(act):
+def delete_Char(act,  withBackSpace=False):
     act.pos.move_Forward(act)
-    delete_PrevChar(act)
+    delete_PrevChar(act, withBackSpace)
 
 def delete_WholeLines(act):
     number = act.vibase.numLines
     act.lines.select_Lines(act, number)
     cut_Selection(act)
-    act.text.delete_Char(act)
+    delete_Char(act, withBackSpace=True)
         
 def delete_ToLineEnd(act):
     act.lines.select_ToLineEnd(act)
