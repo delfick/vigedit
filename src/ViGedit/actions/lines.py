@@ -35,8 +35,12 @@ def select_ManyLines(act, number):
     
     act.pos.move_LineBegin(act)
     cursor = act.pos.getIter(act)
+    l1 = cursor.get_line()
     cursor.forward_lines(number)
-    
+    l2 = cursor.get_line()
+    if abs(l1 - l2) == number:
+        cursor.backward_char()
+        
     act.pos.moveInsert(act, cursor, True)
         
 def getLinesTillEnd(act):
