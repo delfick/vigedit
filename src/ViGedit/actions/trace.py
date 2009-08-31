@@ -35,8 +35,8 @@ def keyPress(event):
 
 def intro(mode=None, message=None, *args):
     if message:
-        info(1, message, *args, color=MAGNETA)
+        info(1, message, *args, **{'color' : MAGNETA})
     else:
-        info(1, "Introducing %s mode", mode.mode, color=MAGNETA)
+        info(1, "Introducing %s mode", mode.mode, **{'color' : MAGNETA})
         
     
