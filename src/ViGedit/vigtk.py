@@ -61,6 +61,7 @@ class VIG_Menus(object):
         self.menu_save         = self.ui_manager.get_action("/MenuBar/FileMenu/FileSaveMenu")
         self.menu_saveAs       = self.ui_manager.get_action("/MenuBar/FileMenu/FileSaveAsMenu")
         self.menu_searchNext   = self.ui_manager.get_action("/MenuBar/SearchMenu/SearchFindNextMenu")
+        self.menu_searchPrev   = self.ui_manager.get_action("/MenuBar/SearchMenu/SearchFindPreviousMenu")
         self.menu_quit         = self.ui_manager.get_action("/MenuBar/FileMenu/FileQuitMenu")
         self.menu_fileClose    = self.ui_manager.get_action("/MenuBar/FileMenu/FileCloseMenu")
         self.menu_indentRight  = self.ui_manager.get_action("/MenuBar/EditMenu/EditOps_5/Indent")

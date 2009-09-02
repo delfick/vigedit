@@ -1,8 +1,4 @@
 import gobject
-
-def nextSearchItem(act):
-    if act.vibase.doc.get_can_search_again():
-        act.menus["searchNext"].activate()
        
 def search(act):
     act.vibase.view.emit("start_interactive_search")
