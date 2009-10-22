@@ -123,6 +123,16 @@ def ex_CommandForTerminal(act, command, result):
     terminal = act.others.getTerminal(act)
     terminal._vte.feed_child(terminalCommand + "\n")
 
+@regexDec("printall")
+def ex_PrintAll(act, command, result):
+    location = "%s/Desktop" % os.environ['HOME']
+    act.others.printall(act, location)
+    
+@regexDec("printall (.+)")
+def ex_PrintAllLoc(act, command, result):
+    location = result.group(1)
+    act.others.printall(act, location)
+
 @regexDec(r's/(?P<search>(?:\\.|(?!/)[^\\])+)(/(?P<replace>(?:\\.|(?!/)[^\\])+)(/(?P<options>.+))?)?')
 def ex_Search(act, command, result):
     search = result.groupdict()['search']
