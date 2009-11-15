@@ -1,8 +1,6 @@
 from gtk import PrintOperation, PageSetup
 import gtksourceview2
 import gobject
-
-from gedit import commands
        
 def search(act):
     act.vibase.view.emit("start_interactive_search")
@@ -38,7 +36,7 @@ def begin_print(operation, context, compositor):
 def printall(act, location):
     views = [view for view in act.vigtk.window.get_views()]
 
-    count = 0
+    count = 1
     for view in views:
             
         po = PrintOperation()

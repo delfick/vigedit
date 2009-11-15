@@ -27,7 +27,7 @@ from gtk import gdk
 ###   MODES
 ###
 ########################
-              
+
 class VIG_Modes(object):
     """Holds info on all the modes"""
     
