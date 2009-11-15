@@ -27,7 +27,9 @@ class Mode(VIG_ModeBase):
         
         self.reg(act.others.undo,                 act.gtk.keysyms.u,           **self.fr)
         self.reg(act.others.search,               act.gtk.keysyms.slash,       final=True)
-               
+
+        self.reg(act.lines.select_OneLine,        act.gtk.keysyms.V,           after=act.modes.visual, final=True)
+        
         self.reg(act.pos.move_LineEnd,            act.gtk.keysyms.A,           after=act.modes.insert, **self.fr)
         self.reg(act.pos.move_LineBegin,          act.gtk.keysyms.I,           after=act.modes.insert, **self.fr)
         self.reg(act.insert.open_LineBelow,       act.gtk.keysyms.o,           after=act.modes.visual, **self.fr)

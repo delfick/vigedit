@@ -16,6 +16,10 @@ def select_Lines(act, number):
         select_OneLine(act)
         
 def select_OneLine(act):
+    
+    if act.mode == act.modes.visual:
+        act.bindings.mode = act.modes.command
+        
     act.pos.move_LineBegin(act)   
     
     cursor = act.pos.getIter(act)
@@ -27,6 +31,10 @@ def select_OneLine(act):
     act.pos.moveInsert(act, cursor, True)
         
 def select_ManyLines(act, number):
+
+    if act.mode == act.modes.visual:
+        act.bindings.mode = act.modes.command
+        
     if type(number) in (list, tuple):
         try:
             number = int("".join(number))
