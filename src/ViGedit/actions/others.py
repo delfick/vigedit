@@ -20,7 +20,10 @@ def getTerminal(act):
     if len(notebook.get_children()) != 0: 
         terminal = notebook.get_children()[1]
         return terminal
-    return None   
+    return None  
+
+def redoLastOperation(act):
+    act.vibase.lastOperation(act)
 
 def draw_page(operation, context, page_nr, compositor):
     compositor.draw_page(context, page_nr)

@@ -54,6 +54,7 @@ class VIG_Vibase(GObject):
         self.returnToMode = None
         self.extraMessage  = None  
         self.select = False
+        self.lastOperation = None
         
         self.viewEvents = [
             self.view.connect("key-press-event", self.onKeyPress),
@@ -253,36 +254,52 @@ class VIG_Vibase(GObject):
             isRepeatable    = bindingInfo["Repeatable"]
             afterMode       = bindingInfo["AfterMode"]
             preservePos     = bindingInfo["PreservePos"]
+            recordAction    = bindingInfo["RecordAction"]
             pos = None
             
             if callable(function):
-                args = [self.act]
-                
-                if preservePos:
-                    pos = self.cursor.getIter(self.act)
+                def operation(act, preservePos, isRepeatable, isFinal, number, numLines, stack):
+                    args = [act]
+                    self.stack = stack
+                    self.numLines = numLines
                     
-                self.act.trace.info(2, "\tfunction is callable")
-                if isRepeatable:
-                    self.act.trace.info(2, "\tfunction is repeatable")
-                    [function(*args) for _ in range(int("".join(self.number or ["1"])) or 1)]
-                    
-                    self.act.trace.info(2, "\tresetting numbers")
-                    self.number = ['0']
-                    self.numLines = 0
-                    self.stack = []
-                    
-                else:   
-                    function(*args)
-                    self.numLines = int("".join(self.number or ["1"]))
-                    self.number = []
-                    
-                    if isFinal:
-                        self.act.trace.info(2, "\tfunction is final")
+                    if preservePos:
+                        pos = self.cursor.getIter(self.act)
+                        
+                    act.trace.info(2, "\tfunction is callable")
+                    if isRepeatable:
+                        act.trace.info(2, "\tfunction is repeatable")
+                        [function(*args) for _ in range(int("".join(number or ["1"])) or 1)]
+                        
+                        act.trace.info(2, "\tresetting numbers")
+                        self.number = ['0']
                         self.numLines = 0
                         self.stack = []
+                        
+                    else:   
+                        function(*args)
+                        self.numLines = int("".join(self.number or ["1"]))
+                        self.number = []
+                        
+                        if isFinal:
+                            self.act.trace.info(2, "\tfunction is final")
+                            self.numLines = 0
+                            self.stack = []
+                    
+                    if preservePos:
+                        self.cursor.moveInsert(self.act, pos)
                 
-                if preservePos:
-                    self.cursor.moveInsert(self.act, pos) 
+                number = list(self.number)
+                numLines = self.numLines
+                stack = dict(self.stack)
+                op = lambda act : operation(act, preservePos, isRepeatable, isFinal, number, numLines, stack)
+                
+                if recordAction:
+                    #store lastOperation so keybindings can call it again if need be (i.e. . option in command mode)
+                    self.lastOperation = op
+                
+                #call that operation
+                op(self.act)
                     
             else:
                 self.act.trace.info(2, "\tfunction is not callable")

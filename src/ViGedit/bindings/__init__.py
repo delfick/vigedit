@@ -31,7 +31,7 @@ class VIG_Registry(object):
     
     def register(self, mode, function, keycode, control=False, meta=False,
                     final=False, repeat=False, after=None, pos=False, 
-                    ignoreStack=False, stack = ""):
+                    ignoreStack=False, stack = "", recordAction = True):
         
         keycombo = keycode, control, meta, stack
         try:
@@ -53,6 +53,7 @@ class VIG_Registry(object):
                 'PreservePos'   : pos,
                 'IgnoreStack'   : ignoreStack,
                 'StackMatch'    : stack,
+                'RecordAction'  : recordAction,
             }
         
 
