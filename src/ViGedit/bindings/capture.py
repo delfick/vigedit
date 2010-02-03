@@ -5,7 +5,8 @@ class MODE_options(object):
     def __init__(self, act, options=None):
         self.captureNum = 0
         self.capturedEvents = []
-        self.startMode = act.modes.command
+        self.start = None
+        self.capture = None
             
 class Mode(VIG_ModeBase):
 
@@ -16,7 +17,8 @@ class Mode(VIG_ModeBase):
     """
     
     def setup(self, act):
-        self.reg(self.captureNextEvents,      act.gtk.keysyms.a, final=True, after=act.modes.command)
+        self.reg(self.captureNextEvents,      act.gtk.keysyms.a, final=True)
+        self.reg(self.setCaptureMode,         act.gtk.keysyms.d, final=True, after=act.modes.command)
         self.reg(self.setStartMode,           act.gtk.keysyms.s, final=True, after=act.modes.command)
         self.reg(self.clearCapturedEvents,    act.gtk.keysyms.c, final=True, after=act.modes.command)
         self.reg(self.emitCapturedEvents,     act.gtk.keysyms.e, final=True)
@@ -50,12 +52,15 @@ class Mode(VIG_ModeBase):
         act.vibase.setExtraStatus(num, self.extraStatus)
         options.captureNum = num
         
+        act.bindings.mode = act.modes.command
+        if options.capture:
+            options.captureNum += 1
+            act.keyboard.emitEvent(act, options.capture)
+        
         def capture(act, event):
             options = act.vibase.captureOptions
-            if options.captureNum > 0:
-                if not options.startMode and len(options.capturedEvents) == 0:
-                    options.startMode = act.bindings.mode
                 
+            if options.captureNum > 0:
                 capturedEvent = act.keyboard.makeEvent(act, event.keyval, event.state)
                 options.capturedEvents.append(capturedEvent)
                 options.captureNum -= 1
@@ -66,14 +71,28 @@ class Mode(VIG_ModeBase):
     ###   GET START MODE
     ########################
     
-    def setStartMode(self, act):
+    def setFutureMode(self, act, when, message):
         act.bindings.mode = act.modes.command
-        act.vibase.setExtraStatus(1, lambda : "(next key determines start mode when emmitting captured keys)")
+        act.vibase.setExtraStatus(1, lambda act : " (%s)" % message)
         
-        def getStartEvent(act, event):
-            act.vibase.captureOptions['start'] = act.keyboard.makeEvent(act, event.keyval, event.state)
+        def getEvent(act, event, when):
+            if type(when) is str:
+                when = (when, )
             
-        act.vibase.setRule(1, getStartEvent)    
+            for w in when:
+                setattr(act.vibase.captureOptions, w, act.keyboard.makeEvent(act, event.keyval, event.state))
+            
+        act.vibase.setRule(1, lambda a, e : getEvent(a, e, when))
+    
+    def setStartMode(self, act):
+        when = "start"
+        if not act.vibase.captureOptions.capture:
+            when = [when, 'capture']
+            
+        self.setFutureMode(act, when, "next key determines start mode when emitting captured keys")
+    
+    def setCaptureMode(self, act):
+        self.setFutureMode(act, 'capture', "Next key determines mode for capturing keys")
     
     ########################
     ###   EMIT
@@ -81,7 +100,10 @@ class Mode(VIG_ModeBase):
     
     def emitCapturedEvents(self, act):
         options = act.vibase.captureOptions
-        act.bindings.mode = options.startMode
+        act.bindings.mode = act.modes.command
+        if options.start:
+            act.keyboard.emitEvent(act, options.start)
+            
         message = "captured keys : ["
         for event in options.capturedEvents:
             act.keyboard.emitEvent(act, event)
@@ -96,5 +118,7 @@ class Mode(VIG_ModeBase):
     def clearCapturedEvents(self, act):
         options = act.vibase.captureOptions
         options.capturedEvents = []
-        optionscaptureNum = 0
+        options.captureNum = 0
+        options.start = None
+        options.capture = None
         

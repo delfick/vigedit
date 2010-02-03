@@ -138,7 +138,7 @@ class VIG_Vibase(GObject):
             if callable(rule):
                 rule(self.act, event)
             if life == 0:
-                self.rules.remove(1, rule)
+                self.rules.remove((1, rule))
         
         # Always return to command mode when Escape is pressed.
         if (event.keyval == gtk.keysyms.Escape):
