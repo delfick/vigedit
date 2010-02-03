@@ -292,8 +292,8 @@ class VIG_Vibase(GObject):
                 
                 number = list(self.number)
                 numLines = self.numLines
-                stack = dict(self.stack)
-                op = lambda act : operation(act, preservePos, isRepeatable, isFinal, number, numLines, stack)
+                
+                op = lambda act : operation(act, preservePos, isRepeatable, isFinal, number, numLines, self.stack)
                 
                 if recordAction:
                     #store lastOperation so keybindings can call it again if need be (i.e. . option in command mode)
