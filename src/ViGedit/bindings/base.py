@@ -38,6 +38,10 @@ class VIG_ModeBase(object):
         """Called when no binding has been found and so the mode is left to handle the event"""
         return True
     
+    def ignore(self, vibase, event):
+        """Returns True if this event should be ignored"""
+        return False
+    
     def nop(self, act):
         pass
 

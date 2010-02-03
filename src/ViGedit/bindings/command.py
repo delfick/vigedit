@@ -65,5 +65,12 @@ class Mode(VIG_ModeBase):
         (so you can still use ordinary shortcuts in command mode"""
         return not act.keyboard.isModifierPressed(act, event)
     
+    def ignore(self, vibase, event):
+        if event.keyval == ord('0'):
+            if int(''.join(vibase.number)) > 0:
+                return True
+        
+        return False 
+    
     
     

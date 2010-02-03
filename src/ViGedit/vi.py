@@ -216,11 +216,12 @@ class VIG_Vibase(GObject):
         control, meta = self.keyboard.modifiers(self.act, event)
         self.act.trace.info(1, "\t%s %s %s %s", currentMode, event.keyval, control, meta)
         
-        #determine if there is a binding, and put it into bindingInfo
-        
+        bindingInfo = None
         doPropogate = currentMode != static.modes.insert
         keycombo = [currentMode, event.keyval, control, meta, "".join(self.stack)]
-        bindingInfo = self.vigtk.registry[(_ for _ in keycombo)]
+        #determine if there is a binding, and put it into bindingInfo
+        if not self.bindings.vigm[currentMode].ignore(self, event):
+            bindingInfo = self.vigtk.registry[(_ for _ in keycombo)]
         
         #if no binding, remove stack from keycombo and try again
         if not bindingInfo:
