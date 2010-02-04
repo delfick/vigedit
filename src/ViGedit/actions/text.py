@@ -26,9 +26,9 @@ def delete_WholeLines(act):
     line = cursor.get_line()
     if line > 0:
         delete_PrevChar(act, withBackSpace=True)
+        act.pos.move_Forward(act)
     else:
         delete_Char(act, withBackSpace=True)
-    act.pos.move_Forward(act)
         
 def delete_ToLineEnd(act):
     act.lines.select_ToLineEnd(act)
