@@ -22,7 +22,12 @@ def delete_WholeLines(act):
     number = act.vibase.numLines
     act.lines.select_Lines(act, number)
     cut_Selection(act)
-    delete_PrevChar(act, withBackSpace=True)
+    cursor = act.pos.getIter(act)
+    line = cursor.get_line()
+    if line > 0:
+        delete_PrevChar(act, withBackSpace=True)
+    else:
+        delete_Char(act, withBackSpace=True)
     act.pos.move_Forward(act)
         
 def delete_ToLineEnd(act):
