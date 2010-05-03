@@ -17,10 +17,10 @@ class Mode(VIG_ModeBase):
         self.reg(self.nop, act.gtk.keysyms.B,       after = (act.modes.block, ["find", "number"]))
         self.reg(self.nop, act.gtk.keysyms.t,       after = (act.modes.t,     ["find", "number", "f"]))
         
-        self.reg(act.lines.select_OneLine,      act.gtk.keysyms.V, after=act.modes.selection, final=True)
-        self.reg(act.text.cut_UntilEndOfLine,   act.gtk.keysyms.D, after=act.modes.command,   final=True)
-        self.reg(act.text.paste_ClipboardAbove, act.gtk.keysyms.P, after=act.modes.command,   pos=True, **self.fr)
-        self.reg(act.text.paste_ClipboardBelow, act.gtk.keysyms.p, after=act.modes.command,   pos=True, **self.fr)
+        self.reg(act.lines.select_OneLine,      act.gtk.keysyms.V, after=act.modes.visual,  final=True)
+        self.reg(act.text.cut_UntilEndOfLine,   act.gtk.keysyms.D, after=act.modes.command, final=True)
+        self.reg(act.text.paste_ClipboardAbove, act.gtk.keysyms.P, after=act.modes.command, pos=True, **self.fr)
+        self.reg(act.text.paste_ClipboardBelow, act.gtk.keysyms.p, after=act.modes.command, pos=True, **self.fr)
 
         self.reg(act.others.redoLastOperation,  act.gtk.keysyms.period, recordAction=False, **self.fr)
         self.reg(act.others.redo,               act.gtk.keysyms.r, True,recordAction=False, **self.fr)
