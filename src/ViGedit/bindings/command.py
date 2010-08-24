@@ -52,6 +52,8 @@ class Mode(VIG_ModeBase):
         self.reg(act.text.delete_Char,          act.gtk.keysyms.s, after=act.modes.insert,  **self.fr)
         
         self.reg(act.others.search,             act.gtk.keysyms.slash, final=True)
+        
+        self.reg(act.pos.move_to_matching_bracket, act.gtk.keysyms.percent, after=act.modes.command, **self.fr)
 
     def intro(self, act, options=None):
         act.vibase.stack = []

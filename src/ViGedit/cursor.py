@@ -126,6 +126,47 @@ class VIG_Cursor(object):
         
     def move_LineBegin(self, act, num=1):
         self.move(act, act.gtk.MOVEMENT_PARAGRAPH_ENDS, -num)
+    
+    ########################
+    ###   OTHER
+    ########################
+        
+    def move_to_matching_bracket(self, act, num=1):
+        prevMode = act.bindings.mode
+        
+        # get chars either side of the cursor
+        # If either is a bracket, then we will search for the matching bracket
+        
+        def info(side):
+            if side == '(':
+                return ['parenleft', 'parenright', ')', 'f']
+            else:
+                return ['parenright', 'parenleft', '(', 'b']
+            
+        cursor = self.getIter(act)
+        for side in self.char_either_side(act, cursor):
+            if side in ('(', ')'):
+                name, oppositeName, opposite, searchDirection = info(side)
+                act.bindings.mode = act.modes.t, ["find", 1, searchDirection, name]
+                act.keyboard.emitName(act, oppositeName)
+                
+                newCursor = self.getIter(act)
+                self.moveInsert(act, newCursor)
+                
+                sides = [s for s in self.char_either_side(act, newCursor)]
+                if opposite not in sides:
+                    # no opposite found, reset cursor
+                    self.moveInsert(act, cursor)
+                    
+                return
+        
+        act.bindings.mode = prevMode
+
+    def char_either_side(self, act, cursor):
+        for direction in ('forward', 'backward'):
+            side = self.getIter(act)
+            getattr(side, '%s_char' % direction)()
+            yield cursor.get_text(side)
         
 instance = VIG_Cursor()  
         
