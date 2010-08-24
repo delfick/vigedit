@@ -157,6 +157,8 @@ class VIG_Cursor(object):
                 if opposite not in sides:
                     # no opposite found, reset cursor
                     self.moveInsert(act, cursor)
+                
+                act.bindings.mode = prevMode
                     
                 return
         
