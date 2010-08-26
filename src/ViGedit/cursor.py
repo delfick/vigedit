@@ -136,34 +136,72 @@ class VIG_Cursor(object):
         
         # get chars either side of the cursor
         # If either is a bracket, then we will search for the matching bracket
-        
-        def info(side):
-            if side == '(':
-                return ['parenleft', 'parenright', ')', 'f']
-            else:
-                return ['parenright', 'parenleft', '(', 'b']
             
         cursor = self.getIter(act)
         for side in self.char_either_side(act, cursor):
             if side in ('(', ')'):
-                name, oppositeName, opposite, searchDirection = info(side)
-                act.bindings.mode = act.modes.t, ["find", 1, searchDirection, name]
-                act.keyboard.emitName(act, oppositeName)
-                
-                newCursor = self.getIter(act)
+                opposite, newCursor = self.iter_for_bracket(act, side)
                 self.moveInsert(act, newCursor)
                 
-                sides = [s for s in self.char_either_side(act, newCursor)]
-                if opposite not in sides:
+                if opposite not in self.char_either_side(act, newCursor):
                     # no opposite found, reset cursor
                     self.moveInsert(act, cursor)
                 
                 act.bindings.mode = prevMode
                     
                 return
+            else:
+                # Cursor isn't on a bracket, so let's look for some
+                # First look to the left and the right for brackets
+                # If we find brackets on both sides, then move to the closest one
+                positions = []
+                for side in  ('(', ')'):
+                    opposite, newCursor = self.iter_for_bracket(act, side)
+                    self.moveInsert(act, newCursor)
+                    if opposite in self.char_either_side(act, newCursor):
+                        positions.append(self.getIter(act))
+                
+                if len(positions) != 2:
+                    # Didn't find brackets on both sides, reset cursor
+                    self.moveInsert(act, cursor)
+                else:
+                    # Did find brackets on both sides, determine which is closer
+                    distance1 = self.distance_between_iters(act, positions[0], cursor)
+                    distance2 = self.distance_between_iters(act, positions[1], cursor)
+                    if distance1 > distance2:
+                        self.moveInsert(act, positions[1])
+                    else:
+                        self.moveInsert(act, positions[0])
         
         act.bindings.mode = prevMode
-
+    
+    def distance_between_iters(self, act, curs1, curs2):
+        line1 = curs1.get_line()
+        line2 = curs2.get_line()
+        
+        if line1 == line2:
+            offset1 = curs1.get_line_offset()
+            offset2 = curs2.get_line_offset()
+            return abs(offset1 - offset2)
+        else:
+            if line1 > line2:
+                # swap so line1 is above line2
+                line1, line2 = line2, line1
+            
+            return abs(len(curs1.get_text(curs2)))
+    
+    def iter_for_bracket(self, act, side):
+        def info(side):
+            if side == '(':
+                return ['parenleft', 'parenright', ')', 'f']
+            else:
+                return ['parenright', 'parenleft', '(', 'b']
+            
+        name, oppositeName, opposite, searchDirection = info(side)
+        act.bindings.mode = act.modes.t, ["find", 1, searchDirection, name]
+        act.keyboard.emitName(act, oppositeName)
+        return opposite, self.getIter(act)
+        
     def char_either_side(self, act, cursor):
         for direction in ('forward', 'backward'):
             side = self.getIter(act)
