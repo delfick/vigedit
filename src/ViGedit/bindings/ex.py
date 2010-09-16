@@ -6,8 +6,9 @@ import re
 class MODE_options(object):
     """Options object for this mode"""
     def __init__(self, act, options=None):
+        self.lastCommand = None
         self.history = []
-        self.index = 0
+        self.index = -1
 
 class Mode(VIG_ModeBase):
     
@@ -15,8 +16,8 @@ class Mode(VIG_ModeBase):
         self.reg(self.evaluateEx,            act.gtk.keysyms.Return,   ignoreStack=True)
         self.reg(self.evaluateEx,            act.gtk.keysyms.KP_Enter, ignoreStack=True)
         self.reg(self.cycleCompletions,      act.gtk.keysyms.Tab)
-        self.reg(self.cyleHistoryBackward,   act.gtk.keysyms.Up)
-        self.reg(self.cyleHistoryForward,    act.gtk.keysyms.Down)
+        self.reg(self.cyleHistoryBackward,   act.gtk.keysyms.Up,       ignoreStack=True)
+        self.reg(self.cyleHistoryForward,    act.gtk.keysyms.Down,     ignoreStack=True)
     
     def status(self, act):
         if act.vibase.stack:
@@ -46,15 +47,24 @@ class Mode(VIG_ModeBase):
     
     def cyleHistoryBackward(self, act):
         options = act.vigtk.exOptions
-        options.history.append("".join(act.vibase.stack))
-        if len(options.history) < options.index:
+        command = "".join(act.vibase.stack)
+        if command and command != options.lastCommand :
+            options.history.insert(options.index+1, "".join(act.vibase.stack))
+            options.lastCommand = command
+        
+        if not act.vibase.stack and (options.index == 0 or options.index == (len(options.history)-1)):
+            act.vibase.stack = list(options.history[options.index])
+            
+        elif options.index > -1:
             options.index -= 1
+            options.lastCommand = options.history[options.index]
             act.vibase.stack = list(options.history[options.index])
             
     def cyleHistoryForward(self, act):
         options = act.vigtk.exOptions
-        if len(options.history) > options.index:
+        if options.index < (len(options.history)-1):
             options.index += 1
+            options.lastCommand = options.history[options.index]
             act.vibase.stack = list(options.history[options.index])
 
     def cycleCompletions(self, act, up = True): 

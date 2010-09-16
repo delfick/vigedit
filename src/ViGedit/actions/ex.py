@@ -19,7 +19,11 @@ class exManager(object):
         
     def evaluate(self, act, command):
         act.trace.info(1, "\tEvaluating %s", command)
-        act.vigtk.exOptions.history.append(command)
+        index = act.vigtk.exOptions.index
+        act.vigtk.exOptions.history.insert(index+1, "".join(act.vibase.stack))
+        
+        act.vigtk.exOptions.lastCommand = command
+        act.vigtk.exOptions.index += 1
         try:
             for regex, function in self.registry:
                 result = regex.match(command)
