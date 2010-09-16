@@ -4,6 +4,10 @@
 ###
 ########################
 
+def delete_Selection(act):
+    act.bindings.mode = act.modes.selection
+    act.keyboard.emitName(act, 'Delete')
+    
 def delete_PrevChar(act, withBackSpace=False):
 	if withBackSpace:
 		act.vibase.doc.backspace(act.pos.getIter(act), False, True) 
