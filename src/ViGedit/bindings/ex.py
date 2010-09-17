@@ -49,19 +49,28 @@ class Mode(VIG_ModeBase):
         options = act.vigtk.exOptions
         command = "".join(act.vibase.stack)
         if command and command != options.lastCommand :
-            options.history.insert(options.index+1, "".join(act.vibase.stack))
+            if options.index == 0:
+                options.history.insert(0, command)
+            else:
+                options.history.insert(options.index+1, command)
             options.lastCommand = command
         
-        if not act.vibase.stack and (options.index == 0 or options.index == (len(options.history)-1)):
+        if not act.vibase.stack:
             act.vibase.stack = list(options.history[options.index])
             
-        elif options.index > -1:
+        elif options.index > 0:
             options.index -= 1
             options.lastCommand = options.history[options.index]
             act.vibase.stack = list(options.history[options.index])
             
     def cyleHistoryForward(self, act):
         options = act.vigtk.exOptions
+        command = "".join(act.vibase.stack)
+        if command and command != options.lastCommand :
+            options.history.insert(options.index+1, command)
+            options.lastCommand = command
+            options.index += 1
+            
         if options.index < (len(options.history)-1):
             options.index += 1
             options.lastCommand = options.history[options.index]
