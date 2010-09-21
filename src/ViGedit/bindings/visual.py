@@ -8,8 +8,8 @@ class Mode(VIG_ModeBase):
         self.reg(self.nop, act.gtk.keysyms.t, after=(act.modes.t,     ["select", "number", "f"]))
 
         self.reg(act.getmenu('paste'),            act.gtk.keysyms.p, **self.fr)
-        self.reg(act.getmenu('copy'),             act.gtk.keysyms.y,  **self.fr)
-        self.reg(act.getmenu('cut'),              act.gtk.keysyms.x, final=True)
+        self.reg(act.getmenu('copy'),             act.gtk.keysyms.y, after=act.modes.command, **self.fr)
+        self.reg(act.getmenu('cut'),              act.gtk.keysyms.x, after=act.modes.command, final=True)
         self.reg(act.getmenu('selectAll'),        act.gtk.keysyms.a, final=True)
                 
         self.reg(act.text.delete_PrevChar,        act.gtk.keysyms.X,          **self.fr)
@@ -18,10 +18,17 @@ class Mode(VIG_ModeBase):
         self.reg(act.pos.move_Backward,           act.gtk.keysyms.h,          **self.fr)
         self.reg(act.pos.move_Down,               act.gtk.keysyms.j,          **self.fr)
         self.reg(act.pos.move_Up,                 act.gtk.keysyms.k,          **self.fr)
+        self.reg(act.pos.move_Forward,            act.gtk.keysyms.Right,      **self.fr)
+        self.reg(act.pos.move_Backward,           act.gtk.keysyms.Left,       **self.fr)
+        self.reg(act.pos.move_Down,               act.gtk.keysyms.Down,       **self.fr)
+        self.reg(act.pos.move_Up,                 act.gtk.keysyms.Up,         **self.fr)
+
         self.reg(act.pos.move_WordForward,        act.gtk.keysyms.w,          **self.fr)
         self.reg(act.pos.move_WordBackward,       act.gtk.keysyms.b,          **self.fr)
         self.reg(act.pos.move_BufferEnd,          act.gtk.keysyms.G,          final=True)
         self.reg(act.pos.move_LineEnd,            act.gtk.keysyms.dollar,     final=True)
+        self.reg(act.pos.move_LineEnd,            act.gtk.keysyms.End,        final=True)
+        self.reg(act.pos.move_LineBegin,          act.gtk.keysyms.Home,       final=True)
         self.reg(act.pos.move_LineBegin,          act.gtk.keysyms.percent,    final=True) 
         self.reg(act.pos.move_LineBegin,          act.gtk.keysyms.asciicircum,final=True) 
         

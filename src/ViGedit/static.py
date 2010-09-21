@@ -35,6 +35,7 @@ class VIG_Modes(object):
         object.__setattr__(self, 'info', {
             'command':     'Command Mode',
             'visual':      'Visual Mode',
+            'visualline':  'Visual Line Mode',
             'delete':      'Delete Mode',
             'insert':      'Insert Mode',
             'ex':          'Expression Mode',
@@ -83,7 +84,7 @@ modes = VIG_Modes()
 ########################
 
 ignored_keys = map( gdk.keyval_from_name, \
-                    ['Up', 'Down', 'Left', 'Right', 'Page_Up', 'Page_Down', 'Home', 'End'] + \
+                    ['Page_Up', 'Page_Down'] + \
                     ["F%d" % n for n in range(1,13)] 
                 )   
                 

@@ -75,6 +75,14 @@ class VIG_Cursor(object):
     ###   DIRECTION
     ########################
     
+    def move_Up_Lines(self, act, num=1):
+        self.move(act, act.gtk.MOVEMENT_DISPLAY_LINES, -num)
+        self.move(act, act.gtk.MOVEMENT_PARAGRAPH_ENDS, -num)
+        
+    def move_Down_Lines(self, act, num=1):
+        self.move(act, act.gtk.MOVEMENT_DISPLAY_LINES, num)
+        self.move(act, act.gtk.MOVEMENT_PARAGRAPH_ENDS, num)
+        
     def move_Up(self, act, num=1):
         self.move(act, act.gtk.MOVEMENT_DISPLAY_LINES, -num)
         
