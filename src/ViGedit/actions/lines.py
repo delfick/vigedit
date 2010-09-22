@@ -93,6 +93,8 @@ def indent(act, direction):
         
     if act.menus["indent%s" % direction] is not None:
         act.menus["indent%s" % direction].activate()
+    else:
+        print 'TODO: call custom/gtk indent method'
         
     act.pos.moveInsert(act, cursor)
     

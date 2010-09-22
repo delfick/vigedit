@@ -215,6 +215,23 @@ class VIG_Cursor(object):
             side = self.getIter(act)
             getattr(side, '%s_char' % direction)()
             yield cursor.get_text(side)
-        
+
+    def buffer_word_boundary(self, buf):
+        iter = buf.get_iter_at_mark(buf.get_insert())
+        start = iter.copy()
+
+        if not iter.starts_word() and (iter.inside_word() or iter.ends_word()):
+                start.backward_word_start()
+
+        if not iter.ends_word() and iter.inside_word():
+                iter.forward_word_end()
+
+        return (start, iter)
+
+    def get_word_under_cursor(self, act):
+        doc = act.vibase.doc
+        start, end = self.buffer_word_boundary(doc)
+        return doc.get_text(start, end)
+
 instance = VIG_Cursor()  
         

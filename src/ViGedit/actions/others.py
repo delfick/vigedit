@@ -2,9 +2,25 @@ from gtk import PrintOperation, PageSetup
 import gtksourceview2
 import gobject
        
+
 def search(act):
     act.vibase.view.emit("start_interactive_search")
-    
+   
+def searchcursor(act):
+    ''' search for word under cursor '''
+    word = act.pos.get_word_under_cursor(act)
+    doc = act.vibase.doc
+    doc.set_search_text(word, 0)
+
+    bounds = doc.get_bounds()
+    if len(bounds) == 0:
+        bounds = doc.get_selection_bounds()
+
+    ret = map(lambda x: x.copy(), bounds)
+
+    doc.search_forward(bounds[0], bounds[1], ret[0], ret[1])
+    doc.select_range(ret[0], ret[1])
+
 def undo(act):
     act.vibase.view.emit("undo")
     
