@@ -6,20 +6,39 @@ import gobject
 def search(act):
     act.vibase.view.emit("start_interactive_search")
    
-def searchcursor(act):
+def search_cursor(act, forward=True):
     ''' search for word under cursor '''
-    word = act.pos.get_word_under_cursor(act)
     doc = act.vibase.doc
+    view = act.vibase.view
+    buf = view.get_buffer()
+
+    word = act.pos.get_word_under_cursor(act)
     doc.set_search_text(word, 0)
 
-    bounds = doc.get_bounds()
-    if len(bounds) == 0:
-        bounds = doc.get_selection_bounds()
+    #get search boundaries
+    start = buf.get_iter_at_mark(buf.get_insert())
+    if start.inside_word:
+        if start.inside_word: start.backward_word_start()
 
-    ret = map(lambda x: x.copy(), bounds)
+    end = buf.get_iter_at_mark(buf.get_insert())
+    if end.inside_word:
+        if end.inside_word: end.forward_word_end()
 
-    doc.search_forward(bounds[0], bounds[1], ret[0], ret[1])
-    doc.select_range(ret[0], ret[1])
+    if forward:
+        ret = end.forward_search(word, 0)
+
+        #if nothing was found, search again from start
+        if not ret:
+            ret = buf.get_bounds()[0].forward_search(word, 0)
+    else:
+        ret = start.backward_search(word, 0)
+
+        if not ret:
+            ret = buf.get_bounds()[1].backward_search(word, 0)
+    act.pos.moveInsert(act, ret[0])
+
+def search_cursor_backward(act):
+    search_cursor(act, forward=False)
 
 def undo(act):
     act.vibase.view.emit("undo")

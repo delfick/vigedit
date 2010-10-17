@@ -217,6 +217,7 @@ class VIG_Cursor(object):
             yield cursor.get_text(side)
 
     def buffer_word_boundary(self, buf):
+        '''get range for word under cursor'''
         iter = buf.get_iter_at_mark(buf.get_insert())
         start = iter.copy()
 
