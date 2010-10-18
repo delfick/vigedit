@@ -57,7 +57,7 @@ class Mode(VIG_ModeBase):
     
     def handle(self, act, event):
         """ moves cursor to next occurance of the next key to be pressed """
-        options = act.vibase.tOptions        
+        options = act.vibase.tOptions
         cursor = act.pos.getIter(act)
         origin = cursor.copy()
         
@@ -76,7 +76,7 @@ class Mode(VIG_ModeBase):
                     if options.direction == "f":
                         if cursor.is_end():
                             act.trace.info(2, "cursor at end")
-                            raise StopLoop 
+                            raise StopLoop
                         
                         cursor.forward_char()
                         char = cursor.get_char()
@@ -87,14 +87,14 @@ class Mode(VIG_ModeBase):
                                 numTimes -= 1
                             else :
                                 act.trace.info(2, "going forward, numtimes is 1, found %s", wanted)
-                                raise StopLoop 
+                                raise StopLoop
                         elif char == options.other:
                             numTimes += 1
                         
                     elif options.direction == "b" :
                         if cursor.is_start():
                             act.trace.info(2, "cursor at start")
-                            raise StopLoop 
+                            raise StopLoop
                         
                         cursor.backward_char()
                         char = cursor.get_char()
@@ -105,7 +105,7 @@ class Mode(VIG_ModeBase):
                                 numTimes -= 1
                             else :
                                 act.trace.info(2, "going backward, numtimes is 1, found %s", wanted)
-                                raise StopLoop  
+                                raise StopLoop
                         elif char == options.other:
                             numTimes += 1
             except StopLoop:

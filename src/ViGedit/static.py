@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 
 #  static.py - Holds static information
-#  
+#
 #  Copyright (C) 2006 - Trond Danielsen
 #  Copyright (C) 2008, 2009 - Stephen Moore
-#  
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
-#   
+#
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-#   
+#
 #  You should have received a copy of the GNU General Public License
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330,
@@ -31,7 +31,7 @@ from gtk import gdk
 class VIG_Modes(object):
     """Holds info on all the modes"""
     
-    def __init__(self):            
+    def __init__(self):
         object.__setattr__(self, 'info', {
             'command':     'Command Mode',
             'visual':      'Visual Mode',
@@ -85,7 +85,7 @@ modes = VIG_Modes()
 
 ignored_keys = map( gdk.keyval_from_name, \
                     ['Page_Up', 'Page_Down'] + \
-                    ["F%d" % n for n in range(1,13)] 
-                )   
+                    ["F%d" % n for n in range(1,13)]
+                )
                 
                 

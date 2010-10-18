@@ -2,7 +2,7 @@ def append_After(act):
     cursor = act.pos.getIter(act)
     if cursor.ends_line():
         act.vibase.doc.insert_at_cursor(" ")
-    else: 
+    else:
         act.pos.move_Forward(act)
     return True
     

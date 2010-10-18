@@ -10,7 +10,7 @@ def delete_Selection(act):
     
 def delete_PrevChar(act, withBackSpace=False):
 	if withBackSpace:
-		act.vibase.doc.backspace(act.pos.getIter(act), False, True) 
+		act.vibase.doc.backspace(act.pos.getIter(act), False, True)
 	else:
 		oldMode = act.bindings.mode
 		act.bindings.mode = act.modes.visual

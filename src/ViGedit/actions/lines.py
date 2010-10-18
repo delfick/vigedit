@@ -20,7 +20,7 @@ def select_OneLine(act):
     if act.mode == act.modes.visual:
         act.bindings.mode = act.modes.command
         
-    act.pos.move_LineBegin(act)   
+    act.pos.move_LineBegin(act)
     
     cursor = act.pos.getIter(act)
     l1 = cursor.get_line()
