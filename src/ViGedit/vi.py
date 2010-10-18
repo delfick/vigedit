@@ -165,11 +165,11 @@ class VIG_Vibase(GObject):
     
     def onButtonRelease(self, doc, view):
         """ if the user is in command mode and they select some text, 
-        then they enter selection mode, if they then deselect that text, then they re-enter command mode """
+        then they enter visual mode, if they then deselect that text, then they re-enter command mode """
         currentMode = self.bindings.mode
-        if currentMode in (static.modes.command, static.modes.selection):
+        if currentMode in (static.modes.command, static.modes.visual):
             if self.doc.get_has_selection():
-                self.bindings.mode = static.modes.selection
+                self.bindings.mode = static.modes.visual
             else:
                 self.bindings.mode = static.modes.command
     
