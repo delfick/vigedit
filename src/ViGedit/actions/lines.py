@@ -115,11 +115,10 @@ def indent(act, direction):
             #check that we are not deleting into line contents
             #(can happen when the indent width is larger than
             #current white space before line)
-            while not re.match('^[\t ]+$', buf.get_text(cursor, end)):
+            while not re.match('^[\t ]*$', buf.get_text(cursor, end)):
                 end.backward_cursor_position()
 
-            if cursor.get_char() in ['\t', ' ']:
-                buf.delete(cursor, end)
+            buf.delete(cursor, end)
 
         #move to end of indentation
         cursor.forward_sentence_end()
