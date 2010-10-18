@@ -84,8 +84,8 @@ modes = VIG_Modes()
 ########################
 
 ignored_keys = map( gdk.keyval_from_name, \
-                    ['Page_Up', 'Page_Down'] + \
+                    ['Page_Up', 'Page_Down', 'Tab'] + \
                     ["F%d" % n for n in range(1,13)] 
-                )   
+                )
                 
                 
