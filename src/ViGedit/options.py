@@ -1,5 +1,7 @@
-class VIG_Options(object):
+class Options(object):
     def __init__(self):
+        """Set default options here"""
+        
         """
             TraceLevel determines what gets printed
             
@@ -15,9 +17,25 @@ class VIG_Options(object):
         """
         self.TraceLevel = 3
 
-        """
-            TraceKeys determines whether or not to print captured keys
-        """
+        #TraceKeys determines whether or not to print captured keys
         self.TraceKeys = False
 
-opts = VIG_Options()
+        #Determine if we use selection or visual mode when you select text in command mode
+        self.useSelectionMode = False
+    
+    def load(self, path):
+        """Given the path to some file, read in the file and ovverride settings on self"""
+        pass
+    
+    def paths(self):
+        """Yield any paths to get settings from here"""
+        if False:
+            yield ""
+            
+    def readSettings(self):
+        """Read any user defined settings here
+        i.e. look in ~/.vigedit or something"""
+        for path in self.paths():
+            self.load(path)
+
+opts = Options()
