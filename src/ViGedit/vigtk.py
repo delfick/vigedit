@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 
 #  gui.py - holds stuff related to the gui
-#  
+#
 #  Copyright (C) 2006 - Trond Danielsen
 #  Copyright (C) 2008, 2009 - Stephen Moore
-#  
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
-#   
+#
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-#   
+#
 #  You should have received a copy of the GNU General Public License
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330,
@@ -54,7 +54,7 @@ class VIG_Menus(object):
     """Used to conveniently refer to particular menu choices"""
     
     def __init__(self, window):
-        self.window = window    
+        self.window = window
         self.ui_manager = self.window.get_ui_manager()
         
         self.menubar           = self.window.get_children()[0].get_children()[0]
@@ -97,7 +97,7 @@ class VIG_Window(GObject):
         self.events = [
             self.window.connect("tab-added", self.onTabAdded),
             self.window.connect("active-tab-changed", self.onActiveTabChanged),
-        ]            
+        ]
     
     def attachInfo(self, view):
         view.set_data("vigtk", self)
@@ -133,13 +133,13 @@ class VIG_Window(GObject):
 
     def updateUI(self):
         tab = self.window.get_active_tab()
-        if tab: 
+        if tab:
             view = tab.get_view()
         else:
             view = self.window.get_active_view()
         if view:
             vib = view.get_data("vibase")
-            if vib: 
+            if vib:
                 vib.update()
                 
                 

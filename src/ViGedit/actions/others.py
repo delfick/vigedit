@@ -1,13 +1,18 @@
 from gtk import PrintOperation, PageSetup
 import gtksourceview2
 import gobject
-       
+
+########################
+###
+###   SEARCH
+###
+########################
 
 def search(act):
     act.vibase.view.emit("start_interactive_search")
    
 def search_cursor(act, forward=True):
-    ''' search for word under cursor '''
+    """search for word under cursor"""
     doc = act.vibase.doc
     view = act.vibase.view
     buf = view.get_buffer()
@@ -40,25 +45,37 @@ def search_cursor(act, forward=True):
 def search_cursor_backward(act):
     search_cursor(act, forward=False)
 
+########################
+###
+###   UNDO/REDO
+###
+########################
+
 def undo(act):
     act.vibase.view.emit("undo")
     
 def redo(act):
     act.vibase.view.emit("redo")
 
+def redoLastOperation(act):
+    act.vibase.lastOperation(act)
+
 def getTerminal(act):
     # Get the terminal
     # TODO Probably needs a more sophisticated lookup, e.g., python terminal not installed, etc.
-    window = act.vigtk.window 
+    window = act.vigtk.window
     bottom_panel = window.get_bottom_panel()
     notebook = bottom_panel.get_children()[0].get_children()[0]
-    if len(notebook.get_children()) != 0: 
+    if len(notebook.get_children()) != 0:
         terminal = notebook.get_children()[1]
         return terminal
-    return None  
+    return None
 
-def redoLastOperation(act):
-    act.vibase.lastOperation(act)
+########################
+###
+###   PRINTING
+###
+########################
 
 def draw_page(operation, context, page_nr, compositor):
     compositor.draw_page(context, page_nr)

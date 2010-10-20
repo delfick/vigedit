@@ -34,7 +34,7 @@ class VIG_Actions(object):
         
         try:
             #names that aren't modules, but we want something to return from it
-            #that don't refer to the currently active instance of vibase            
+            #that don't refer to the currently active instance of vibase
             return {
                 'fileops'           : modules["fileOperations"],
                 'static'            : static,

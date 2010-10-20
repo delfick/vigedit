@@ -45,7 +45,7 @@ class Mode(VIG_ModeBase):
             
         elif event.keyval not in (act.gtk.keysyms.Return, act.gtk.keysyms.BackSpace):
             act.vibase.addToStack(event)
-        return True      
+        return True
     
     def cycleHistoryBackward(self, act):
         options = act.vigtk.exOptions
@@ -76,7 +76,7 @@ class Mode(VIG_ModeBase):
         if options.index < (len(options.history)-1):
             options.index += 1
             options.lastCommand = options.history[options.index]
-            act.vibase.stack = list(options.history[options.index])      
+            act.vibase.stack = list(options.history[options.index])
     
     def cycleHistoryStart(self, act):
         options = act.vigtk.exOptions
@@ -104,13 +104,13 @@ class Mode(VIG_ModeBase):
         if options.index < (len(options.history)-1):
             options.index = len(options.history)-1
             options.lastCommand = options.history[options.index]
-            act.vibase.stack = list(options.history[options.index])   
+            act.vibase.stack = list(options.history[options.index])
 
-    def cycleCompletions(self, act, up = True): 
+    def cycleCompletions(self, act, up = True):
         act.trace.info(1, "TODO : make tab completion work")
         #I didn't like the previous code for this and removed it
         #At some point I'll come back and reimplement tab completion
-        #unless someone else does it for me :p   
+        #unless someone else does it for me :p
         
     def evaluateEx(self, act):
         command = "".join(act.vibase.stack)

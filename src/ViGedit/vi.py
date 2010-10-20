@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 
-#  vigtk.py -   holds the vibase class, which is instantiated 
+#  vigtk.py -   holds the vibase class, which is instantiated
 #               for every tab of every gedit window
-#  
+#
 #  Copyright (C) 2008 - Joseph Method
 #  Copyright (C) 2008, 2009 - Stephen Moore
 #  Copyright (C) 2006 - Trond Danielsen
-#  
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
-#   
+#
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-#   
+#
 #  You should have received a copy of the GNU General Public License
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330,
@@ -29,6 +29,7 @@ from gobject import GObject
 
 from ViGedit.bindings import VIG_Bindings
 from ViGedit.actions import VIG_Actions
+from ViGedit.options import opts
 
 class VIG_Vibase(GObject):
     """Glues everything together"""
@@ -52,7 +53,7 @@ class VIG_Vibase(GObject):
         self.numLines = 0
         self.extraMessageLife = 0
         self.returnToMode = None
-        self.extraMessage  = None  
+        self.extraMessage  = None
         self.select = False
         self.lastOperation = None
         
@@ -66,7 +67,7 @@ class VIG_Vibase(GObject):
             self.doc.connect("loaded", self.updateDoc),
         ]
         
-        self.setMessage()   
+        self.setMessage()
     
     ########################
     ###   UTILITY
@@ -81,10 +82,10 @@ class VIG_Vibase(GObject):
     def setExtraStatus(self, life, func):
         if life > 0:
             self.extraMessageLife = life
-            self.extraMessage = func          
+            self.extraMessage = func
         
     def setRule(self, life, func):
-        self.rules.append((life, func))  
+        self.rules.append((life, func))
     
     def addToStack(self, event):
         if event.keyval in range(256):
@@ -122,15 +123,15 @@ class VIG_Vibase(GObject):
     ########################
         
     def onKeyPress(self, view, event):
-        """ initial key press processing """ 
+        """ initial key press processing """
         self.act.trace.keyPress(event)
         
         if self.extraMessageLife > 0:
-            self.extraMessageLife -= 1 
+            self.extraMessageLife -= 1
             
         self.setMessage()
-        doPropogate = False  
-        currentMode = self.bindings.mode 
+        doPropogate = False
+        currentMode = self.bindings.mode
         
         #call any rules set by modes
         for life, rule in self.rules:
@@ -150,7 +151,7 @@ class VIG_Vibase(GObject):
             self.bindings.mode = static.modes.command
             doPropogate = False
             
-        # Ignored keys.  
+        # Ignored keys.
         elif currentMode == static.modes.insert \
             or event.keyval in static.ignored_keys \
                 and currentMode != static.modes.ex:
@@ -164,21 +165,26 @@ class VIG_Vibase(GObject):
         return doPropogate
     
     def onButtonRelease(self, doc, view):
-        """ if the user is in command mode and they select some text, 
-        then they enter visual mode, if they then deselect that text, then they re-enter command mode """
+        """ if the user is in command mode and they select some text,
+        then they enter either selection or visual mode, if they then deselect that text, then they re-enter command mode """
         currentMode = self.bindings.mode
-        if currentMode in (static.modes.command, static.modes.visual):
+        if opts.useSelectionMode:
+            m = static.modes.selection
+        else:
+            m = static.modes.visual
+            
+        if currentMode in (static.modes.command, m):
             if self.doc.get_has_selection():
-                self.bindings.mode = static.modes.visual
+                self.bindings.mode = m
             else:
                 self.bindings.mode = static.modes.command
     
     def processKey(self, event):
         """ second level of keypress processing
         
-        if a binding doesn't exist for the event passed in 
+        if a binding doesn't exist for the event passed in
         
-            if it's a number, 
+            if it's a number,
                 it's added to ViBase.vigtk.number
             otherwise
                 the current mode's handle() is called
@@ -189,7 +195,7 @@ class VIG_Vibase(GObject):
                 
             otherwise
             
-                determine where the cursor is 
+                determine where the cursor is
                 
                 if it's repeatable,
                 
@@ -209,7 +215,7 @@ class VIG_Vibase(GObject):
                     move the cursor back to where it started at
         
         finally, if self.returnToMode is set to something,
-            set that mode.       
+            set that mode.
         """
         
         currentMode = self.bindings.mode
@@ -232,7 +238,7 @@ class VIG_Vibase(GObject):
             if bindingInfo and not bindingInfo['IgnoreStack']:
                 bindingInfo = None
                 
-        if bindingInfo is None: 
+        if bindingInfo is None:
             self.act.trace.info(1, "\tthe binding -- %s : %s doesn't exist", currentMode, keycombo[1:])
             if event.keyval >= ord('0') and event.keyval <= ord('9'):
                 #event is a number
@@ -277,7 +283,7 @@ class VIG_Vibase(GObject):
                         self.numLines = 0
                         self.stack = []
                         
-                    else:   
+                    else:
                         function(*args)
                         self.numLines = int("".join(self.number or ["1"]))
                         self.number = []
@@ -304,7 +310,7 @@ class VIG_Vibase(GObject):
                     
             else:
                 self.act.trace.info(2, "\tfunction is not callable")
-                if function is None: 
+                if function is None:
                     self.addToStack(event)
             
             if afterMode:

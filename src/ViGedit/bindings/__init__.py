@@ -30,7 +30,7 @@ class VIG_Registry(object):
         raise Exception, "Use the register function"
     
     def register(self, mode, function, keycode, control=False, meta=False,
-                    final=False, repeat=False, after=None, pos=False, 
+                    final=False, repeat=False, after=None, pos=False,
                     ignoreStack=False, stack = "", recordAction = True):
         
         keycombo = keycode, control, meta, stack
@@ -57,7 +57,7 @@ class VIG_Registry(object):
             }
         
 
-registry = VIG_Registry()  
+registry = VIG_Registry()
 
 ########################
 ###
@@ -70,11 +70,11 @@ class VIG_ModeHolder(object):
     def start(self):
         for mode in modes:
             try:
-                next = modules["mode_%s" % mode]  
+                next = modules["mode_%s" % mode]
             except KeyError:
                 next = None
             
-            if next:                
+            if next:
                 next = next.Mode(registry, mode)
                 
                 setattr(self, "mode_%s" % mode, next)

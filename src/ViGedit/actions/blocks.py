@@ -16,7 +16,7 @@ def selectWhole(act, type1, type2):
     
 def selectTill(act, type1):
     act.bindings.mode = act.modes.t, ["select",1, "f"]
-    act.keyboard.emitName(act, type1) 
+    act.keyboard.emitName(act, type1)
     act.bindings.mode = act.modes.selection
     
     

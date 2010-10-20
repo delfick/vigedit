@@ -1,7 +1,7 @@
 import re
 import os
 import gedit
-import gobject 
+import gobject
 
 ########################
 ###

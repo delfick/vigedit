@@ -1,28 +1,28 @@
 # -*- coding: utf-8 -*-
 
 #  cursor.py - processing for the cursor
-#  
+#
 #  Copyright (C) 2008 - Joseph Method
 #  Copyright (C) 2008, 2009 - Stephen Moore
 #  Copyright (C) 2006 - Trond Danielsen
-#  
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
-#   
+#
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-#   
+#
 #  You should have received a copy of the GNU General Public License
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330,
 #  Boston, MA 02111-1307, USA.
 
 class VIG_Cursor(object):
-    """functions to control the cursor with"""     
+    """functions to control the cursor with"""
         
     def getIter(self, act):
         return act.vibase.doc.get_iter_at_mark(act.vibase.doc.get_insert())
@@ -97,7 +97,7 @@ class VIG_Cursor(object):
        
     ########################
     ###   PAGE
-    ######################## 
+    ########################
         
     def move_PageUp(self, act, num=1):
         self.move(act, act.gtk.MOVEMENT_PAGES, -num)
@@ -217,7 +217,7 @@ class VIG_Cursor(object):
             yield cursor.get_text(side)
 
     def buffer_word_boundary(self, buf):
-        '''get range for word under cursor'''
+        """get range for word under cursor"""
         iter = buf.get_iter_at_mark(buf.get_insert())
         start = iter.copy()
 
@@ -234,5 +234,5 @@ class VIG_Cursor(object):
         start, end = self.buffer_word_boundary(doc)
         return doc.get_text(start, end)
 
-instance = VIG_Cursor()  
+instance = VIG_Cursor()
         

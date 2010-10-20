@@ -10,7 +10,7 @@ class Mode(VIG_ModeBase):
         
         self.reg(act.text.yank_Line,          act.gtk.keysyms.y,      pos=True, after=act.modes.command, **self.fr)
         self.reg(act.text.yank_TillEndOfWord, act.gtk.keysyms.w,      pos=True, after=act.modes.command, **self.fr)
-        self.reg(act.text.yank_NextWord,      act.gtk.keysyms.w,      pos=True, after=act.modes.command, 
+        self.reg(act.text.yank_NextWord,      act.gtk.keysyms.w,      pos=True, after=act.modes.command,
                                                                                               stack="a", **self.fr)
                                                                                               
         self.reg(act.text.yank_ToLineEnd,     act.gtk.keysyms.dollar, pos=True, after=act.modes.command, **self.fr)
