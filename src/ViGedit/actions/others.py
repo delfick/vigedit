@@ -12,34 +12,29 @@ def search(act):
     act.vibase.view.emit("start_interactive_search")
    
 def search_cursor(act, forward=True):
-    """search for word under cursor"""
+    """search for token under cursor"""
     doc = act.vibase.doc
     view = act.vibase.view
     buf = view.get_buffer()
 
-    word = act.pos.get_word_under_cursor(act)
-    doc.set_search_text(word, 0)
-
-    #get search boundaries
-    start = buf.get_iter_at_mark(buf.get_insert())
-    if start.inside_word:
-        if start.inside_word: start.backward_word_start()
-
-    end = buf.get_iter_at_mark(buf.get_insert())
-    if end.inside_word:
-        if end.inside_word: end.forward_word_end()
+    start, end = act.pos.buffer_token_boundary(buf)
+    token = doc.get_text(start, end).strip()
+    
+    #don't search for whitespace
+    if token:
+        doc.set_search_text(token, 0)
 
     if forward:
-        ret = end.forward_search(word, 0)
+        ret = end.forward_search(token, 0)
 
         #if nothing was found, search again from start
         if not ret:
-            ret = buf.get_bounds()[0].forward_search(word, 0)
+            ret = buf.get_bounds()[0].forward_search(token, 0)
     else:
-        ret = start.backward_search(word, 0)
+        ret = start.backward_search(token, 0)
 
         if not ret:
-            ret = buf.get_bounds()[1].backward_search(word, 0)
+            ret = buf.get_bounds()[1].backward_search(token, 0)
     act.pos.moveInsert(act, ret[0])
 
 def search_cursor_backward(act):

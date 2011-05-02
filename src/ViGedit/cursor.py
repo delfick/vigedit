@@ -21,6 +21,9 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330,
 #  Boston, MA 02111-1307, USA.
 
+import string
+token_symbols = string.letters + string.digits + '_'
+
 class VIG_Cursor(object):
     """functions to control the cursor with"""
         
@@ -217,7 +220,7 @@ class VIG_Cursor(object):
             yield cursor.get_text(side)
 
     def buffer_word_boundary(self, buf):
-        """get range for word under cursor"""
+        """get range for the natural-language word under cursor"""
         iter = buf.get_iter_at_mark(buf.get_insert())
         start = iter.copy()
 
@@ -233,6 +236,26 @@ class VIG_Cursor(object):
         doc = act.vibase.doc
         start, end = self.buffer_word_boundary(doc)
         return doc.get_text(start, end)
+
+
+    def buffer_token_boundary(self, buf):
+        """get range for the token under cursor (token is words plus _ and maybe other chars to be added?)"""
+        iter = buf.get_iter_at_mark(buf.get_insert())
+        start = iter.copy()
+
+        #move start and end markers to token boundaries
+
+        #assuming start is either in a word or on start or end character,
+        #so move to left whitespace/non token character
+        if start.backward_find_char(lambda x, d: x not in token_symbols):
+            start.forward_char()
+
+        #same right
+        iter.forward_find_char(lambda x, d: x not in token_symbols)
+        #iter.backward_char()
+        
+        return (start, iter)
+
 
 instance = VIG_Cursor()
         
