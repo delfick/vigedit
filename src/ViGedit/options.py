@@ -21,7 +21,7 @@ class Options(object):
         self.TraceKeys = False
 
         #Determine if we use selection or visual mode when you select text in command mode
-        self.useSelectionMode = False
+        self.useSelectionMode = True
     
     def load(self, path):
         """Given the path to some file, read in the file and ovverride settings on self"""
