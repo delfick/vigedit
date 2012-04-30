@@ -1,4 +1,4 @@
-[Gedit Plugin]
+[Plugin]
 Loader=python
 Module=ViGedit
 IAge=3
