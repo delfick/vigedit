@@ -1,0 +1,1 @@
+class VigApp(object): pass
