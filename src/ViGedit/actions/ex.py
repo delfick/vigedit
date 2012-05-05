@@ -1,7 +1,6 @@
+from gi.repository import Gedit as gedit, GObject as gobject
 import re
 import os
-import gedit
-import gobject
 
 ########################
 ###

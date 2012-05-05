@@ -1,15 +1,22 @@
 from ViGedit import static
 from ViGedit import keyboard
 from ViGedit import cursor
-import gtk
-from gtk import gdk
+from gi.repository import Gtk as gtk, Gdk as gdk
 modules = {}
+
+class Keysyms(object):
+    """Backwards compatibility to keysyms previously existing on gtk"""
+    def __getattr__(self, key):
+        if not key.startswith("_"):
+            key = "_%s" % key
+        return getattr(gdk, 'KEY%s' % key)
 
 class VIG_Actions(object):
     """Middleman to all the actions functions"""
     
     def __init__(self, vibase):
         self.vibase = vibase
+        gtk.keysyms = Keysyms()
         if vibase:
             self.vigtk = self.vibase.vigtk
     

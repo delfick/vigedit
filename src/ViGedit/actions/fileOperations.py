@@ -1,4 +1,5 @@
-import gedit, gobject, os
+from gi.repository import Gedit as gedit, GObject as gobject
+import os
 
 def saveFile(act):
     if act.vibase.doc.get_uri() != None:

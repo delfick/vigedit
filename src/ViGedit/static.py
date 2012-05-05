@@ -1,4 +1,4 @@
-from gtk import gdk
+from gi.repository import Gdk as gdk
 
 ########################
 ###

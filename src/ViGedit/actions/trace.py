@@ -1,5 +1,5 @@
+from gi.repository import Gdk as gdk
 from ViGedit.options import opts
-from gtk import gdk
 
 HEADER = '\033[95m'
 BLUE = '\033[94m'
@@ -8,8 +8,6 @@ WARNING = '\033[43m'
 MAGNETA = '\033[95m'
 ERROR = '\033[91m'
 ENDC = '\033[0m'
-
-
     
 def error(message, *args):
     if opts.TraceLevel > 1:

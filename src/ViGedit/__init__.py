@@ -2,6 +2,9 @@
     The Gedit plugin itself.
 '''
 from gi.repository import GObject, Gedit
+from vig import VigApp
+import sys
+import os
 
 ########################
 ###   DEFINE ACTIONS
@@ -10,15 +13,18 @@ from gi.repository import GObject, Gedit
 class AppMethods(object):
     def do_activate(self):
         """App was created"""
+        self.app.vig = VigApp()
         print 'create', self.app
-    
-    def do_deactivate(self):
-        """App was closed"""
-        print 'destroy', self.app
 
 class WindowMethods(object):
+    @property
+    def app(self):
+        return Gedit.App.get_default()
+    
     def do_activate(self):
         """Window was created"""
+        print os.path.abspath(os.curdir)
+        print self.app.vig
         print '\tcreate', self.window
     
     def do_deactivate(self):
@@ -30,6 +36,10 @@ class WindowMethods(object):
         print '\tupdate', self.window
 
 class ViewMethods(object):
+    @property
+    def app(self):
+        return Gedit.App.get_default()
+    
     def do_activate(self):
         """View was created"""
         print '\t\tcreate', self.view
@@ -83,11 +93,11 @@ def create_activatables(*specs):
 
 # Create and add activatables to this file
 # So that they may be imported
+if 'nose' not in sys.modules:
+    activatables = create_activatables(
+          (AppMethods, "App")
+        , (ViewMethods, "View")
+        , (WindowMethods, "Window")
+        )
 
-activatables = create_activatables(
-      (AppMethods, "App")
-    , (ViewMethods, "View")
-    , (WindowMethods, "Window")
-    )
-
-locals().update(**activatables)
+    locals().update(**activatables)

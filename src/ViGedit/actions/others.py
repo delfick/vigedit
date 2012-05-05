@@ -1,6 +1,5 @@
-from gtk import PrintOperation, PageSetup
-import gtksourceview2
-import gobject
+from gi.repository.Gtk import PrintOperation, PageSetup
+from gi.repository import GObject as gobject
 
 ########################
 ###
