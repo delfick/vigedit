@@ -1,0 +1,9 @@
+[Plugin]
+Loader=python
+Module=vigedit_specs
+IAge=3
+Name=vigedittest
+Description=Plugin to run ViGedit tests from inside gedit.
+Icon=gedit-plugin
+Authors=Stephen Moore <delfick755@gmail.com>
+Website=http://github.com/delfick/vigedit
