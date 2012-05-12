@@ -7,17 +7,25 @@ previous_plugins=`gsettings get org.gnome.gedit.plugins "active-plugins"`
 
 # Set active plugins to just vigedit_specs and then start gedit
 gsettings set org.gnome.gedit.plugins "active-plugins" "['vigedit_specs']"
-gedit -s &
-pid=$!
+if [ $1 = '-m' ]
+then
+    # User wants to manually start tests
+    # Useful if user wants to use nose.tools.set_trace in the test
+    gedit -s
+else
+    # User wants to auto start the tests
+    gedit -s &
+    pid=$!
 
-# Print to the screen pid for gedit and the pid of the window xdotool finds
-# Useful to see it is getting the correct window
-ps aux | grep gedit | grep -v grep
-echo "Found $pid"
+    # Print to the screen pid for gedit and the pid of the window xdotool finds
+    # Useful to see it is getting the correct window
+    ps aux | grep gedit | grep -v grep
+    echo "Found $pid"
 
-# Focus gedit and tell it to start the tests
-wmctrl -a gedit && sleep 0.5 && xdotool key ctrl+alt+u
+    # Focus gedit and tell it to start the tests
+    wmctrl -a gedit && sleep 0.5 && xdotool key ctrl+alt+u
 
-# Foreground gedit and set back previous active-plugins list when it's done
-wait %1
+    # Foreground gedit and set back previous active-plugins list when it's done
+    wait %1
+fi
 gsettings set org.gnome.gedit.plugins "active-plugins" "$previous_plugins"
