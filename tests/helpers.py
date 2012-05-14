@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from gi.repository import Gedit
+from gi.repository import Gedit, Gtk
 from unittest import TestCase
 
 class GeditHelper(object):
@@ -19,17 +19,12 @@ class GeditHelper(object):
         return self.window.get_active_document()
     
     @property
+    def tabs(self):
+        return self.window.get_views()
+    
+    @property
     def bounds(self):
         return self.document.get_bounds()
-    
-    @contextmanager
-    def grouped_action(self):
-        doc = self.document
-        doc.begin_user_action()
-        try:
-            yield doc
-        finally:
-            doc.end_user_action()
      
     @property
     def text(self):
@@ -40,7 +35,20 @@ class GeditHelper(object):
     @text.setter
     def text(self, txt):
         self.document.set_text(txt)
+        self.update()
+    
+    def add_tab(self, jump_to=True):
+        self.window.create_tab(jump_to)
+        self.update()
+    
+    def update(self):
+        """Make gedit run the main iteration"""
+        while Gtk.events_pending():
+            Gtk.main_iteration()
 
 class GeditTestCase(TestCase):
     def setUp(self):
         self.gedit = GeditHelper(Gedit.App.get_default())
+        # Remove all current tabs and replace with new one
+        self.gedit.window.close_all_tabs()
+        self.gedit.add_tab()

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Set nose args for tests
-export NOSE_ARGS="--pdb --with-noy"
+export NOSE_ARGS="--pdb --with-noy $@"
 
 # Set variable for current gedit plugins so it may be set back when gedit finishes
 previous_plugins=`gsettings get org.gnome.gedit.plugins "active-plugins"`
