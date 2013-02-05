@@ -1,3 +1,7 @@
+Note:: This project has been discontinued!
+
+Though feel free to fork it, and continue the effort, I'm sure I'll answer any questions you have!
+
 vigedit
 =======
 
@@ -20,7 +24,13 @@ The project continued to grow for another two years before it essentially stood 
 
 Since this time, the only things that have happened as far as this project is concerned is Tim Taubert has made a fork on github (https://github.com/ttaubert/ViGedit-Plus) and Gedit 3 has been released.
 
-It is now 2012 and I've been meaning to port this to gedit 3 for quite some time now.....
+In 2012 I started to try and port this to Gedit3. I got as far as getting somewhere with making it possible to write tests,
+and having those tests run inside an instance of gedit, before other things gained priority and I stopped working on vigedit.
+
+It's now 2013 and I have decided that I won't be porting vigedit to Gedit 3.
+
+I haven't used Gedit itself for a very long time (I use a combination of sublime/idea/vim these days)
+and I have come to the conclusion that I don't have the time or motivation to continue this plugin.
 
 Authors
 =======
